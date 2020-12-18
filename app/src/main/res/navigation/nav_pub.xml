@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_pub"
+    app:startDestination="@id/publicationListFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.MainFragment"
+        android:label="MainFragment" >
+        <action
+            android:id="@+id/actionMainToPublicationList"
+            app:destination="@id/publicationListFragment" />
+        <action
+            android:id="@+id/actionMainToIndicatorList"
+            app:destination="@id/indicatorListFragment" />
+        <action
+            android:id="@+id/actionMainInfographicList"
+            app:destination="@id/infographicListFragment" />
+        <action
+            android:id="@+id/actionMainToAbout"
+            app:destination="@id/aboutFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_statisticalNewsListFragment"
+            app:destination="@id/statisticalNewsListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/publicationListFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.list_fragment.PublicationListFragment"
+        android:label="PublicationListFragment" >
+        <action
+            android:id="@+id/actionListToDetail"
+            app:destination="@id/publicationDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/publicationDetailFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.detail_fragment.PublicationDetailFragment"
+        android:label="PublicationDetailFragment" >
+        <action
+            android:id="@+id/actionDetailToList"
+            app:destination="@id/publicationListFragment" />
+        <argument
+            android:name="uuid"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/indicatorListFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.list_fragment.IndicatorListFragment"
+        android:label="IndicatorListFragment" />
+    <fragment
+        android:id="@+id/infographicListFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.list_fragment.InfographicListFragment"
+        android:label="InfographicListFragment" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.AboutFragment"
+        android:label="AboutFragment" />
+    <fragment
+        android:id="@+id/statisticalNewsListFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.list_fragment.StatisticalNewsListFragment"
+        android:label="StatisticalNewsListFragment" >
+        <action
+            android:id="@+id/actionStatisticalNewsListToDetail"
+            app:destination="@id/statisticalNewsDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/statisticalNewsDetailFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.detail_fragment.StatisticalNewsDetailFragment"
+        android:label="StatisticalNewsDetailFragment" >
+        <action
+            android:id="@+id/actionStatisticalNewsToList"
+            app:destination="@id/statisticalNewsListFragment" />
+        <argument
+            android:name="uuid"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+</navigation>

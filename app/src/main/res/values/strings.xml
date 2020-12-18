@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">LekDarjoApp</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="open">open</string>
+    <string name="close">close</string>
+    <string name="item_about">Tentang Kami</string>
+    <string name="item_share">Bagikan aplikasi</string>
+    <string name="menu_other">Lainya</string>
+    <string name="item_main">Beranda</string>
+    <string name="menu_main">Menu</string>
+    <string name="item_news">Berita Statistik</string>
+    <string name="item_publication">Publikasi</string>
+    <string name="item_indicator">Indikator</string>
+    <string name="item_infographic">Infografis</string>
+    <string name="spinner_title">year</string>
+
+    <string name="spinner_prompt">Choose an item</string>
+    <string name="simple_header">Simple Spinner</string>
+    <string name="dynamic_list_header">Dynamic list Spinner</string>
+    <string name="selection_header">Selection Spinner</string>
+    <string name="filterTitle">Filter</string>
+    <string name="subject">Subjek :</string>
+    <string name="district">Wilayah :</string>
+    <string name="year">Tahun :</string>
+
+    <string-array name="cities_array">
+        <item>Berlin</item>
+        <item>Helsinki</item>
+        <item>London</item>
+        <item>New York</item>
+        <item>Paris</item>
+        <item>Stockholm</item>
+    </string-array>
+</resources>

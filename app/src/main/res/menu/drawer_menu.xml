@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/main"
+        android:title="@string/item_main" />
+
+    <item android:title="@string/menu_main">
+        <menu>
+            <item
+                android:id="@+id/news"
+                android:icon="@drawable/ic_news"
+                android:title="@string/item_news" />
+            <item
+                android:id="@+id/publication"
+                android:icon="@drawable/ic_publication"
+                android:title="@string/item_publication" />
+            <item
+                android:id="@+id/indicator"
+                android:icon="@drawable/ic_indicator"
+                android:title="@string/item_indicator" />
+            <item
+                android:id="@+id/infographic"
+                android:icon="@drawable/ic_infographic"
+                android:title="@string/item_infographic" />
+
+        </menu>
+
+    </item>
+
+    <item android:title="@string/menu_other">
+
+        <menu>
+            <item
+                android:id="@+id/about"
+                android:icon="@drawable/ic_about"
+                android:title="@string/item_about" />
+            <item
+                android:id="@+id/share"
+                android:icon="@drawable/ic_share"
+                android:title="@string/item_share" />
+        </menu>
+
+    </item>
+
+
+</menu>
