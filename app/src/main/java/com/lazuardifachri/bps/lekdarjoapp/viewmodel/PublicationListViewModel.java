@@ -19,6 +19,7 @@ import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
@@ -65,8 +66,7 @@ public class PublicationListViewModel extends AndroidViewModel {
                         .subscribeWith(new DisposableSingleObserver<PublicationResponse>() {
                             @Override
                             public void onSuccess(@NonNull PublicationResponse response) {
-                                deleteAllFromDatabase();
-                                insertAllToDatabase(response.getPublications());
+                                deleteAllFromDatabase(response.getPublications());
                                 Toast.makeText(getApplication(), "Publication retrieved from endpoint", Toast.LENGTH_SHORT).show();
                             }
 
@@ -91,12 +91,11 @@ public class PublicationListViewModel extends AndroidViewModel {
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Publication> publications) {
                         if (!publications.isEmpty()) {
                             publicationRetrieved(publications);
-                            Log.d("publications", publications.toString());
                             Toast.makeText(getApplication(), "Publication retrieved from database", Toast.LENGTH_SHORT).show();
-                            return;
+                        } else {
+                            notFound.setValue(true);
+                            loading.setValue(false);
                         }
-                        notFound.setValue(true);
-                        loading.setValue(false);
                     }
 
                     @Override
@@ -118,19 +117,19 @@ public class PublicationListViewModel extends AndroidViewModel {
                 .subscribeWith(new DisposableSingleObserver<List<Publication>>() {
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Publication> publications) {
-
                         if (!publications.isEmpty()) {
                             publicationRetrieved(publications);
-                            Log.d("publications", publications.toString());
                             Toast.makeText(getApplication(), "Publication retrieved from database", Toast.LENGTH_SHORT).show();
-                            return;
+                        } else {
+                            notFound.setValue(true);
+                            loading.setValue(false);
                         }
-                        notFound.setValue(true);
-                        loading.setValue(false);
                     }
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        notFound.setValue(true);
+                        loading.setValue(false);
                         e.printStackTrace();
                     }
                 }));
@@ -148,16 +147,17 @@ public class PublicationListViewModel extends AndroidViewModel {
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Publication> publications) {
                         if (!publications.isEmpty()) {
                             publicationRetrieved(publications);
-                            Log.d("publications", publications.toString());
                             Toast.makeText(getApplication(), "Publication retrieved from database", Toast.LENGTH_SHORT).show();
-                            return;
+                        } else {
+                            notFound.setValue(true);
+                            loading.setValue(false);
                         }
-                        notFound.setValue(true);
-                        loading.setValue(false);
                     }
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        notFound.setValue(true);
+                        loading.setValue(false);
                         e.printStackTrace();
                     }
                 }));
@@ -175,16 +175,17 @@ public class PublicationListViewModel extends AndroidViewModel {
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Publication> publications) {
                         if (!publications.isEmpty()) {
                             publicationRetrieved(publications);
-                            Log.d("publications", publications.toString());
                             Toast.makeText(getApplication(), "Publication retrieved from database", Toast.LENGTH_SHORT).show();
-                            return;
+                        } else {
+                            notFound.setValue(true);
+                            loading.setValue(false);
                         }
-                        notFound.setValue(true);
-                        loading.setValue(false);
                     }
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        notFound.setValue(true);
+                        loading.setValue(false);
                         e.printStackTrace();
                     }
                 }));
@@ -202,16 +203,17 @@ public class PublicationListViewModel extends AndroidViewModel {
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Publication> publications) {
                         if (!publications.isEmpty()) {
                             publicationRetrieved(publications);
-                            Log.d("publications", publications.toString());
                             Toast.makeText(getApplication(), "Publication retrieved from database", Toast.LENGTH_SHORT).show();
-                            return;
+                        } else {
+                            notFound.setValue(true);
+                            loading.setValue(false);
                         }
-                        notFound.setValue(true);
-                        loading.setValue(false);
                     }
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        notFound.setValue(true);
+                        loading.setValue(false);
                         e.printStackTrace();
                     }
                 }));
@@ -225,29 +227,40 @@ public class PublicationListViewModel extends AndroidViewModel {
                 .subscribeWith(new DisposableSingleObserver<List<Long>>() {
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Long> results) {
-                        Log.d("insertAll", "success");
-                        int i = 0;
-                        while (i < publications.size()) {
-                            publications.get(i).setUuid(results.get(i).intValue());
-                            i++;
+                        if (!results.isEmpty()) {
+                            int i = 0;
+                            while (i < publications.size()) {
+                                publications.get(i).setUuid(results.get(i).intValue());
+                                i++;
+                            }
+                            preferencesHelper.saveUpdateTime(System.nanoTime());
+                            publicationRetrieved(publications);
                         }
-                        preferencesHelper.saveUpdateTime(System.nanoTime());
-                        publicationRetrieved(publications);
                     }
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-
+                        e.printStackTrace();
                     }
                 }));
 
     }
 
-    public void deleteAllFromDatabase() {
+    public void deleteAllFromDatabase(List<Publication> publications) {
         disposable.add(myDatabase.getInstance(getApplication())
                 .publicationDao().deleteAllPublications()
                 .subscribeOn(Schedulers.io())
-                .subscribe());
+                .subscribeWith(new DisposableCompletableObserver() {
+                    @Override
+                    public void onComplete() {
+                        insertAllToDatabase(publications);
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        e.printStackTrace();
+                    }
+                }));
     }
 
     @Override

@@ -26,7 +26,12 @@ public class ServiceGenerator {
 
     public static <T> T createService(Class<T> serviceClass, Context context) {
 
-        Retrofit retrofit = builder.client(new OkHttpClient.Builder().addInterceptor(new AuthInterceptor(context)).build()).build();
+        Retrofit retrofit = builder.client(new OkHttpClient.Builder()
+                .addInterceptor(new AuthInterceptor(context))
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build()).build();
 
         return retrofit.create(serviceClass);
     }
@@ -36,6 +41,9 @@ public class ServiceGenerator {
         Retrofit retrofit = builder.client(new OkHttpClient.Builder()
                 .addInterceptor(new AuthInterceptor(context))
                 .addInterceptor(new DownloadInterceptor(listener))
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
                 .build()).build();
 
         return retrofit.create(serviceClass);

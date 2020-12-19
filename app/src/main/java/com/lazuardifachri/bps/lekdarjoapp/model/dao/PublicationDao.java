@@ -36,6 +36,9 @@ public interface PublicationDao {
     @Query("SELECT * FROM publication WHERE release_date LIKE :year")
     Single<List<Publication>> getPublicationByYear(String year);
 
+    @Query("SELECT EXISTS(SELECT * FROM publication WHERE uuid = :uuid)")
+    Single<Boolean> isPublicationExist(int uuid);
+
     @Query("DELETE FROM publication")
     Completable deleteAllPublications();
 

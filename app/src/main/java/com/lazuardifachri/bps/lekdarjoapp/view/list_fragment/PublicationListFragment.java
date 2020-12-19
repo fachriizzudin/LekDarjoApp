@@ -80,26 +80,26 @@ public class PublicationListFragment extends Fragment implements PublicationFilt
 
     private void observeViewModel() {
         viewModel.publicationLiveData.observe(getViewLifecycleOwner(), publications -> {
-            if (publications != null && publications instanceof List) {
+            if (publications instanceof List) {
                 adapter.updatePublication(publications);
                 binding.recyclerView.setVisibility(View.VISIBLE);
             }
         });
 
         viewModel.error.observe(getViewLifecycleOwner(), isError -> {
-            if (isError != null && isError instanceof Boolean) {
+            if (isError instanceof Boolean) {
                 binding.error.setVisibility(isError ? View.VISIBLE : View.GONE);
             }
         });
 
         viewModel.notFound.observe(getViewLifecycleOwner(), isNotFound -> {
-            if (isNotFound != null && isNotFound instanceof Boolean) {
+            if (isNotFound instanceof Boolean) {
                 binding.notFound.setVisibility(isNotFound ? View.VISIBLE : View.GONE);
             }
         });
 
         viewModel.loading.observe(getViewLifecycleOwner(), isLoading -> {
-            if (isLoading != null && isLoading instanceof Boolean) {
+            if (isLoading instanceof Boolean) {
                 binding.loadingProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
                 if (isLoading) {
                     binding.error.setVisibility(View.GONE);

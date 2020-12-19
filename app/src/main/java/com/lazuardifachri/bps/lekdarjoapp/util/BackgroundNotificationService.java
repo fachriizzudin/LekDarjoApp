@@ -95,7 +95,7 @@ public class BackgroundNotificationService extends JobIntentService {
             }
 
             @Override
-            public void onProgress(int progress) {
+            public void onProgressDownload(int progress) {
                 Log.d("listener", "onProgress");
                 notificationBuilder
                         .setSmallIcon(android.R.drawable.stat_sys_download)
@@ -123,7 +123,7 @@ public class BackgroundNotificationService extends JobIntentService {
             }
 
             @Override
-            public void onFail(String errorInfo) {
+            public void onFailDownload(String errorInfo) {
                 Toast.makeText(getApplication(), "Download failed", Toast.LENGTH_SHORT).show();
             }
         };

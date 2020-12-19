@@ -1,7 +1,5 @@
 package com.lazuardifachri.bps.lekdarjoapp.model.response;
 
-import android.util.Log;
-
 import com.lazuardifachri.bps.lekdarjoapp.util.FileDownloadListener;
 
 import java.io.IOException;
@@ -56,7 +54,7 @@ public class DownloadResponseBody extends ResponseBody {
                 totalBytesRead += bytesRead != -1 ? bytesRead : 0;
                 if (null != listener) {
                     if (bytesRead != -1) {
-                        listener.onProgress((int) (totalBytesRead * 100 / responseBody.contentLength()));
+                        listener.onProgressDownload((int) (totalBytesRead * 100 / responseBody.contentLength()));
                     }
                 }
                 return bytesRead;

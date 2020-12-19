@@ -73,6 +73,10 @@ public class Publication implements Serializable {
         this.documentUri = documentUri;
     }
 
+    public Publication() {
+
+    }
+
     public int getId() {
         return id;
     }

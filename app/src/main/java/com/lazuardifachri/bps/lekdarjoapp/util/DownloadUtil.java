@@ -3,13 +3,9 @@ package com.lazuardifachri.bps.lekdarjoapp.util;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import com.lazuardifachri.bps.lekdarjoapp.model.FileModel;
 import com.lazuardifachri.bps.lekdarjoapp.model.api.FileDownloadApi;
 import com.lazuardifachri.bps.lekdarjoapp.model.myDatabase;
-import com.lazuardifachri.bps.lekdarjoapp.viewmodel.FileModelViewModel;
-import com.lazuardifachri.bps.lekdarjoapp.viewmodel.PublicationListViewModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -88,7 +84,7 @@ public class DownloadUtil {
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                        listener.onFail(e.toString());
+                        listener.onFailDownload(e.toString());
                     }
 
                     @Override
@@ -149,9 +145,9 @@ public class DownloadUtil {
             fos.close();
             inputString.close();
         } catch (FileNotFoundException e) {
-            listener.onFail("FileNotFoundException");
+            listener.onFailDownload("FileNotFoundException");
         } catch (IOException e) {
-            listener.onFail("IOException");
+            listener.onFailDownload("IOException");
         }
 
     }
