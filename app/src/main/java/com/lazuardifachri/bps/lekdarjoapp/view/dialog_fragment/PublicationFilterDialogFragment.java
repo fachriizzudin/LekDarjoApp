@@ -1,4 +1,4 @@
-package com.lazuardifachri.bps.lekdarjoapp.view;
+package com.lazuardifachri.bps.lekdarjoapp.view.dialog_fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;

@@ -1,4 +1,4 @@
-package com.lazuardifachri.bps.lekdarjoapp.view;
+package com.lazuardifachri.bps.lekdarjoapp.view.dialog_fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 
@@ -20,19 +19,15 @@ import androidx.fragment.app.DialogFragment;
 import com.lazuardifachri.bps.lekdarjoapp.R;
 import com.lazuardifachri.bps.lekdarjoapp.databinding.DialogFilterNewsBinding;
 import com.lazuardifachri.bps.lekdarjoapp.model.Category;
-import com.lazuardifachri.bps.lekdarjoapp.model.District;
 import com.lazuardifachri.bps.lekdarjoapp.model.Subject;
 import com.lazuardifachri.bps.lekdarjoapp.util.Parameters;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class StatisticalNewsFilterDialogFragment extends DialogFragment {
 
     DialogFilterNewsBinding binding;
 
     public interface OnFilterSelected {
-        void sendInput(int subjectId, int categoryId, int month, int year);
+        void sendInput(int subjectId, int categoryId, String monthString, int year);
     }
 
     OnFilterSelected onFilterSelected;
@@ -47,7 +42,6 @@ public class StatisticalNewsFilterDialogFragment extends DialogFragment {
         binding = DialogFilterNewsBinding.inflate(inflater);
 
         View dialogView = binding.getRoot();
-
 
         Spinner subjectSpinner = binding.dialogSubjectSpinner;
         ArrayAdapter<Subject> subjectAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, Parameters.getInstance().getSubjects());
@@ -82,6 +76,11 @@ public class StatisticalNewsFilterDialogFragment extends DialogFragment {
                         binding.dialogCategoryText.setVisibility(View.VISIBLE);
                         binding.dialogCategorySpinner.setVisibility(View.VISIBLE);
                         break;
+                    case 4:
+                    case 999:
+                        binding.dialogCategoryText.setVisibility(View.GONE);
+                        binding.dialogCategorySpinner.setVisibility(View.GONE);
+                        break;
                 }
             }
 
@@ -92,9 +91,9 @@ public class StatisticalNewsFilterDialogFragment extends DialogFragment {
         });
 
         NumberPicker monthNumberPicker = binding.monthDialogNumberPicker;
-        monthNumberPicker.setMinValue(1);
+        monthNumberPicker.setMinValue(0);
         monthNumberPicker.setMaxValue(12);
-        monthNumberPicker.setValue(1);
+        monthNumberPicker.setValue(0);
 
         NumberPicker yearNumberPicker = binding.yearDialogNumberPicker;
         yearNumberPicker.setMinValue(2000);
@@ -113,9 +112,15 @@ public class StatisticalNewsFilterDialogFragment extends DialogFragment {
             }
 
             int month = monthNumberPicker.getValue();
+            String monthString;
+            if (month < 10) {
+                monthString = "0" + month;
+            } else {
+                monthString = String.valueOf(month);
+            }
             int year = yearNumberPicker.getValue();
 
-            onFilterSelected.sendInput(subject.getId(), categoryId, month, year);
+            onFilterSelected.sendInput(subject.getId(), categoryId, monthString, year);
             dismiss();
         });
 

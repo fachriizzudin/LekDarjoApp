@@ -29,11 +29,11 @@ public interface StatisticalNewsDao {
     @Query("SELECT * FROM statistical_news WHERE category_id =:categoryId AND release_date LIKE :monthYear")
     Single<List<StatisticalNews>> getStatisticalNewsByCategory(int categoryId, String monthYear);
 
-    @Query("SELECT * FROM statistical_news WHERE subject_id =:subjectId AND category_id =:categoryId AND release_date LIKE :monthYear")
-    Single<List<StatisticalNews>> getStatisticalNewsBySubjectAndCategory(int subjectId, int categoryId, String monthYear);
-
     @Query("SELECT * FROM statistical_news WHERE release_date LIKE :monthYear")
     Single<List<StatisticalNews>> getStatisticalNewsByMonthYear(String monthYear);
+
+    @Query("SELECT EXISTS(SELECT * FROM statistical_news WHERE uuid = :uuid)")
+    Single<Boolean> isStatisticalNewsExist(int uuid);
 
     @Query("DELETE FROM statistical_news")
     Completable deleteAllStatisticalNews();

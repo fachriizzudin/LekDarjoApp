@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
 @Entity(tableName = "publication")
-public class Publication implements Serializable {
+public class Publication {
 
     @ColumnInfo(name = "pub_id")
     @SerializedName("id")
@@ -58,20 +58,6 @@ public class Publication implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int uuid;
-
-    public Publication(int id, String title, String catalogNo, String publicationNo, String issnOrIsbn, String releaseDate, String information, District district, Subject subject, String imageUri, String documentUri) {
-        this.id = id;
-        this.title = title;
-        this.catalogNo = catalogNo;
-        this.publicationNo = publicationNo;
-        this.issnOrIsbn = issnOrIsbn;
-        this.releaseDate = releaseDate;
-        this.information = information;
-        this.district = district;
-        this.subject = subject;
-        this.imageUri = imageUri;
-        this.documentUri = documentUri;
-    }
 
     public Publication() {
 

@@ -1,6 +1,5 @@
 package com.lazuardifachri.bps.lekdarjoapp.view.list_fragment;
 
-import android.app.SearchManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +12,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,12 +19,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.lazuardifachri.bps.lekdarjoapp.R;
 import com.lazuardifachri.bps.lekdarjoapp.databinding.FragmentStatisticalNewsListBinding;
 import com.lazuardifachri.bps.lekdarjoapp.model.StatisticalNews;
-import com.lazuardifachri.bps.lekdarjoapp.view.StatisticalNewsFilterDialogFragment;
+import com.lazuardifachri.bps.lekdarjoapp.view.dialog_fragment.StatisticalNewsFilterDialogFragment;
 import com.lazuardifachri.bps.lekdarjoapp.view.adapter.DateObject;
 import com.lazuardifachri.bps.lekdarjoapp.view.adapter.ObjectList;
 import com.lazuardifachri.bps.lekdarjoapp.view.adapter.StatisticalNewsAdapter;
 import com.lazuardifachri.bps.lekdarjoapp.view.adapter.StatisticalNewsObject;
-import com.lazuardifachri.bps.lekdarjoapp.viewmodel.StatisticalNewsViewModel;
+import com.lazuardifachri.bps.lekdarjoapp.viewmodel.StatisticalNewsListViewModel;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -36,7 +34,7 @@ import java.util.Set;
 
 public class StatisticalNewsListFragment extends Fragment implements StatisticalNewsFilterDialogFragment.OnFilterSelected{
 
-    private StatisticalNewsViewModel viewModel;
+    private StatisticalNewsListViewModel viewModel;
     StatisticalNewsAdapter adapter = new StatisticalNewsAdapter(new ArrayList<>());
     private FragmentStatisticalNewsListBinding binding;
 
@@ -66,7 +64,7 @@ public class StatisticalNewsListFragment extends Fragment implements Statistical
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerView.setAdapter(adapter);
 
-        viewModel = new ViewModelProvider(this).get(StatisticalNewsViewModel.class);
+        viewModel = new ViewModelProvider(this).get(StatisticalNewsListViewModel.class);
         viewModel.refresh();
 
         observeViewModel();
@@ -81,62 +79,28 @@ public class StatisticalNewsListFragment extends Fragment implements Statistical
         });
     }
 
-    private void groupDataIntoHashMap(List<StatisticalNews> statisticalNews) {
-        LinkedHashMap<String, Set<StatisticalNews>> groupedHashMap = new LinkedHashMap<>();
-        Set<StatisticalNews> set = null;
-        for (StatisticalNews news : statisticalNews) {
-            String hashMapKey = news.getReleaseDate();
-            if (groupedHashMap.containsKey(hashMapKey)) {
-                groupedHashMap.get(hashMapKey).add(news);
-            } else {
-                set = new LinkedHashSet<>();
-                set.add(news);
-                groupedHashMap.put(hashMapKey, set);
-            }
-        }
-        generateListFromMap(groupedHashMap);
-    }
-
-
-    private ArrayList<ObjectList> generateListFromMap(LinkedHashMap<String, Set<StatisticalNews>> groupedHashMap) {
-        ArrayList<ObjectList> consolidatedList = new ArrayList<>();
-        for (String date : groupedHashMap.keySet()) {
-            DateObject dateItem = new DateObject(date);
-            consolidatedList.add(dateItem);
-            for (StatisticalNews news : groupedHashMap.get(date)) {
-                StatisticalNewsObject generalItem = new StatisticalNewsObject();
-                generalItem.setStatisticalNewsModel(news);
-                consolidatedList.add(generalItem);
-            }
-        }
-
-        adapter.setDataChange(consolidatedList);
-
-        return consolidatedList;
-    }
-
     private void observeViewModel() {
         viewModel.statisticalNewsLiveData.observe(getViewLifecycleOwner(), statisticalNews -> {
-            if (statisticalNews != null && statisticalNews instanceof List) {
+            if (statisticalNews instanceof List) {
                 groupDataIntoHashMap(statisticalNews);
                 binding.recyclerView.setVisibility(View.VISIBLE);
             }
         });
 
         viewModel.error.observe(getViewLifecycleOwner(), isError -> {
-            if (isError != null && isError instanceof Boolean) {
+            if (isError instanceof Boolean) {
                 binding.error.setVisibility(isError ? View.VISIBLE : View.GONE);
             }
         });
 
         viewModel.notFound.observe(getViewLifecycleOwner(), isNotFound -> {
-            if (isNotFound != null && isNotFound instanceof Boolean) {
+            if (isNotFound instanceof Boolean) {
                 binding.notFound.setVisibility(isNotFound ? View.VISIBLE : View.GONE);
             }
         });
 
         viewModel.loading.observe(getViewLifecycleOwner(), isLoading -> {
-            if (isLoading != null && isLoading instanceof Boolean) {
+            if (isLoading instanceof Boolean) {
                 binding.loadingProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
                 if (isLoading) {
                     binding.error.setVisibility(View.GONE);
@@ -176,42 +140,104 @@ public class StatisticalNewsListFragment extends Fragment implements Statistical
     }
 
     @Override
-    public void sendInput(int subjectId, int categoryId, int month, int year) {
+    public void sendInput(int subjectId, int categoryId, String monthString, int year) {
         binding.recyclerView.setVisibility(View.GONE);
         binding.error.setVisibility(View.GONE);
         binding.loadingProgressBar.setVisibility(View.VISIBLE);
 
-        Log.d("paramsDialog", String.valueOf(subjectId) + " " + String.valueOf(categoryId) + " " +String.valueOf(month) + " " + String.valueOf(year));
+        Log.d("paramsDialog", String.valueOf(subjectId) + " " + String.valueOf(categoryId) + " " +String.valueOf(monthString) + " " + String.valueOf(year));
 
         int filterCase = 0;
 
+        // subject = semua
         if (subjectId == 999) filterCase++;
-        if (subjectId == 4) filterCase = filterCase + 2;
-        if (categoryId == 999) filterCase = filterCase + 3;
+
+        // subject = umum
+        if (subjectId == 4) filterCase = filterCase + 10;
+
+        // kategori = semua
+        if (categoryId == 999) filterCase = filterCase + 100;
+
+        // month = 0
+        if (monthString.equals("00")) filterCase = filterCase + 1000;
+
+        Log.d("filtercase", String.valueOf(filterCase));
 
         switch (filterCase) {
             case 0:
-            case 2:
-                Log.d("fetchByCategory", "masuk");
-                viewModel.fetchByCategoryFromDatabase(categoryId, month, year);
-                // observeViewModel();
+                // bisa langsung kategori
+                viewModel.fetchByCategoryFromDatabase(categoryId, monthString, year);
                 binding.refreshLayout.setRefreshing(false);
                 break;
             case 1:
+                viewModel.fetchByMonthYearFromDatabase(monthString, year);
+                binding.refreshLayout.setRefreshing(false);
+                break;
+            case 10:
+                viewModel.fetchBySubjectFromDatabase(subjectId, monthString, year);
+                binding.refreshLayout.setRefreshing(false);
+                break;
+            case 11:
+                // tidak bisa subject semua dan umum sekaligus
+                break;
+            case 100:
                 Log.d("fetchByMonthYear", "masuk");
-                viewModel.fetchByMonthYearFromDatabase(month, year);
-                // observeViewModel();
+                viewModel.fetchBySubjectFromDatabase(subjectId, monthString, year);
                 binding.refreshLayout.setRefreshing(false);
                 break;
-                // observeViewModel();
-            case 3:
-            case 5:
-                Log.d("fetchBySubject", "masuk");
-                viewModel.fetchBySubjectFromDatabase(subjectId, month, year);
+            case 110:
+                // tidak bisa, jika subject umum maka tidak ada pilihan kategori
+            case 111:
+                // tidak bisa, jika subject umum maka tidak ada pilihan kategori
+            case 1000:
+            case 1001:
+                viewModel.fetchByMonthYearFromDatabase(year);
                 binding.refreshLayout.setRefreshing(false);
                 break;
+            case 1010:
+            case 1100:
+                viewModel.fetchBySubjectFromDatabase(subjectId, year);
+                binding.refreshLayout.setRefreshing(false);
+                break;
+            case 1110:
+                // tidak bisa, jika subject umum maka tidak ada pilihan kategori
+            case 1111:
+                // tidak bisa, jika subject umum maka tidak ada pilihan kategori
         }
     }
 
+    private void groupDataIntoHashMap(List<StatisticalNews> statisticalNews) {
+        LinkedHashMap<String, Set<StatisticalNews>> groupedHashMap = new LinkedHashMap<>();
+        Set<StatisticalNews> set = null;
+        for (StatisticalNews news : statisticalNews) {
+            String hashMapKey = news.getReleaseDate();
+            if (groupedHashMap.containsKey(hashMapKey)) {
+                groupedHashMap.get(hashMapKey).add(news);
+            } else {
+                set = new LinkedHashSet<>();
+                set.add(news);
+                groupedHashMap.put(hashMapKey, set);
+            }
+        }
+        generateListFromMap(groupedHashMap);
+    }
+
+
+    private ArrayList<ObjectList> generateListFromMap(LinkedHashMap<String, Set<StatisticalNews>> groupedHashMap) {
+        ArrayList<ObjectList> consolidatedList = new ArrayList<>();
+        for (String date : groupedHashMap.keySet()) {
+            DateObject dateItem = new DateObject(date);
+            consolidatedList.add(dateItem);
+            for (StatisticalNews news : groupedHashMap.get(date)) {
+                StatisticalNewsObject generalItem = new StatisticalNewsObject();
+                generalItem.setStatisticalNewsModel(news);
+                consolidatedList.add(generalItem);
+            }
+        }
+
+        adapter.setDataChange(consolidatedList);
+
+        return consolidatedList;
+    }
 
 }

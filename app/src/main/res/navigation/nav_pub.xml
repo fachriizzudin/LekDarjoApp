@@ -45,7 +45,7 @@
     </fragment>
     <fragment
         android:id="@+id/indicatorListFragment"
-        android:name="com.lazuardifachri.bps.lekdarjoapp.view.list_fragment.IndicatorListFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.list_fragment.IndicatorPagerFragment"
         android:label="IndicatorListFragment" />
     <fragment
         android:id="@+id/infographicListFragment"

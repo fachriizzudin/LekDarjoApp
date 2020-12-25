@@ -8,11 +8,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,7 +20,7 @@ import android.view.ViewGroup;
 
 import com.lazuardifachri.bps.lekdarjoapp.R;
 import com.lazuardifachri.bps.lekdarjoapp.databinding.FragmentPublicationListBinding;
-import com.lazuardifachri.bps.lekdarjoapp.view.PublicationFilterDialogFragment;
+import com.lazuardifachri.bps.lekdarjoapp.view.dialog_fragment.PublicationFilterDialogFragment;
 import com.lazuardifachri.bps.lekdarjoapp.view.adapter.PublicationAdapter;
 import com.lazuardifachri.bps.lekdarjoapp.viewmodel.PublicationListViewModel;
 
@@ -51,6 +49,8 @@ public class PublicationListFragment extends Fragment implements PublicationFilt
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Publikasi");
 
+        viewModel = new ViewModelProvider(getActivity()).get(PublicationListViewModel.class);
+
         return view;
     }
 
@@ -61,7 +61,6 @@ public class PublicationListFragment extends Fragment implements PublicationFilt
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerView.setAdapter(adapter);
 
-        viewModel = new ViewModelProvider(this).get(PublicationListViewModel.class);
         viewModel.refresh();
 
         observeViewModel();
@@ -178,25 +177,21 @@ public class PublicationListFragment extends Fragment implements PublicationFilt
             case 0:
                 // by subject, district, year
                 viewModel.fetchByFilterFromDatabase(subjectId, districtCode, year);
-                // observeViewModel();
                 binding.refreshLayout.setRefreshing(false);
                 break;
             case 1:
                 // by district
                 viewModel.fetchByDistrictFromDatabase(districtCode, year);
-                // observeViewModel();
                 binding.refreshLayout.setRefreshing(false);
                 break;
             case 2:
                 // by subject
                 viewModel.fetchBySubjectFromDatabase(subjectId, year);
-                // observeViewModel();
                 binding.refreshLayout.setRefreshing(false);
                 break;
             case 3:
                 // by year
                 viewModel.fetchByYearOnlyFromDatabase(year);
-                // observeViewModel();
                 binding.refreshLayout.setRefreshing(false);
                 break;
         }

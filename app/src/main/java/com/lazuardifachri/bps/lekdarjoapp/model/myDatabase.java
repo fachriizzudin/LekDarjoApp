@@ -7,10 +7,12 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.lazuardifachri.bps.lekdarjoapp.model.dao.FileModelDao;
+import com.lazuardifachri.bps.lekdarjoapp.model.dao.IndicatorDao;
 import com.lazuardifachri.bps.lekdarjoapp.model.dao.PublicationDao;
 import com.lazuardifachri.bps.lekdarjoapp.model.dao.StatisticalNewsDao;
 
-@Database(entities = {Publication.class, FileModel.class, StatisticalNews.class}, version = 7, exportSchema = false)
+@Database(entities = {Publication.class, FileModel.class,
+        StatisticalNews.class, Indicator.class}, version = 9, exportSchema = false)
 public abstract class myDatabase extends RoomDatabase {
 
     private static myDatabase instance;
@@ -39,4 +41,6 @@ public abstract class myDatabase extends RoomDatabase {
     public abstract FileModelDao fileModelDao();
 
     public abstract StatisticalNewsDao statisticalNewsDao();
+
+    public abstract IndicatorDao indicatorDao();
 }

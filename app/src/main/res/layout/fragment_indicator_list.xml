@@ -7,14 +7,48 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="wrap_content"
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/indicatorTabLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Indicator"
+            app:tabIndicatorColor="@color/blue"
+            app:tabSelectedTextColor="@color/blue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/indicatorSocial"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sosial" />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/indicatorEconomy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ekonomi" />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/indicatorAgriculture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pertanian" />
+
+
+        </com.google.android.material.tabs.TabLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/indicatorTabLayout" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -42,7 +42,6 @@ public class PublicationDetailFragment extends Fragment {
     private String documentUri;
     private Uri filePathUri;
     private int uuid;
-    private boolean downloading;
 
     public PublicationDetailFragment() {
         // Required empty public constructor
@@ -67,7 +66,6 @@ public class PublicationDetailFragment extends Fragment {
             uuid = PublicationDetailFragmentArgs.fromBundle(getArguments()).getUuid();
             if (uuid != 0) {
                 viewModel.checkIfPublicationExistFromDatabase(uuid);
-                viewModel.fetchByIdFromDatabase(uuid);
             }
         }
 
@@ -93,6 +91,13 @@ public class PublicationDetailFragment extends Fragment {
     }
 
     private void observeViewModel() {
+        viewModel.publicationExist.observe(getViewLifecycleOwner(), isExist -> {
+            if (isExist instanceof Boolean && getContext() != null) {
+                if (isExist) {
+                    viewModel.fetchByIdFromDatabase(uuid);
+                }
+            }
+        });
         viewModel.publicationLiveData.observe(getViewLifecycleOwner(), publication -> {
             if (publication instanceof Publication && getContext() != null) {
                 binding.setPublication(publication);
@@ -113,13 +118,11 @@ public class PublicationDetailFragment extends Fragment {
             if (isLoading instanceof Boolean) {
                 Log.d("downloadLoading", "inside");
                 if (isLoading) {
-                    downloading = isLoading;
                     binding.horizontalProgressBar.setVisibility(View.VISIBLE);
                     binding.downloadActionFab.setOnClickListener(v -> {
                         Toast.makeText(getContext(), "Please wait", Toast.LENGTH_SHORT).show();
                     });
                 } else {
-                    downloading = !isLoading;
                     binding.horizontalProgressBar.setVisibility(View.GONE);
                 }
             }
@@ -139,9 +142,9 @@ public class PublicationDetailFragment extends Fragment {
                 }
             }
         });
-        fileModelViewModel.fileExist.observe(getViewLifecycleOwner(), exist -> {
-            if (exist instanceof Boolean && getContext() != null) {
-                if (exist) {
+        fileModelViewModel.fileExist.observe(getViewLifecycleOwner(), isExist -> {
+            if (isExist instanceof Boolean && getContext() != null) {
+                if (isExist) {
                     if (documentUri != null)
                         fileModelViewModel.fetchFileNameFromDatabase(documentUri);
                 }

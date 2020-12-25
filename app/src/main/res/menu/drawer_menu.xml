@@ -2,25 +2,30 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/main"
-        android:title="@string/item_main" />
+        android:title="@string/item_main"
+        android:checkable="true"/>
 
     <item android:title="@string/menu_main">
         <menu>
             <item
                 android:id="@+id/news"
                 android:icon="@drawable/ic_news"
+                android:checkable="true"
                 android:title="@string/item_news" />
             <item
                 android:id="@+id/publication"
                 android:icon="@drawable/ic_publication"
+                android:checkable="true"
                 android:title="@string/item_publication" />
             <item
                 android:id="@+id/indicator"
                 android:icon="@drawable/ic_indicator"
+                android:checkable="true"
                 android:title="@string/item_indicator" />
             <item
                 android:id="@+id/infographic"
                 android:icon="@drawable/ic_infographic"
+                android:checkable="true"
                 android:title="@string/item_infographic" />
 
         </menu>

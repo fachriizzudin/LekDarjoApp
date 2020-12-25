@@ -49,6 +49,7 @@ dependencies {
 
 //    implementation 'mbanje.kurt:fabbutton:1.2.4@aar'
 //    implementation 'com.dmitrymalkovich.android:progress-fab:1.6'
+    implementation "org.apache.commons:commons-lang3:3.11"
 
     implementation "androidx.palette:palette:1.0.0"
 
