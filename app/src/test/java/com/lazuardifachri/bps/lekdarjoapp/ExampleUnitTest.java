@@ -1,11 +1,20 @@
 package com.lazuardifachri.bps.lekdarjoapp;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.lazuardifachri.bps.lekdarjoapp.model.Graph;
+
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +39,15 @@ public class ExampleUnitTest {
         }
 
         assertEquals(Integer.parseInt(matcher.group()), 28);
+
+    }
+
+    @Test
+    public void getFeatureFromUrlTest() {
+
+        String mydata = "https://lekdarjo.herokuapp.com/api/publications/files/28";
+        System.out.println(StringUtils.substringBetween(mydata, "api/", "/"));
+
 
     }
 
@@ -65,5 +83,41 @@ public class ExampleUnitTest {
         System.out.println(monthInt);
         String monthString = theMonth(monthInt);
         System.out.println(monthString);
+    }
+
+    @Test
+    public void getHighestValue() {
+
+        String json = "[\n" +
+                "    {\n" +
+                "      \"id\": 7,\n" +
+                "      \"value\": 77.43,\n" +
+                "      \"year\": 2015\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"id\": 8,\n" +
+                "      \"value\": 78.17,\n" +
+                "      \"year\": 2016\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"id\": 9,\n" +
+                "      \"value\": 78.7,\n" +
+                "      \"year\": 2017\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"id\": 10,\n" +
+                "      \"value\": 79.51,\n" +
+                "      \"year\": 2018\n" +
+                "    }\n" +
+                "  ]";
+
+        Gson gson = new Gson();
+
+        ArrayList<Graph> data = gson.fromJson(json, new TypeToken<List<Graph>>(){}.getType());
+
+        Graph lastData = Collections.max(data, Comparator.comparingInt(Graph::getYear));
+
+        System.out.println(lastData.getYear());
+
     }
 }

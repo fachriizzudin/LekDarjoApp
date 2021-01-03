@@ -11,29 +11,31 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+import androidx.navigation.Navigation;
 
 import com.google.android.material.button.MaterialButton;
 import com.lazuardifachri.bps.lekdarjoapp.R;
 import com.lazuardifachri.bps.lekdarjoapp.model.FileModel;
-import com.lazuardifachri.bps.lekdarjoapp.model.Publication;
+import com.lazuardifachri.bps.lekdarjoapp.model.Infographic;
 import com.lazuardifachri.bps.lekdarjoapp.model.api.FileDownloadApi;
 import com.lazuardifachri.bps.lekdarjoapp.model.myDatabase;
 import com.lazuardifachri.bps.lekdarjoapp.util.FileDownloadListener;
 import com.lazuardifachri.bps.lekdarjoapp.util.ServiceGenerator;
+import com.lazuardifachri.bps.lekdarjoapp.view.list_fragment.InfographicListFragmentDirections;
+import com.lazuardifachri.bps.lekdarjoapp.view.list_fragment.PublicationListFragmentDirections;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
-import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Consumer;
@@ -115,7 +117,15 @@ public class FileModelViewModel extends AndroidViewModel {
 
     public void fetchFileFromRemote(String documentUri, String title) throws IOException {
 
-        String fileName = title.replaceAll(" ", "").concat(".pdf");
+        String feature = StringUtils.substringBetween(documentUri, "api/", "/");
+        String fileName;
+        if (feature.equals("publications") || feature.equals("statnews")) {
+            fileName = title.replaceAll(" ", "").concat(".pdf");
+        } else if (feature.equals("infographics")) {
+            fileName = title.replaceAll(" ", "").concat(".png");
+        } else {
+            fileName = "file.tmp";
+        }
 
         String filePath = listener.onStartDownload(fileName);
 
@@ -161,10 +171,11 @@ public class FileModelViewModel extends AndroidViewModel {
     }
 
 
-    public void fetchExcelFromRemote(String documentUri, String title, MaterialButton downloadButton, ProgressBar downloadProgressBar) throws IOException {
+    public void fetchFileFromRemote(String documentUri, String title, MaterialButton downloadButton, ProgressBar downloadProgressBar) throws IOException {
 
         Log.d("fetchExcelFromRemote", "run");
         int fileId = getFileIdFromUri(documentUri);
+        String feature = StringUtils.substringBetween(documentUri, "api/", "/");
         FileDownloadListener indicatorListener = new FileDownloadListener() {
             @Override
             public String onStartDownload(String fileName) throws IOException {
@@ -192,7 +203,7 @@ public class FileModelViewModel extends AndroidViewModel {
             @Override
             public void onFinishDownload() {
                 downloadProgressBar.setVisibility(View.INVISIBLE);
-                fetchIndicatorFileNameFromDatabase(fileId, downloadButton);
+                fetchFileNameFromDatabase(fileId, downloadButton, feature);
             }
 
             @Override
@@ -203,7 +214,15 @@ public class FileModelViewModel extends AndroidViewModel {
 
         FileDownloadApi indicatorFileDownloadApi = ServiceGenerator.createDownloadService(FileDownloadApi.class, getApplication(), indicatorListener);
 
-        String fileName = title.replaceAll(" ", "").concat(".xls");
+
+
+        String fileName;
+
+        if (feature.equals("indicators")) {
+            fileName = title.replaceAll(" ", "").concat(".xls");
+        } else {
+            fileName = "file.tmp";
+        }
 
         String filePath = indicatorListener.onStartDownload(fileName);
 
@@ -219,7 +238,7 @@ public class FileModelViewModel extends AndroidViewModel {
                 .doOnNext(new Consumer<InputStream>() {
                     @Override
                     public void accept(InputStream inputStream) throws Throwable {
-                        writeExcelFile(inputStream, filePath, indicatorListener);
+                        writeFile(inputStream, filePath, indicatorListener, feature);
                     }
                 }).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<InputStream>() {
@@ -230,7 +249,7 @@ public class FileModelViewModel extends AndroidViewModel {
 
                     @Override
                     public void onNext(@io.reactivex.rxjava3.annotations.NonNull InputStream inputStream) {
-                        insertExcelPathToDatabase(documentUri, fileName, filePath, indicatorListener);
+                        insertPathToDatabase(documentUri, fileName, filePath, indicatorListener, feature);
                     }
 
                     @Override
@@ -244,8 +263,6 @@ public class FileModelViewModel extends AndroidViewModel {
                     }
                 });
     }
-
-
 
     public void insertPathToDatabase(String documentUri, String fileName, String filePath) {
 
@@ -270,7 +287,7 @@ public class FileModelViewModel extends AndroidViewModel {
         );
     }
 
-    public void insertExcelPathToDatabase(String documentUri, String fileName, String filePath, FileDownloadListener downloadListener) {
+    public void insertPathToDatabase(String documentUri, String fileName, String filePath, FileDownloadListener downloadListener, String feature) {
 
         int fileId = getFileIdFromUri(documentUri);
 
@@ -281,7 +298,6 @@ public class FileModelViewModel extends AndroidViewModel {
                 .subscribeWith(new DisposableSingleObserver<Long>() {
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull Long aLong) {
-                        fetchFileNameFromDatabase(documentUri);
                         downloadListener.onFinishDownload();
                     }
 
@@ -318,7 +334,7 @@ public class FileModelViewModel extends AndroidViewModel {
 
     }
 
-    private void writeExcelFile(InputStream inputString, String filePath, FileDownloadListener downloadListener) {
+    private void writeFile(InputStream inputString, String filePath, FileDownloadListener downloadListener, String feature) {
         File file = new File(filePath);
         if (file.exists()) {
             file.delete();
@@ -369,6 +385,37 @@ public class FileModelViewModel extends AndroidViewModel {
                 }));
     }
 
+    public void fetchFileNameFromDatabase(int fileId, MaterialButton button, String feature) {
+        disposable.add(myDatabase.getInstance(getApplication())
+                .fileModelDao().getFileName(fileId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSingleObserver<String>() {
+                    @Override
+                    public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull String fileName) {
+                        File fileDir = new File(getApplication().getFilesDir(), "document");
+                        File filePath = new File(fileDir, fileName);
+                        Uri contentUri = getUriForFile(getApplication(), "com.lazuardifachri.bps.fileprovider", filePath);
+
+                        Log.d("contentUri", contentUri.getPath());
+                        Log.d("fileName", fileName);
+
+                        button.setIcon(getApplication().getResources().getDrawable(R.drawable.ic_view));
+                        button.setOnClickListener(v -> {
+                            if (feature.equals("publications")) {
+                                readFile(contentUri);
+                            }
+                        });
+
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        e.printStackTrace();
+                    }
+                }));
+    }
+
     public void checkIfFileExistFromDatabase(String documentUri) {
         int fileId = getFileIdFromUri(documentUri);
         disposable.add(myDatabase.getInstance(getApplication())
@@ -395,8 +442,9 @@ public class FileModelViewModel extends AndroidViewModel {
     }
 
 
-    public void checkIfIndicatorFileExistFromDatabase(String documentUri, MaterialButton button) {
+    public void checkIfFileExistFromDatabase(String documentUri, MaterialButton button) {
         int fileId = getFileIdFromUri(documentUri);
+        String feature = StringUtils.substringBetween(documentUri, "api/", "/");
         disposable.add(myDatabase.getInstance(getApplication())
                 .fileModelDao().isIndicatorExist(fileId)
                 .subscribeOn(Schedulers.io())
@@ -404,7 +452,7 @@ public class FileModelViewModel extends AndroidViewModel {
                 .subscribeWith(new DisposableSingleObserver<Integer>() {
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull Integer exist) {
-                        if (exist > 0) fetchIndicatorFileNameFromDatabase(fileId, button);
+                        if (exist > 0) fetchFileNameFromDatabase(fileId, button, feature);
                     }
 
                     @Override
@@ -414,31 +462,7 @@ public class FileModelViewModel extends AndroidViewModel {
                 }));
     }
 
-    public void fetchIndicatorFileNameFromDatabase(int fileId, MaterialButton button) {
-        disposable.add(myDatabase.getInstance(getApplication())
-                .fileModelDao().getFileName(fileId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<String>() {
-                    @Override
-                    public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull String fileName) {
-                        File fileDir = new File(getApplication().getFilesDir(), "document");
-                        File filePath = new File(fileDir, fileName);
-                        Uri contentUri = getUriForFile(getApplication(), "com.lazuardifachri.bps.fileprovider", filePath);
 
-                        button.setIcon(getApplication().getResources().getDrawable(R.drawable.ic_view));
-                        button.setOnClickListener(v -> {
-                            readFile(contentUri);
-                        });
-
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                        e.printStackTrace();
-                    }
-                }));
-    }
 
     private void readFile(Uri uri) {
         Intent ExcelIntent = new Intent(Intent.ACTION_VIEW);

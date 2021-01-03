@@ -49,14 +49,6 @@
                     android:text="@{indicator.title}" />
 
                 <TextView
-                    android:id="@+id/indicatorStatType"
-                    style="@style/Text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:text="@{indicator.statType}" />
-
-                <TextView
                     android:id="@+id/indicatorListDate"
                     style="@style/Text"
                     android:layout_width="wrap_content"

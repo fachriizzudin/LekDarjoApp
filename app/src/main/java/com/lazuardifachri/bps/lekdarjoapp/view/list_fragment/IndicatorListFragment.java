@@ -88,7 +88,7 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
                 downloadProgressBar = (ProgressBar) progressBar;
                 try {
                     if (checkPermission()) {
-                        fileModelViewModel.fetchExcelFromRemote(indicator.getDocumentUri(), indicator.getTitle(), downloadButton, downloadProgressBar);
+                        fileModelViewModel.fetchFileFromRemote(indicator.getDocumentUri(), indicator.getTitle(), downloadButton, downloadProgressBar);
                     } else {
                         requestPermission();
                     }
@@ -101,7 +101,7 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
             public void checkIfFileExist(View v, Indicator indicator) {
                 Log.d("checkIfFileExist", "run");
                 downloadButton = (MaterialButton) v;
-                fileModelViewModel.checkIfIndicatorFileExistFromDatabase(indicator.getDocumentUri(), downloadButton);
+                fileModelViewModel.checkIfFileExistFromDatabase(indicator.getDocumentUri(), downloadButton);
             }
         });
 
@@ -117,7 +117,7 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerView.setAdapter(adapter);
 
-        viewModel.fetchBySubjectFromDatabase(subjectId);
+        viewModel.refresh(subjectId);
 
         binding.refreshLayout.setOnRefreshListener(() -> {
             binding.recyclerView.setVisibility(View.GONE);

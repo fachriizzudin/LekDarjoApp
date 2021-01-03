@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="infographic"
+            type="com.lazuardifachri.bps.lekdarjoapp.model.Infographic" />
+        <variable
+            name="listener"
+            type="com.lazuardifachri.bps.lekdarjoapp.view.InfographicClickListener" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginHorizontal="13dp">
+
+        <LinearLayout
+            android:id="@+id/pubListItemLayout"
+            android:layout_width="match_parent"
+            android:layout_height="125dp"
+            android:weightSum="9"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:orientation="horizontal"
+            android:onClick="@{listener::onInfographicClick}">
+
+            <TextView
+                android:id="@+id/infographicUuId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{String.valueOf(infographic.uuid)}"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/pubListImageView"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="2"
+                android:padding="4dp"
+                android:src="@mipmap/ic_launcher"
+                android:imageUrl="@{infographic.imageUri}"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="7"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="2dp">
+
+                <TextView
+                    android:id="@+id/pubListTitle"
+                    style="@style/Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="@{infographic.title}" />
+
+                <TextView
+                    android:id="@+id/pubListDate"
+                    style="@style/Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="@{infographic.releaseDate}" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</layout>
+

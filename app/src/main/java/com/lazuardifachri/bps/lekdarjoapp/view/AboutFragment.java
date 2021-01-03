@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.lazuardifachri.bps.lekdarjoapp.databinding.FragmentAboutBinding;
-import com.lazuardifachri.bps.lekdarjoapp.databinding.FragmentMainBinding;
 
 public class AboutFragment extends Fragment {
 

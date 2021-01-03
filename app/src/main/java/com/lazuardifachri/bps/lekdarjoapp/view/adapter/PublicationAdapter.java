@@ -61,7 +61,7 @@ public class PublicationAdapter extends RecyclerView.Adapter<PublicationAdapter.
         int uuid = Integer.parseInt(uuidString);
         Log.d("uuidstring", uuidString);
         if (uuid != 0) {
-            PublicationListFragmentDirections.ActionListToDetail action = PublicationListFragmentDirections.actionListToDetail();
+            PublicationListFragmentDirections.PublicationActionListToDetail action = PublicationListFragmentDirections.publicationActionListToDetail();
             action.setUuid(uuid);
             Navigation.findNavController(v).navigate(action);
         }

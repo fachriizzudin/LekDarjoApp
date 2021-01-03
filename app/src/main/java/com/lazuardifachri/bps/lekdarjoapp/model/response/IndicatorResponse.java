@@ -2,11 +2,11 @@ package com.lazuardifachri.bps.lekdarjoapp.model.response;
 
 import com.google.gson.annotations.SerializedName;
 import com.lazuardifachri.bps.lekdarjoapp.model.Indicator;
-import com.lazuardifachri.bps.lekdarjoapp.model.Publication;
 
 import java.util.List;
 
 public class IndicatorResponse {
+
     @SerializedName("total_pages")
     private int totalPages;
     @SerializedName("total_items")

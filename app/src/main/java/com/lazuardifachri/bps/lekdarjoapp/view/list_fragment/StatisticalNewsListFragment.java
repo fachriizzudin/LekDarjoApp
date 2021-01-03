@@ -50,6 +50,8 @@ public class StatisticalNewsListFragment extends Fragment implements Statistical
 
         View view = binding.getRoot();
 
+        viewModel = new ViewModelProvider(this).get(StatisticalNewsListViewModel.class);
+
         setHasOptionsMenu(true);
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Berita Statistik");
@@ -64,7 +66,6 @@ public class StatisticalNewsListFragment extends Fragment implements Statistical
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerView.setAdapter(adapter);
 
-        viewModel = new ViewModelProvider(this).get(StatisticalNewsListViewModel.class);
         viewModel.refresh();
 
         observeViewModel();

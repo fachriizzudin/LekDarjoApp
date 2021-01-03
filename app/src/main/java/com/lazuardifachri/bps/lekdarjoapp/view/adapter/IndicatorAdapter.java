@@ -52,8 +52,7 @@ public class IndicatorAdapter extends RecyclerView.Adapter<IndicatorAdapter.Indi
         holder.itemView.indicatorDownloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Indicator indicator = filteredIndicatorList.get(position);
-                listener.onIndicatorDownloadClick(v, holder.itemView.progressBar, indicator);
+                listener.onIndicatorDownloadClick(v, holder.itemView.progressBar, filteredIndicatorList.get(position));
             }
         });
         listener.checkIfFileExist(holder.itemView.indicatorDownloadButton, filteredIndicatorList.get(position));

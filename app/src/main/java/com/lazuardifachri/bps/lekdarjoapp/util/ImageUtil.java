@@ -3,6 +3,7 @@ package com.lazuardifachri.bps.lekdarjoapp.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import androidx.databinding.BindingAdapter;
 import androidx.palette.graphics.Palette;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
+import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.load.model.GlideUrl;
@@ -51,6 +53,28 @@ public class ImageUtil {
     public static void loadImage(ImageView view, String url) {
         if (url!=null) {
             loadImage(view, url, getProgressDrawable(view.getContext()), view.getContext());
+        }
+    }
+
+    @BindingAdapter("android:infographicUrl")
+    public static void loadInfographic(ImageView imageView, String url) {
+        if (url!=null) {
+            loadImage(imageView, url, getProgressDrawable(imageView.getContext()), imageView.getContext());
+            RequestOptions options = new RequestOptions()
+                    .placeholder(getProgressDrawable(imageView.getContext()))
+                    .error(R.mipmap.ic_launcher);
+
+            GlideUrl glideUrl = new GlideUrl(url,
+                    new LazyHeaders.Builder()
+                            .addHeader("Authorization", "Bearer " + SharedPreferencesHelper.getInstance(imageView.getContext()).fetchAuthToken())
+                            .build());
+
+            Glide.with(imageView.getContext())
+                    .setDefaultRequestOptions(options)
+                    .load(glideUrl)
+                    .into(imageView);
+
+            imageView.setOnTouchListener(new ImageMatrixTouchHandler(imageView.getContext()));
         }
     }
 

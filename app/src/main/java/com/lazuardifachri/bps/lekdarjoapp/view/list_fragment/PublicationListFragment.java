@@ -45,11 +45,12 @@ public class PublicationListFragment extends Fragment implements PublicationFilt
 
         View view = binding.getRoot();
 
+        viewModel = new ViewModelProvider(getActivity()).get(PublicationListViewModel.class);
+
         setHasOptionsMenu(true);
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Publikasi");
 
-        viewModel = new ViewModelProvider(getActivity()).get(PublicationListViewModel.class);
 
         return view;
     }
@@ -79,26 +80,26 @@ public class PublicationListFragment extends Fragment implements PublicationFilt
 
     private void observeViewModel() {
         viewModel.publicationLiveData.observe(getViewLifecycleOwner(), publications -> {
-            if (publications instanceof List) {
+            if (publications != null) {
                 adapter.updatePublication(publications);
                 binding.recyclerView.setVisibility(View.VISIBLE);
             }
         });
 
         viewModel.error.observe(getViewLifecycleOwner(), isError -> {
-            if (isError instanceof Boolean) {
+            if (isError != null) {
                 binding.error.setVisibility(isError ? View.VISIBLE : View.GONE);
             }
         });
 
         viewModel.notFound.observe(getViewLifecycleOwner(), isNotFound -> {
-            if (isNotFound instanceof Boolean) {
+            if (isNotFound != null) {
                 binding.notFound.setVisibility(isNotFound ? View.VISIBLE : View.GONE);
             }
         });
 
         viewModel.loading.observe(getViewLifecycleOwner(), isLoading -> {
-            if (isLoading instanceof Boolean) {
+            if (isLoading != null) {
                 binding.loadingProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
                 if (isLoading) {
                     binding.error.setVisibility(View.GONE);
