@@ -7,8 +7,6 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity(tableName = "graph_data")
@@ -27,6 +25,12 @@ public class GraphData {
 
 
     public GraphData() {
+    }
+
+    public GraphData(List<Graph> data, GraphMeta meta, int uuid) {
+        this.data = data;
+        this.meta = meta;
+        this.uuid = uuid;
     }
 
     public List<Graph> getData() {

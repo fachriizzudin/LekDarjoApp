@@ -3,7 +3,6 @@
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,7 +11,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="250dp"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
@@ -40,15 +39,14 @@
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-
     </com.google.android.material.appbar.AppBarLayout>
-
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:behavior_overlapTop="64dp"
         app:layout_anchor="@id/appbar"
+        android:focusable="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -75,7 +73,7 @@
                         android:layout_height="30dp"
                         android:layout_marginTop="10dp"
                         android:gravity="center"
-                        android:text="Pertumbuhan Ekonomi (persen)" />
+                        android:text="Pertumbuhan Ekonomi" />
 
                     <TextView
                         android:id="@+id/yearEconomyGrowth"
@@ -104,13 +102,14 @@
 
                         <TextView
                             android:id="@+id/economyGrowthNewValue"
-                            android:layout_width="50dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_margin="3dp"
                             android:layout_weight="1"
                             android:autoSizeTextType="uniform"
                             android:gravity="center"
-                            android:text="" />
+                            android:text=""
+                            style="@style/Indicators"/>
 
                         <ImageView
                             android:id="@+id/upArrowEconomyGrowth"
@@ -119,7 +118,223 @@
                             android:layout_centerHorizontal="true"
                             android:layout_margin="3dp"
                             android:layout_weight="1"
-                            android:src="@drawable/ic_increase" />
+                            android:src="@drawable/ic_up" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/totalPopulationCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp">
+
+                    <TextView
+                        android:id="@+id/titleTotalPopulation"
+                        style="@style/Title"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:text="Jumlah Penduduk" />
+
+                    <TextView
+                        android:id="@+id/yearTotalPopulation"
+                        style="@style/Title"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_below="@+id/titleTotalPopulation"
+                        android:gravity="center"
+                        android:text="2019" />
+
+                    <LinearLayout
+                        style="@style/Widget.CardContent"
+                        android:layout_width="match_parent"
+                        android:layout_height="140dp"
+                        android:layout_below="@+id/yearTotalPopulation"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="match_parent"
+                            android:layout_margin="3dp"
+                            android:layout_weight="1"
+                            android:src="@drawable/ic_population" />
+
+                        <TextView
+                            android:id="@+id/totalPopulationNewValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_margin="3dp"
+                            android:layout_weight="1"
+                            android:autoSizeTextType="uniform"
+                            android:gravity="center"
+                            android:text=""
+                            style="@style/Indicators"/>
+
+                        <ImageView
+                            android:id="@+id/upArrowTotalPopulation"
+                            android:layout_width="50dp"
+                            android:layout_height="match_parent"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="3dp"
+                            android:layout_weight="1"
+                            android:src="@drawable/ic_up" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/povertyCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp">
+
+                    <TextView
+                        android:id="@+id/titlePoverty"
+                        style="@style/Title"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:text="Persentase Penduduk Miskin" />
+
+                    <TextView
+                        android:id="@+id/yearPoverty"
+                        style="@style/Title"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_below="@+id/titlePoverty"
+                        android:gravity="center"
+                        android:text="2019" />
+
+                    <LinearLayout
+                        style="@style/Widget.CardContent"
+                        android:layout_width="match_parent"
+                        android:layout_height="140dp"
+                        android:layout_below="@+id/yearPoverty"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="match_parent"
+                            android:layout_margin="3dp"
+                            android:layout_weight="1"
+                            android:src="@drawable/ic_poverty" />
+
+                        <TextView
+                            android:id="@+id/povertyNewValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_margin="3dp"
+                            android:layout_weight="1"
+                            android:autoSizeTextType="uniform"
+                            android:gravity="center"
+                            android:text=""
+                            style="@style/Indicators"/>
+
+                        <ImageView
+                            android:id="@+id/upArrowPoverty"
+                            android:layout_width="50dp"
+                            android:layout_height="match_parent"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="3dp"
+                            android:layout_weight="1"
+                            android:src="@drawable/ic_up" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/unemploymentCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp">
+
+                    <TextView
+                        android:id="@+id/titleUnemployment"
+                        style="@style/Title"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:text="Tingkat Pengangguran Terbuka" />
+
+                    <TextView
+                        android:id="@+id/yearUnemployment"
+                        style="@style/Title"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_below="@+id/titleUnemployment"
+                        android:gravity="center"
+                        android:text="2019" />
+
+                    <LinearLayout
+                        style="@style/Widget.CardContent"
+                        android:layout_width="match_parent"
+                        android:layout_height="140dp"
+                        android:layout_below="@+id/yearUnemployment"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="match_parent"
+                            android:layout_margin="3dp"
+                            android:layout_weight="1"
+                            android:src="@drawable/ic_unemployment" />
+
+                        <TextView
+                            android:id="@+id/unemploymentNewValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_margin="3dp"
+                            android:layout_weight="1"
+                            android:autoSizeTextType="uniform"
+                            android:gravity="center"
+                            android:text=""
+                            style="@style/Indicators"/>
+
+                        <ImageView
+                            android:id="@+id/upArrowUnemployment"
+                            android:layout_width="50dp"
+                            android:layout_height="match_parent"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="3dp"
+                            android:layout_weight="1"
+                            android:src="@drawable/ic_up" />
 
                     </LinearLayout>
 
@@ -175,13 +390,14 @@
 
                         <TextView
                             android:id="@+id/ipmNewValue"
-                            android:layout_width="50dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_margin="3dp"
                             android:layout_weight="1"
                             android:autoSizeTextType="uniform"
                             android:gravity="center"
-                            android:text="" />
+                            android:text=""
+                            style="@style/Indicators"/>
 
                         <ImageView
                             android:id="@+id/upArrowIpm"
@@ -190,7 +406,7 @@
                             android:layout_centerHorizontal="true"
                             android:layout_margin="3dp"
                             android:layout_weight="1"
-                            android:src="@drawable/ic_increase" />
+                            android:src="@drawable/ic_up" />
 
                     </LinearLayout>
 
@@ -199,7 +415,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/pdrbKonstanCard"
+                android:id="@+id/riceProductionCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
@@ -211,20 +427,20 @@
                     android:layout_height="200dp">
 
                     <TextView
-                        android:id="@+id/titlePDRBKonstan"
+                        android:id="@+id/titleRiceProduction"
                         style="@style/Title"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:layout_marginTop="10dp"
                         android:gravity="center"
-                        android:text="PDRB Harga Konstan (triliun rupiah)" />
+                        android:text="Produksi Padi" />
 
                     <TextView
-                        android:id="@+id/yearPDRBKonstan"
+                        android:id="@+id/yearRiceProduction"
                         style="@style/Title"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
-                        android:layout_below="@+id/titlePDRBKonstan"
+                        android:layout_below="@+id/titleRiceProduction"
                         android:gravity="center"
                         android:text="2019" />
 
@@ -233,7 +449,7 @@
                         style="@style/Widget.CardContent"
                         android:layout_width="match_parent"
                         android:layout_height="140dp"
-                        android:layout_below="@+id/yearPDRBKonstan"
+                        android:layout_below="@+id/yearRiceProduction"
                         android:gravity="center"
                         android:orientation="horizontal"
                         android:weightSum="3">
@@ -243,26 +459,27 @@
                             android:layout_height="match_parent"
                             android:layout_margin="3dp"
                             android:layout_weight="1"
-                            android:src="@drawable/ic_pdrb" />
+                            android:src="@drawable/ic_production" />
 
                         <TextView
-                            android:id="@+id/pdrbKonstanNewValue"
-                            android:layout_width="50dp"
+                            android:id="@+id/riceProductionNewValue"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_margin="3dp"
                             android:layout_weight="1"
                             android:autoSizeTextType="uniform"
                             android:gravity="center"
-                            android:text="" />
+                            android:text=""
+                            style="@style/Indicators"/>
 
                         <ImageView
-                            android:id="@+id/upArrowPDRBHargaKonstan"
+                            android:id="@+id/upArrowRiceProduction"
                             android:layout_width="50dp"
                             android:layout_height="match_parent"
                             android:layout_centerHorizontal="true"
                             android:layout_margin="3dp"
                             android:layout_weight="1"
-                            android:src="@drawable/ic_increase" />
+                            android:src="@drawable/ic_up" />
 
                     </LinearLayout>
 
@@ -272,7 +489,7 @@
 
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/morbidityCard"
+                android:id="@+id/riceProductivityCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
@@ -284,20 +501,20 @@
                     android:layout_height="200dp">
 
                     <TextView
-                        android:id="@+id/titleMorbidty"
+                        android:id="@+id/titleRiceProductivity"
                         style="@style/Title"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:layout_marginTop="10dp"
                         android:gravity="center"
-                        android:text="Angka Morbiditas (persen)" />
+                        android:text="Produktivitas Padi" />
 
                     <TextView
-                        android:id="@+id/yearMorbidty"
+                        android:id="@+id/yearRiceProductivity"
                         style="@style/Title"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
-                        android:layout_below="@+id/titleMorbidty"
+                        android:layout_below="@+id/titleRiceProductivity"
                         android:gravity="center"
                         android:text="2018" />
 
@@ -305,7 +522,7 @@
                         style="@style/Widget.CardContent"
                         android:layout_width="match_parent"
                         android:layout_height="140dp"
-                        android:layout_below="@+id/yearMorbidty"
+                        android:layout_below="@+id/yearRiceProductivity"
                         android:gravity="center"
                         android:orientation="horizontal"
                         android:weightSum="3">
@@ -315,98 +532,27 @@
                             android:layout_height="match_parent"
                             android:layout_margin="3dp"
                             android:layout_weight="1"
-                            android:src="@drawable/ic_morbidty" />
+                            android:src="@drawable/ic_agriculture" />
 
                         <TextView
-                            android:id="@+id/morbidityNewValue"
-                            android:layout_width="50dp"
+                            android:id="@+id/riceProductivityNewValue"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_margin="3dp"
                             android:layout_weight="1"
                             android:autoSizeTextType="uniform"
                             android:gravity="center"
-                            android:text="" />
+                            android:text=""
+                            style="@style/Indicators"/>
 
                         <ImageView
-                            android:id="@+id/upArrowMorbidity"
+                            android:id="@+id/upArrowRiceProductivity"
                             android:layout_width="50dp"
                             android:layout_height="match_parent"
                             android:layout_centerHorizontal="true"
                             android:layout_margin="3dp"
                             android:layout_weight="1"
-                            android:src="@drawable/ic_increase" />
-
-                    </LinearLayout>
-
-                </RelativeLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/lifeExpectancyCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginBottom="20dp"
-                app:cardCornerRadius="10dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp">
-
-                    <TextView
-                        android:id="@+id/titleLifeExpectancy"
-                        style="@style/Title"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:layout_marginTop="10dp"
-                        android:gravity="center"
-                        android:text="Angka Harapan Hidup" />
-
-                    <TextView
-                        android:id="@+id/yearLifeExpectancy"
-                        style="@style/Title"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:layout_below="@+id/titleLifeExpectancy"
-                        android:gravity="center"
-                        android:text="2018" />
-
-                    <LinearLayout
-                        style="@style/Widget.CardContent"
-                        android:layout_width="match_parent"
-                        android:layout_height="140dp"
-                        android:layout_below="@+id/yearLifeExpectancy"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:weightSum="3">
-
-                        <ImageView
-                            android:layout_width="50dp"
-                            android:layout_height="match_parent"
-                            android:layout_margin="3dp"
-                            android:layout_weight="1"
-                            android:src="@drawable/ic_life_expectancy" />
-
-                        <TextView
-                            android:id="@+id/lifeExpectancyNewValue"
-                            android:layout_width="50dp"
-                            android:layout_height="match_parent"
-                            android:layout_margin="3dp"
-                            android:layout_weight="1"
-                            android:autoSizeTextType="uniform"
-                            android:gravity="center"
-                            android:text="" />
-
-                        <ImageView
-                            android:id="@+id/upArrowLifeExpectancy"
-                            android:layout_width="50dp"
-                            android:layout_height="match_parent"
-                            android:layout_centerHorizontal="true"
-                            android:layout_margin="3dp"
-                            android:layout_weight="1"
-                            android:src="@drawable/ic_increase" />
+                            android:src="@drawable/ic_up" />
 
                     </LinearLayout>
 

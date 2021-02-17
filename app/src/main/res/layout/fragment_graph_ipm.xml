@@ -30,21 +30,24 @@
                 android:id="@+id/chart"
                 android:layout_width="match_parent"
                 android:layout_height="350dp"
-                android:layout_margin="@dimen/card_margin" />
+                android:layout_margin="@dimen/card_margin"
+                android:visibility="invisible"/>
 
             <LinearLayout
+                android:id="@+id/seekBarSection1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:weightSum="10"
                 android:orientation="horizontal"
                 android:layout_marginHorizontal="@dimen/card_margin"
-                android:layout_marginTop="@dimen/card_margin">
+                android:layout_marginTop="@dimen/card_margin"
+                android:visibility="invisible">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="100px"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="X"
+                    android:text="Tahun"
                     android:gravity="center"/>
 
                 <com.warkiz.widget.IndicatorSeekBar
@@ -53,24 +56,23 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="9"/>
 
-
-
-
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/seekBarSection2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:weightSum="10"
                 android:orientation="horizontal"
                 android:layout_marginHorizontal="@dimen/card_margin"
-                android:layout_marginTop="@dimen/card_margin">
+                android:layout_marginTop="@dimen/card_margin"
+                android:visibility="invisible">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="100px"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Y"
+                    android:text="Skala"
                     android:gravity="center"/>
 
                 <com.warkiz.widget.IndicatorSeekBar
@@ -85,10 +87,12 @@
 
 
             <LinearLayout
+                android:id="@+id/descriptionSection"
                 style="@style/Widget.CardContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/card_margin">
+                android:layout_margin="@dimen/card_margin"
+                android:visibility="invisible">
 
                 <TextView
                     style="@style/Title"

@@ -29,14 +29,20 @@
             android:id="@+id/actionMainToIpm"
             app:destination="@id/ipmFragment" />
         <action
-            android:id="@+id/actionMainToPdrbKonstan"
-            app:destination="@id/pdrbKonstanFragment" />
+            android:id="@+id/actionMainToPopulation"
+            app:destination="@id/populationFragment" />
         <action
-            android:id="@+id/actionMainToMorbidity"
-            app:destination="@id/morbidityFragment" />
+            android:id="@+id/actionMainToPoverty"
+            app:destination="@id/povertyFragment" />
         <action
-            android:id="@+id/actionMainToLifeExpectancy"
-            app:destination="@id/lifeExpectancyFragment" />
+            android:id="@+id/actionMainToUnemployment"
+            app:destination="@id/unemploymentFragment" />
+        <action
+            android:id="@+id/actionMainToRiceProduction"
+            app:destination="@id/riceProductionFragment" />
+        <action
+            android:id="@+id/actionMainToRiceProductivity"
+            app:destination="@id/riceProductivityFragment" />
     </fragment>
     <fragment
         android:id="@+id/publicationListFragment"
@@ -122,30 +128,23 @@
             android:defaultValue="0" />
     </fragment>
     <fragment
-        android:id="@+id/pdrbKonstanFragment"
-        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.PdrbKonstanFragment"
-        android:label="PdrbKonstanFragment" >
-        <argument
-            android:name="id"
-            app:argType="integer"
-            android:defaultValue="0" />
-    </fragment>
+        android:id="@+id/populationFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.PopulationFragment"
+        android:label="PopulationFragment" />
     <fragment
-        android:id="@+id/lifeExpectancyFragment"
-        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.LifeExpectancyFragment"
-        android:label="LifeExpectancyFragment" >
-        <argument
-            android:name="id"
-            app:argType="integer"
-            android:defaultValue="0" />
-    </fragment>
+        android:id="@+id/povertyFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.PovertyFragment"
+        android:label="PovertyFragment" />
     <fragment
-        android:id="@+id/morbidityFragment"
-        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.MorbidityFragment"
-        android:label="MorbidityFragment" >
-        <argument
-            android:name="id"
-            app:argType="integer"
-            android:defaultValue="0" />
-    </fragment>
+        android:id="@+id/unemploymentFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.UnemploymentFragment"
+        android:label="UnemploymentFragment" />
+    <fragment
+        android:id="@+id/riceProductionFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.RiceProductionFragment"
+        android:label="RiceProductionFragment" />
+    <fragment
+        android:id="@+id/riceProductivityFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.RiceProductivityFragment"
+        android:label="RiceProductivityFragment" />
 </navigation>

@@ -35,7 +35,6 @@
                 app:expandedTitleMarginStart="48dp"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/backdrop"
                     android:layout_width="match_parent"

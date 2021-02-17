@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
 import com.google.android.material.navigation.NavigationView;
@@ -28,6 +29,8 @@ import com.lazuardifachri.bps.lekdarjoapp.model.request.LoginRequest;
 import com.lazuardifachri.bps.lekdarjoapp.model.response.LoginResponse;
 import com.lazuardifachri.bps.lekdarjoapp.util.ServiceGenerator;
 import com.lazuardifachri.bps.lekdarjoapp.util.SharedPreferencesHelper;
+
+import java.io.File;
 
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -60,8 +63,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         setupNavigation();
 
-        loginApp();
+        // loginApp();
+        SharedPreferencesHelper.getInstance(getApplicationContext()).saveAuthToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbmRyb2lkYXBwQG1haWwuY29tIiwiaWF0IjoxNjExMzc1NTEzLCJleHAiOjI2MTEzNzU1MTN9.Qyy706g2vfLyWFJmKob_skxiwxM6n76OF-MTtkEFj_ce9n4p9eQZLMUq8IY1n0P-AWJkFEt2XCFo-An9Q1PBGg");
 
+        File root = new File(getApplication().getFilesDir().getAbsolutePath());
+        if (!root.exists()) {
+            if (root.mkdirs()) {
+                root.setReadable(true, false);
+                root.setExecutable(true, false);
+            }
+        }
     }
 
     private void setupDrawer() {
@@ -83,46 +94,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navController.navigate(R.id.mainFragment);
     }
 
-    private MenuItem selectedItem;
-    private MenuItem previous;
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        if (previous != null) previous.setChecked(false);
-
-        selectedItem = item;
-
-        selectedItem.setChecked(true);
 
         drawerLayout.closeDrawer(GravityCompat.START);
 
         switch (item.getItemId()) {
             case R.id.main:
                 navController.navigate(R.id.mainFragment);
-                previous = item;
                 break;
             case R.id.news:
                 navController.navigate(R.id.statisticalNewsListFragment);
-                previous = item;
                 break;
             case R.id.publication:
                 navController.navigate(R.id.publicationListFragment);
-                previous = item;
                 break;
             case R.id.indicator:
                 navController.navigate(R.id.indicatorListFragment);
-                previous = item;
                 break;
             case R.id.infographic:
                 navController.navigate(R.id.infographicListFragment);
-                previous = item;
                 break;
             case R.id.about:
                 navController.navigate(R.id.aboutFragment);
-                previous = item;
                 break;
             case R.id.share:
-                previous = item;
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 shareIntent.setType("text/plain");
@@ -173,6 +170,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(Menu menu) {
         return super.onCreateOptionsMenu(menu);
     }
-
 
 }

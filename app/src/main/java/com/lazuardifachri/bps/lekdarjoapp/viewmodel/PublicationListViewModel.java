@@ -1,8 +1,6 @@
 package com.lazuardifachri.bps.lekdarjoapp.viewmodel;
 
 import android.app.Application;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -25,16 +23,15 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class PublicationListViewModel extends AndroidViewModel {
 
-    public MutableLiveData<List<Publication>> publicationLiveData = new MutableLiveData<List<Publication>>();
-    public MutableLiveData<Boolean> error = new MutableLiveData<Boolean>();
-    public MutableLiveData<Boolean> notFound = new MutableLiveData<Boolean>();
-    public MutableLiveData<Boolean> loading = new MutableLiveData<Boolean>();
+    public MutableLiveData<List<Publication>> publicationLiveData = new MutableLiveData<>();
+    public MutableLiveData<Boolean> error = new MutableLiveData<>();
+    public MutableLiveData<Boolean> notFound = new MutableLiveData<>();
+    public MutableLiveData<Boolean> loading = new MutableLiveData<>();
 
     private final PublicationApi publicationApi = ServiceGenerator.createService(PublicationApi.class, getApplication());
     private final CompositeDisposable disposable = new CompositeDisposable();
 
     private final SharedPreferencesHelper preferencesHelper = SharedPreferencesHelper.getInstance(getApplication());
-    private final long refreshTimeMonth = 30 * 24 * 60 * 60 * 1000 * 1000 * 1000L;
 
     public PublicationListViewModel(@NonNull Application application) {
         super(application);
@@ -48,9 +45,10 @@ public class PublicationListViewModel extends AndroidViewModel {
     }
 
     public void refresh() {
-        long updateTime = preferencesHelper.getUpdateTime();
+        long updateTime = preferencesHelper.getPubUpdateTime();
         long currentTime = System.nanoTime();
-        if (updateTime != 0 && currentTime - updateTime < refreshTimeMonth) {
+        long refreshTime = 15 * 24 * 60 * 60 * 1000 * 1000 * 1000L;
+        if (updateTime != 0 && currentTime - updateTime < refreshTime) {
             fetchAllFromDatabase();
         } else {
             fetchAllFromRemote();
@@ -67,7 +65,6 @@ public class PublicationListViewModel extends AndroidViewModel {
                             @Override
                             public void onSuccess(@NonNull PublicationResponse response) {
                                 deleteAllFromDatabase(response.getPublications());
-                                Toast.makeText(getApplication(), "Publication retrieved from endpoint", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
@@ -91,7 +88,6 @@ public class PublicationListViewModel extends AndroidViewModel {
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Publication> publications) {
                         if (!publications.isEmpty()) {
                             publicationRetrieved(publications);
-                            Toast.makeText(getApplication(), "Publication retrieved from database", Toast.LENGTH_SHORT).show();
                         } else {
                             notFound.setValue(true);
                             loading.setValue(false);
@@ -119,7 +115,6 @@ public class PublicationListViewModel extends AndroidViewModel {
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Publication> publications) {
                         if (!publications.isEmpty()) {
                             publicationRetrieved(publications);
-                            Toast.makeText(getApplication(), "Publication retrieved from database", Toast.LENGTH_SHORT).show();
                         } else {
                             notFound.setValue(true);
                             loading.setValue(false);
@@ -147,7 +142,6 @@ public class PublicationListViewModel extends AndroidViewModel {
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Publication> publications) {
                         if (!publications.isEmpty()) {
                             publicationRetrieved(publications);
-                            Toast.makeText(getApplication(), "Publication retrieved from database", Toast.LENGTH_SHORT).show();
                         } else {
                             notFound.setValue(true);
                             loading.setValue(false);
@@ -175,7 +169,6 @@ public class PublicationListViewModel extends AndroidViewModel {
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Publication> publications) {
                         if (!publications.isEmpty()) {
                             publicationRetrieved(publications);
-                            Toast.makeText(getApplication(), "Publication retrieved from database", Toast.LENGTH_SHORT).show();
                         } else {
                             notFound.setValue(true);
                             loading.setValue(false);
@@ -203,7 +196,6 @@ public class PublicationListViewModel extends AndroidViewModel {
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Publication> publications) {
                         if (!publications.isEmpty()) {
                             publicationRetrieved(publications);
-                            Toast.makeText(getApplication(), "Publication retrieved from database", Toast.LENGTH_SHORT).show();
                         } else {
                             notFound.setValue(true);
                             loading.setValue(false);
@@ -233,8 +225,8 @@ public class PublicationListViewModel extends AndroidViewModel {
                                 publications.get(i).setUuid(results.get(i).intValue());
                                 i++;
                             }
-                            preferencesHelper.saveUpdateTime(System.nanoTime());
-                            publicationRetrieved(publications);
+                            preferencesHelper.savePubUpdateTime(System.nanoTime());
+                            fetchAllFromDatabase();
                         }
                     }
 

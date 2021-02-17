@@ -79,9 +79,17 @@ public class EconomyGrowthFragment extends Fragment implements OnSeekChangeListe
 
             if (graphData != null) {
 
+                binding.chart.setVisibility(View.VISIBLE);
+                binding.seekBarSection1.setVisibility(View.VISIBLE);
+                binding.seekBarSection2.setVisibility(View.VISIBLE);
+                binding.descriptionSection.setVisibility(View.VISIBLE);
+
                 this.graphData = graphData;
+
+                String titleGraph = graphData.getMeta().getTitle() + "\n(" + graphData.getMeta().getVerticalUnit() + ")";
+
                 binding.description.setText(graphData.getMeta().getDescription());
-                binding.title.setText(graphData.getMeta().getTitle());
+                binding.title.setText(titleGraph);
 
                 int maxYear = graphData.getData().get(graphData.getData().size() - 1).getYear();
                 int minYear = graphData.getData().get(0).getYear();

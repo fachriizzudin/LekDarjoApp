@@ -50,7 +50,7 @@ public class IpmFragment extends Fragment implements OnSeekChangeListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel.refresh(2);
+        viewModel.refresh(6);
 
         xSeekBar = (IndicatorSeekBar) binding.xSeekBar;
         ySeekBar = (IndicatorSeekBar) binding.ySeekBar;
@@ -64,9 +64,17 @@ public class IpmFragment extends Fragment implements OnSeekChangeListener {
 
             if (graphData != null) {
 
+                binding.chart.setVisibility(View.VISIBLE);
+                binding.seekBarSection1.setVisibility(View.VISIBLE);
+                binding.seekBarSection2.setVisibility(View.VISIBLE);
+                binding.descriptionSection.setVisibility(View.VISIBLE);
+
                 this.graphData = graphData;
+
+                String titleGraph = graphData.getMeta().getTitle() + "\n(" + graphData.getMeta().getVerticalUnit() + ")";
+
                 binding.description.setText(graphData.getMeta().getDescription());
-                binding.title.setText(graphData.getMeta().getTitle());
+                binding.title.setText(titleGraph);
 
                 int maxYear = graphData.getData().get(graphData.getData().size() - 1).getYear();
                 int minYear = graphData.getData().get(0).getYear();

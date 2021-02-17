@@ -8,7 +8,11 @@ import androidx.preference.PreferenceManager;
 
 public class SharedPreferencesHelper {
 
-    private final String PREF_TIME = "pref_time";
+    private final String GRAPH_TIME = "graph_time";
+    private final String NEWS_TIME = "news_time";
+    private final String PUB_TIME = "pub_time";
+    private final String IDX_TIME = "idx_time";
+    private final String INFO_TIME = "info_time";
     private final String TOKEN = "jwt_token";
 
     private static SharedPreferencesHelper instance;
@@ -25,12 +29,44 @@ public class SharedPreferencesHelper {
         return instance;
     }
 
-    public void saveUpdateTime(long time) {
-        pref.edit().putLong(PREF_TIME, time).apply();
+    public void saveGraphUpdateTime(long time) {
+        pref.edit().putLong(GRAPH_TIME, time).apply();
     }
 
-    public long getUpdateTime() {
-        return pref.getLong(PREF_TIME, 0);
+    public long getGraphUpdateTime() {
+        return pref.getLong(GRAPH_TIME, 0);
+    }
+
+    public void saveNewsUpdateTime(long time) {
+        pref.edit().putLong(NEWS_TIME, time).apply();
+    }
+
+    public long getNewsUpdateTime() {
+        return pref.getLong(NEWS_TIME, 0);
+    }
+
+    public void savePubUpdateTime(long time) {
+        pref.edit().putLong(PUB_TIME, time).apply();
+    }
+
+    public long getPubUpdateTime() {
+        return pref.getLong(PUB_TIME, 0);
+    }
+
+    public void saveIdxUpdateTime(long time) {
+        pref.edit().putLong(IDX_TIME, time).apply();
+    }
+
+    public long getIdxUpdateTime() {
+        return pref.getLong(IDX_TIME, 0);
+    }
+
+    public void saveInfoUpdateTime(long time) {
+        pref.edit().putLong(INFO_TIME, time).apply();
+    }
+
+    public long getInfoUpdateTime() {
+        return pref.getLong(INFO_TIME, 0);
     }
 
     public void saveAuthToken(String token) { pref.edit().putString(TOKEN, token).apply(); }

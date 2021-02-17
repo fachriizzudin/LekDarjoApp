@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lazuardifachri.bps.lekdarjoapp.R;
 import com.lazuardifachri.bps.lekdarjoapp.databinding.ItemIndicatorBinding;
 import com.lazuardifachri.bps.lekdarjoapp.model.Indicator;
-import com.lazuardifachri.bps.lekdarjoapp.view.IndicatorItemListener;
+import com.lazuardifachri.bps.lekdarjoapp.view.listener.IndicatorItemListener;
 
 import java.util.ArrayList;
 import java.util.List;

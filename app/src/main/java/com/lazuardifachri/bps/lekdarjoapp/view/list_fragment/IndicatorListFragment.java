@@ -29,7 +29,7 @@ import com.google.android.material.button.MaterialButton;
 import com.lazuardifachri.bps.lekdarjoapp.R;
 import com.lazuardifachri.bps.lekdarjoapp.databinding.FragmentIndicatorBinding;
 import com.lazuardifachri.bps.lekdarjoapp.model.Indicator;
-import com.lazuardifachri.bps.lekdarjoapp.view.IndicatorItemListener;
+import com.lazuardifachri.bps.lekdarjoapp.view.listener.IndicatorItemListener;
 import com.lazuardifachri.bps.lekdarjoapp.view.dialog_fragment.IndicatorFilterDialogFragment;
 import com.lazuardifachri.bps.lekdarjoapp.view.adapter.IndicatorAdapter;
 import com.lazuardifachri.bps.lekdarjoapp.viewmodel.FileModelViewModel;
@@ -55,9 +55,6 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
     private int subjectId;
     private String title;
     private String documentUri;
-    private Uri filePathUri;
-    private List<Indicator> indicatorItems = new ArrayList<>();
-
 
     public static IndicatorListFragment newInstance(Integer counter) {
         IndicatorListFragment fragment = new IndicatorListFragment();
@@ -86,9 +83,11 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
             public void onIndicatorDownloadClick(View button, View progressBar, Indicator indicator) {
                 downloadButton = (MaterialButton) button;
                 downloadProgressBar = (ProgressBar) progressBar;
+                documentUri = indicator.getDocumentUri();
+                title = indicator.getTitle();
                 try {
                     if (checkPermission()) {
-                        fileModelViewModel.fetchFileFromRemote(indicator.getDocumentUri(), indicator.getTitle(), downloadButton, downloadProgressBar);
+                        viewModel.fetchFileFromRemote(indicator.getDocumentUri(), indicator.getTitle(), downloadButton, downloadProgressBar);
                     } else {
                         requestPermission();
                     }
@@ -101,7 +100,7 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
             public void checkIfFileExist(View v, Indicator indicator) {
                 Log.d("checkIfFileExist", "run");
                 downloadButton = (MaterialButton) v;
-                fileModelViewModel.checkIfFileExistFromDatabase(indicator.getDocumentUri(), downloadButton);
+                viewModel.checkIfFileExistFromDatabase(indicator.getDocumentUri(), downloadButton);
             }
         });
 
@@ -283,7 +282,7 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (documentUri != null && title != null) {
                         try {
-                            fileModelViewModel.fetchFileFromRemote(documentUri, title);
+                            viewModel.fetchFileFromRemote(documentUri, title, downloadButton, downloadProgressBar);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

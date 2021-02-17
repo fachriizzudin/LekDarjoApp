@@ -29,7 +29,7 @@ public class GraphMeta {
     private String vertical;
 
     @ColumnInfo(name = "vertical_unit")
-    @SerializedName("verticalUnit")
+    @SerializedName("vertical_unit")
     private String verticalUnit;
 
     @ColumnInfo(name = "description")

@@ -28,16 +28,4 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Title">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="Detail">
-        <item name="android:textSize">13sp</item>
-    </style>
-
-    <style name="Text">
-        <item name="android:textSize">15sp</item>
-    </style>
 </resources>

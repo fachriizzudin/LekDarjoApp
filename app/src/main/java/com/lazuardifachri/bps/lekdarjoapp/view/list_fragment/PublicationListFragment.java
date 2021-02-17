@@ -1,6 +1,7 @@
 package com.lazuardifachri.bps.lekdarjoapp.view.list_fragment;
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -198,5 +200,4 @@ public class PublicationListFragment extends Fragment implements PublicationFilt
         }
 
     }
-
 }

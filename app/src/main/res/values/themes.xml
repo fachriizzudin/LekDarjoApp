@@ -34,6 +34,18 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="Lekdarjo">
+        <item name="android:textSize">24sp</item>
+        <item name="android:fontFamily">sans-serif-condensed-medium</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Indicators">
+        <item name="android:textSize">24sp</item>
+        <item name="android:fontFamily">sans-serif-condensed-medium</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
     <style name="Detail">
         <item name="android:textSize">13sp</item>
     </style>
@@ -43,8 +55,13 @@
     </style>
 
     <style name="DrawerText">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:color">@color/white</item>
+    </style>
+
+    <style name="DrawerSubText">
+        <item name="android:textSize">12sp</item>
         <item name="android:color">@color/white</item>
     </style>
 
@@ -66,10 +83,7 @@
     </style>
 
     <style name="Widget.CardContent" parent="android:Widget">
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
-        <item name="android:paddingTop">24dp</item>
-        <item name="android:paddingBottom">24dp</item>
+        <item name="android:padding">16dp</item>
         <item name="android:orientation">vertical</item>
     </style>
 

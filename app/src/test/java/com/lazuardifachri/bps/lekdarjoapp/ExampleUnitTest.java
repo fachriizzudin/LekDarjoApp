@@ -86,6 +86,14 @@ public class ExampleUnitTest {
     }
 
     @Test
+    public void setTotalPopulation() {
+        int population = 2266533;
+        String populationString = String.format("%.2f Juta", population/ 1000000.0);
+        System.out.println(populationString);
+
+    }
+
+    @Test
     public void getHighestValue() {
 
         String json = "[\n" +

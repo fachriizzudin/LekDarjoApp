@@ -1,6 +1,5 @@
 package com.lazuardifachri.bps.lekdarjoapp.view.adapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lazuardifachri.bps.lekdarjoapp.R;
 import com.lazuardifachri.bps.lekdarjoapp.databinding.ItemInfographicBinding;
 import com.lazuardifachri.bps.lekdarjoapp.model.Infographic;
-import com.lazuardifachri.bps.lekdarjoapp.model.Infographic;
-import com.lazuardifachri.bps.lekdarjoapp.view.InfographicClickListener;
-import com.lazuardifachri.bps.lekdarjoapp.view.InfographicItemListener;
+import com.lazuardifachri.bps.lekdarjoapp.view.listener.InfographicClickListener;
 import com.lazuardifachri.bps.lekdarjoapp.view.list_fragment.InfographicListFragmentDirections;
 
 import java.util.ArrayList;

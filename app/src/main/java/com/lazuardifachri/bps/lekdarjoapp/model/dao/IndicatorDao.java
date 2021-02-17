@@ -5,7 +5,6 @@ import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.lazuardifachri.bps.lekdarjoapp.model.Indicator;
-import com.lazuardifachri.bps.lekdarjoapp.model.StatisticalNews;
 
 import java.util.List;
 
@@ -20,9 +19,6 @@ public interface IndicatorDao {
 
     @Query("SELECT * FROM indicator WHERE subject_id =:subjectId")
     Single<List<Indicator>> getIndicatorBySubject(int subjectId);
-
-    @Query("SELECT * FROM indicator WHERE subject_id =:subjectId AND release_date LIKE :monthYear")
-    Single<List<Indicator>> getIndicatorBySubject(int subjectId, String monthYear);
 
     @Query("SELECT * FROM indicator WHERE category_id =:categoryId AND release_date LIKE :monthYear")
     Single<List<Indicator>> getIndicatorByCategory(int categoryId, String monthYear);

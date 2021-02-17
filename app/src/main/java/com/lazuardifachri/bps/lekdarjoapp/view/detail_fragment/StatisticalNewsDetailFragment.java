@@ -30,14 +30,11 @@ import java.io.IOException;
 public class StatisticalNewsDetailFragment extends Fragment {
 
     private FragmentStatisticalNewsDetailBinding binding;
-
     private StatisticalNewsDetailViewModel viewModel;
-    private FileModelViewModel fileModelViewModel;
 
     private static final int PERMISSION_REQUEST_CODE = 1;
     private String title;
     private String documentUri;
-    private Uri filePathUri;
     private int uuid;
 
     public StatisticalNewsDetailFragment() {
@@ -47,10 +44,7 @@ public class StatisticalNewsDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentStatisticalNewsDetailBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-
-        viewModel = new ViewModelProvider(this).get(StatisticalNewsDetailViewModel.class);
-        fileModelViewModel = new ViewModelProvider(getActivity()).get(FileModelViewModel.class);
-
+        viewModel = new ViewModelProvider(getActivity()).get(StatisticalNewsDetailViewModel.class);
         return view;
     }
 
@@ -64,50 +58,40 @@ public class StatisticalNewsDetailFragment extends Fragment {
                 viewModel.checkIfStatisticalNewsExistFromDatabase(uuid);
             }
         }
-
         observeViewModel();
-
-        observeFileModelViewModel();
-
-        if (filePathUri == null) {
-            binding.downloadActionFab.setOnClickListener(v -> {
-                if (checkPermission()) {
-                    try {
-                        if (documentUri != null && title != null)
-                            fileModelViewModel.fetchFileFromRemote(documentUri, title);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    requestPermission();
-                }
-            });
-        }
-
     }
 
     private void observeViewModel() {
-        viewModel.statisticalNewsExist.observe(getViewLifecycleOwner(), isExist -> {
-            if (isExist instanceof Boolean && getContext() != null) {
-                if (isExist) {
-                    viewModel.fetchByIdFromDatabase(uuid);
-                }
+        viewModel.statisticalNewsLiveData.observe(getViewLifecycleOwner(), publication -> {
+            if (publication != null && getContext() != null) {
+                binding.setStatisticalNews(publication);
+                title = publication.getTitle();
+                documentUri = publication.getDocumentUri();
+                binding.downloadActionFab.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_download));
+                binding.downloadActionFab.setOnClickListener(v -> {
+                    if (checkPermission()) {
+                        try {
+                            viewModel.fetchFileFromRemote(documentUri, title);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        requestPermission();
+                    }
+                });
             }
         });
-        viewModel.statisticalNewsLiveData.observe(getViewLifecycleOwner(), statisticalNews -> {
-            if (statisticalNews instanceof StatisticalNews && getContext() != null) {
-                binding.setStatisticalNews(statisticalNews);
-                viewModel.checkIfStatisticalNewsExistFromDatabase(statisticalNews.getUuid());
-                title = statisticalNews.getTitle();
-                documentUri = statisticalNews.getDocumentUri();
-                fileModelViewModel.checkIfFileExistFromDatabase(documentUri);
+        viewModel.filePathUri.observe(getViewLifecycleOwner(), uri -> {
+            if (uri != null && getContext() != null) {
+                binding.downloadActionFab.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_view));
+                binding.downloadActionFab.setOnClickListener(v -> {
+                    readFile(uri);
+                });
             }
         });
-    }
-    private void observeFileModelViewModel() {
-        fileModelViewModel.downloadLoading.observe(getViewLifecycleOwner(), isLoading -> {
-            if (isLoading instanceof Boolean) {
-                Log.d("downloadLoading", "inside");
+        viewModel.downloadLoading.observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading != null && getContext() != null) {
+                Log.d("statnewsFragment", String.valueOf(isLoading));
                 if (isLoading) {
                     binding.horizontalProgressBar.setVisibility(View.VISIBLE);
                     binding.downloadActionFab.setOnClickListener(v -> {
@@ -118,36 +102,18 @@ public class StatisticalNewsDetailFragment extends Fragment {
                 }
             }
         });
-        fileModelViewModel.downloadError.observe(getViewLifecycleOwner(), isError -> {
-            if (isError instanceof Boolean) {
-                Log.d("observe", "downloadError");
+        viewModel.downloadError.observe(getViewLifecycleOwner(), isError -> {
+            if (isError != null && getContext() != null) {
                 if (isError) {
                     binding.horizontalProgressBar.setVisibility(View.GONE);
                     binding.downloadActionFab.setOnClickListener(v -> {
                         try {
-                            fileModelViewModel.fetchFileFromRemote(documentUri, title);
+                            viewModel.fetchFileFromRemote(documentUri, title);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     });
                 }
-            }
-        });
-        fileModelViewModel.fileExist.observe(getViewLifecycleOwner(), isExist -> {
-            if (isExist instanceof Boolean && getContext() != null) {
-                if (isExist) {
-                    if (documentUri != null)
-                        fileModelViewModel.fetchFileNameFromDatabase(documentUri);
-                }
-            }
-        });
-        fileModelViewModel.filePathUri.observe(getViewLifecycleOwner(), uri -> {
-            if (uri instanceof Uri && getContext() != null) {
-                filePathUri = uri;
-                binding.downloadActionFab.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_view));
-                binding.downloadActionFab.setOnClickListener(v -> {
-                    readFile(uri);
-                });
             }
         });
     }
@@ -184,7 +150,7 @@ public class StatisticalNewsDetailFragment extends Fragment {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (documentUri != null && title != null) {
                         try {
-                            fileModelViewModel.fetchFileFromRemote(documentUri, title);
+                            viewModel.fetchFileFromRemote(documentUri, title);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

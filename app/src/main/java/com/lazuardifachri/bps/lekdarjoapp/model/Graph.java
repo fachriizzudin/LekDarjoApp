@@ -13,7 +13,7 @@ public class Graph {
     @SerializedName("year")
     private int year;
 
-    public Graph(int id, int value, int year) {
+    public Graph(int id, double value, int year) {
         this.id = id;
         this.value = value;
         this.year = year;

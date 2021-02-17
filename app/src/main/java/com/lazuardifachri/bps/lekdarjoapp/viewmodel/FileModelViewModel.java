@@ -3,6 +3,7 @@ package com.lazuardifachri.bps.lekdarjoapp.viewmodel;
 import android.app.Application;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -48,14 +49,11 @@ import static androidx.core.content.FileProvider.getUriForFile;
 
 public class FileModelViewModel extends AndroidViewModel {
 
-    //
-
     public MutableLiveData<Uri> filePathUri = new MutableLiveData<>();
     public MutableLiveData<Boolean> fileExist = new MutableLiveData<>();
     public MutableLiveData<Boolean> downloadError = new MutableLiveData<Boolean>();
     public MutableLiveData<Boolean> downloadLoading = new MutableLiveData<Boolean>();
     public MutableLiveData<Integer> downloadProgress = new MutableLiveData<Integer>();
-    public MutableLiveData<Boolean> downloadComplete = new MutableLiveData<Boolean>();
 
     FileDownloadListener listener = new FileDownloadListener() {
         @Override
@@ -64,9 +62,19 @@ public class FileModelViewModel extends AndroidViewModel {
             downloadLoading.setValue(true);
             try {
                 File root = new File(getApplication().getFilesDir().getAbsolutePath() + "/document");
-                if (!root.exists()) root.mkdirs();
+                Log.d("root", root.getAbsolutePath());
+                if (!root.exists()) {
+                    root.mkdirs();
+                    root.setReadable(true, false);
+                    root.setExecutable(true, false);
+                }
+                // getApplication().getFilesDir().getAbsolutePath()
                 File destinationFile = new File(getApplication().getFilesDir().getAbsolutePath() + "/document/" + fileName);
-                if (!destinationFile.exists()) destinationFile.createNewFile();
+                if (!destinationFile.exists()) {
+                    destinationFile.createNewFile();
+                    destinationFile.setReadable(true,false);
+                }
+                Log.d("destinationFile", destinationFile.getAbsolutePath());
                 return destinationFile.getAbsolutePath();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -85,13 +93,11 @@ public class FileModelViewModel extends AndroidViewModel {
         public void onFinishDownload() {
             Log.d("listener", "onFinishDownload");
             downloadLoading.setValue(false);
-            // downloadComplete.postValue(true);
         }
 
         @Override
         public void onFailDownload(String errorInfo) {
             Log.d("listener", "onFailDownload");
-            Log.d("errorInfo", errorInfo);
             downloadLoading.postValue(false);
             Log.d("errorInfo", errorInfo);
             downloadError.setValue(true);
@@ -127,10 +133,9 @@ public class FileModelViewModel extends AndroidViewModel {
             fileName = "file.tmp";
         }
 
-        String filePath = listener.onStartDownload(fileName);
+        Log.d("fileName", fileName);
 
-        Log.d("fetchFileFromRemote", filePath);
-        Log.d("fetchFileFromRemote", fileName);
+        String filePath = listener.onStartDownload(fileName);
 
         fileDownloadApi.download(documentUri)
                 .subscribeOn(Schedulers.io())
@@ -173,7 +178,6 @@ public class FileModelViewModel extends AndroidViewModel {
 
     public void fetchFileFromRemote(String documentUri, String title, MaterialButton downloadButton, ProgressBar downloadProgressBar) throws IOException {
 
-        Log.d("fetchExcelFromRemote", "run");
         int fileId = getFileIdFromUri(documentUri);
         String feature = StringUtils.substringBetween(documentUri, "api/", "/");
         FileDownloadListener indicatorListener = new FileDownloadListener() {
@@ -183,9 +187,18 @@ public class FileModelViewModel extends AndroidViewModel {
                 Log.d("indiOnStart", "run");
                 try {
                     File root = new File(getApplication().getFilesDir().getAbsolutePath() + "/document");
-                    if (!root.exists()) root.mkdirs();
+                    Log.d("root", root.getAbsolutePath());
+                    if (!root.exists()) {
+                        root.mkdirs();
+                        root.setReadable(true, false);
+                        root.setExecutable(true, false);
+                    }
                     File destinationFile = new File(getApplication().getFilesDir().getAbsolutePath() + "/document/" + fileName);
-                    if (!destinationFile.exists()) destinationFile.createNewFile();
+                    if (!destinationFile.exists()) {
+                        destinationFile.createNewFile();
+                        destinationFile.setReadable(true,false);
+                    }
+                    Log.d("PATH", destinationFile.getAbsolutePath());
                     return destinationFile.getAbsolutePath();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -202,6 +215,7 @@ public class FileModelViewModel extends AndroidViewModel {
 
             @Override
             public void onFinishDownload() {
+                Log.d("indiOnFinish", "run");
                 downloadProgressBar.setVisibility(View.INVISIBLE);
                 fetchFileNameFromDatabase(fileId, downloadButton, feature);
             }
@@ -213,8 +227,6 @@ public class FileModelViewModel extends AndroidViewModel {
         };
 
         FileDownloadApi indicatorFileDownloadApi = ServiceGenerator.createDownloadService(FileDownloadApi.class, getApplication(), indicatorListener);
-
-
 
         String fileName;
 
@@ -402,7 +414,7 @@ public class FileModelViewModel extends AndroidViewModel {
 
                         button.setIcon(getApplication().getResources().getDrawable(R.drawable.ic_view));
                         button.setOnClickListener(v -> {
-                            if (feature.equals("publications")) {
+                            if (feature.equals("indicators")) {
                                 readFile(contentUri);
                             }
                         });
@@ -425,13 +437,7 @@ public class FileModelViewModel extends AndroidViewModel {
                 .subscribeWith(new DisposableSingleObserver<Boolean>() {
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull Boolean exist) {
-                        if (exist) {
-                            Log.d("fileExist", "true");
-                            fileExist.setValue(true);
-                        } else {
-                            Log.d("fileExist", "false");
-                            fileExist.setValue(false);
-                        }
+                        if (exist) fetchFileNameFromDatabase(documentUri);
                     }
 
                     @Override
@@ -471,11 +477,12 @@ public class FileModelViewModel extends AndroidViewModel {
         ExcelIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         ExcelIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         ExcelIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Toast.makeText(getApplication(), uri.getPath(), Toast.LENGTH_SHORT).show();
         try {
             getApplication().startActivity(ExcelIntent);
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getApplication(), "No Application available to view Excel", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplication(), "No Application available to view Excel", Toast.LENGTH_SHORT).show();
         }
     }
 

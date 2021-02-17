@@ -9,14 +9,13 @@
             type="com.lazuardifachri.bps.lekdarjoapp.model.Infographic" />
         <variable
             name="listener"
-            type="com.lazuardifachri.bps.lekdarjoapp.view.InfographicClickListener" />
+            type="com.lazuardifachri.bps.lekdarjoapp.view.listener.InfographicClickListener" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginHorizontal="13dp">
+        android:layout_margin="10dp">
 
         <LinearLayout
             android:id="@+id/pubListItemLayout"
@@ -42,7 +41,6 @@
                 android:layout_gravity="center"
                 android:layout_weight="2"
                 android:padding="4dp"
-                android:src="@mipmap/ic_launcher"
                 android:imageUrl="@{infographic.imageUri}"/>
 
             <LinearLayout

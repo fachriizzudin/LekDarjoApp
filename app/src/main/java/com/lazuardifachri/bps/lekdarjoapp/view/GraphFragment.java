@@ -5,6 +5,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -47,6 +50,8 @@ public class GraphFragment extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(GraphViewModel.class);
 
+        setHasOptionsMenu(true);
+
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Statistik Sidoarjo");
 
         return view;
@@ -64,22 +69,33 @@ public class GraphFragment extends Fragment {
             Navigation.findNavController(v).navigate(GraphFragmentDirections.actionMainToEconomy());
         });
 
+        binding.totalPopulationCard.setOnClickListener(v -> {
+            Navigation.findNavController(v).navigate(GraphFragmentDirections.actionMainToPopulation());
+        });
+
+        binding.povertyCard.setOnClickListener(v -> {
+            Navigation.findNavController(v).navigate(GraphFragmentDirections.actionMainToPoverty());
+        });
+
+        binding.unemploymentCard.setOnClickListener(v -> {
+            Navigation.findNavController(v).navigate(GraphFragmentDirections.actionMainToUnemployment());
+        });
+
+        binding.riceProductionCard.setOnClickListener(v -> {
+            Navigation.findNavController(v).navigate(GraphFragmentDirections.actionMainToRiceProduction());
+        });
+
+        binding.riceProductivityCard.setOnClickListener(v -> {
+            Navigation.findNavController(v).navigate(GraphFragmentDirections.actionMainToRiceProductivity());
+        });
+
         binding.ipmCard.setOnClickListener(v -> {
             Navigation.findNavController(v).navigate(GraphFragmentDirections.actionMainToIpm());
         });
+    }
 
-        binding.pdrbKonstanCard.setOnClickListener(v -> {
-            Navigation.findNavController(v).navigate(GraphFragmentDirections.actionMainToPdrbKonstan());
-        });
-
-        binding.morbidityCard.setOnClickListener(v -> {
-            Navigation.findNavController(v).navigate(GraphFragmentDirections.actionMainToMorbidity());
-        });
-
-        binding.lifeExpectancyCard.setOnClickListener(v -> {
-            Navigation.findNavController(v).navigate(GraphFragmentDirections.actionMainToLifeExpectancy());
-        });
-
+    private String getLastYear(List<Graph> graphList) {
+        return String.valueOf(graphList.get(graphList.size()-1).getYear());
     }
 
     private String getLastYearData(List<Graph> graphList) {
@@ -93,16 +109,12 @@ public class GraphFragment extends Fragment {
 
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void observeViewModel() {
-
-        // kesehatan/morbiditas
+        // economy growth
         viewModel.economyGrowthDataLive.observe(getViewLifecycleOwner(), graphData -> {
-
-            Log.d("lastData", String.valueOf(getLastYearData(graphData.getData())));
-            // get last year data from graphData
+            binding.yearEconomyGrowth.setText(getLastYear(graphData.getData()));
             binding.economyGrowthNewValue.setText(getLastYearData(graphData.getData()));
-
-            // check if last year data increase or decrease
             if (isIncrease(graphData.getData())) {
                 binding.upArrowEconomyGrowth.setImageDrawable(getResources().getDrawable(R.drawable.ic_up));
             } else {
@@ -110,11 +122,46 @@ public class GraphFragment extends Fragment {
             }
         });
 
-        // angka harapan hidup
-        viewModel.ipmDataLive.observe(getViewLifecycleOwner(), graphData -> {
-            binding.ipmNewValue.setText(getLastYearData(graphData.getData()));
+        // population
+        viewModel.populationDataLive.observe(getViewLifecycleOwner(), graphData -> {
+            binding.yearTotalPopulation.setText(getLastYear(graphData.getData()));
+            int value = (int) graphData.getData().get(graphData.getData().size()-1).getValue();
+            @SuppressLint("DefaultLocale") String valueString = String.format("%.2f", value/1000000.0);
+            binding.totalPopulationNewValue.setText(valueString);
+            if (isIncrease(graphData.getData())) {
+                binding.upArrowTotalPopulation.setImageDrawable(getResources().getDrawable(R.drawable.ic_up));
+            } else {
+                binding.upArrowTotalPopulation.setImageDrawable(getResources().getDrawable(R.drawable.ic_down));
+            }
 
-            // check if last year data increase or decrease
+        });
+
+        // poverty
+        viewModel.povertyDataLive.observe(getViewLifecycleOwner(), graphData -> {
+            binding.yearPoverty.setText(getLastYear(graphData.getData()));
+            binding.povertyNewValue.setText(getLastYearData(graphData.getData()));
+            if (isIncrease(graphData.getData())) {
+                binding.upArrowPoverty.setImageDrawable(getResources().getDrawable(R.drawable.ic_up));
+            } else {
+                binding.upArrowPoverty.setImageDrawable(getResources().getDrawable(R.drawable.ic_down));
+            }
+        });
+
+        // unemployment
+        viewModel.unemploymentDataLive.observe(getViewLifecycleOwner(), graphData -> {
+            binding.yearUnemployment.setText(getLastYear(graphData.getData()));
+            binding.unemploymentNewValue.setText(getLastYearData(graphData.getData()));
+            if (isIncrease(graphData.getData())) {
+                binding.upArrowUnemployment.setImageDrawable(getResources().getDrawable(R.drawable.ic_up));
+            } else {
+                binding.upArrowUnemployment.setImageDrawable(getResources().getDrawable(R.drawable.ic_down));
+            }
+        });
+
+        // ipm
+        viewModel.ipmDataLive.observe(getViewLifecycleOwner(), graphData -> {
+            binding.yearIpm.setText(getLastYear(graphData.getData()));
+            binding.ipmNewValue.setText(getLastYearData(graphData.getData()));
             if (isIncrease(graphData.getData())) {
                 binding.upArrowIpm.setImageDrawable(getResources().getDrawable(R.drawable.ic_up));
             } else {
@@ -122,50 +169,46 @@ public class GraphFragment extends Fragment {
             }
         });
 
-        // pdrb harga berlaku
-        viewModel.pdrbKonstanDataLive.observe(getViewLifecycleOwner(), graphData -> {
-            binding.pdrbKonstanNewValue.setText(getLastYearData(graphData.getData()));
-
-            // check if last year data increase or decrease
+        // rice production
+        viewModel.riceProductionDataLive.observe(getViewLifecycleOwner(), graphData -> {
+            binding.yearRiceProduction.setText(getLastYear(graphData.getData()));
+            binding.riceProductionNewValue.setText(getLastYearData(graphData.getData()));
             if (isIncrease(graphData.getData())) {
-                binding.upArrowPDRBHargaKonstan.setImageDrawable(getResources().getDrawable(R.drawable.ic_up));
+                binding.upArrowRiceProduction.setImageDrawable(getResources().getDrawable(R.drawable.ic_up));
             } else {
-                binding.upArrowPDRBHargaKonstan.setImageDrawable(getResources().getDrawable(R.drawable.ic_down));
+                binding.upArrowRiceProduction.setImageDrawable(getResources().getDrawable(R.drawable.ic_down));
             }
         });
 
-        // pendidikan
-        viewModel.morbidityDataLive.observe(getViewLifecycleOwner(), graphData -> {
-            binding.morbidityNewValue.setText(getLastYearData(graphData.getData()));
-
-            // check if last year data increase or decrease
+        // rice productivity
+        viewModel.riceProductivityDataLive.observe(getViewLifecycleOwner(), graphData -> {
+            binding.yearRiceProductivity.setText(getLastYear(graphData.getData()));
+            binding.riceProductivityNewValue.setText(getLastYearData(graphData.getData()));
             if (isIncrease(graphData.getData())) {
-                binding.upArrowMorbidity.setImageDrawable(getResources().getDrawable(R.drawable.ic_up));
+                binding.upArrowRiceProductivity.setImageDrawable(getResources().getDrawable(R.drawable.ic_up));
             } else {
-                binding.upArrowMorbidity.setImageDrawable(getResources().getDrawable(R.drawable.ic_down));
-            }
-        });
-
-        // pertumbuhan ekonomi
-        viewModel.lifeExpectancyDataLive.observe(getViewLifecycleOwner(), graphData -> {
-            binding.lifeExpectancyNewValue.setText(getLastYearData(graphData.getData()));
-
-            // check if last year data increase or decrease
-            if (isIncrease(graphData.getData())) {
-                binding.upArrowLifeExpectancy.setImageDrawable(getResources().getDrawable(R.drawable.ic_up));
-            } else {
-                binding.upArrowLifeExpectancy.setImageDrawable(getResources().getDrawable(R.drawable.ic_down));
+                binding.upArrowRiceProductivity.setImageDrawable(getResources().getDrawable(R.drawable.ic_down));
             }
         });
 
         viewModel.counter.observe(getViewLifecycleOwner(), counter -> {
-            if (counter == 5) {
+            if (counter == 8) {
                 binding.horizontalProgressBar.setVisibility(View.GONE);
-            } else if (counter < 5) {
+            } else if (counter < 8) {
                 binding.horizontalProgressBar.setVisibility(View.VISIBLE);
             }
         });
     }
 
-
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.graph_action_menu, menu);
+        MenuItem refreshMenuItem = menu.findItem(R.id.refreshAction);
+        refreshMenuItem.setOnMenuItemClickListener(item -> {
+            binding.horizontalProgressBar.setVisibility(View.VISIBLE);
+            viewModel.fetchAllFromRemote();
+            return true;
+        });
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 }

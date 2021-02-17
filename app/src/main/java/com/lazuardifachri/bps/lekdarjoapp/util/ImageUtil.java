@@ -19,6 +19,7 @@ import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.lazuardifachri.bps.lekdarjoapp.R;
 import com.lazuardifachri.bps.lekdarjoapp.model.ColorPalette;
@@ -28,7 +29,7 @@ public class ImageUtil {
 
         RequestOptions options = new RequestOptions()
                 .placeholder(progressDrawable)
-                .error(R.mipmap.ic_launcher);
+                .error(R.drawable.ic_saved);
 
         GlideUrl glideUrl = new GlideUrl(url,
                 new LazyHeaders.Builder()
@@ -62,7 +63,7 @@ public class ImageUtil {
             loadImage(imageView, url, getProgressDrawable(imageView.getContext()), imageView.getContext());
             RequestOptions options = new RequestOptions()
                     .placeholder(getProgressDrawable(imageView.getContext()))
-                    .error(R.mipmap.ic_launcher);
+                    .error(R.drawable.ic_infographic);
 
             GlideUrl glideUrl = new GlideUrl(url,
                     new LazyHeaders.Builder()
@@ -71,8 +72,20 @@ public class ImageUtil {
 
             Glide.with(imageView.getContext())
                     .setDefaultRequestOptions(options)
+                    .asBitmap()
                     .load(glideUrl)
-                    .into(imageView);
+                    .into(new CustomTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            imageView.setImageBitmap(resource);
+                            imageView.buildDrawingCache();
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                        }
+                    });
 
             imageView.setOnTouchListener(new ImageMatrixTouchHandler(imageView.getContext()));
         }

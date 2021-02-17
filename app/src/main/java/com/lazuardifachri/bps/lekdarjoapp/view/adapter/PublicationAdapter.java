@@ -1,6 +1,5 @@
 package com.lazuardifachri.bps.lekdarjoapp.view.adapter;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lazuardifachri.bps.lekdarjoapp.R;
 import com.lazuardifachri.bps.lekdarjoapp.databinding.ItemPublicationBinding;
 import com.lazuardifachri.bps.lekdarjoapp.model.Publication;
-import com.lazuardifachri.bps.lekdarjoapp.view.PublicationClickListener;
-import com.lazuardifachri.bps.lekdarjoapp.view.list_fragment.PublicationListFragment;
+import com.lazuardifachri.bps.lekdarjoapp.view.listener.PublicationClickListener;
 import com.lazuardifachri.bps.lekdarjoapp.view.list_fragment.PublicationListFragmentDirections;
 
 import java.util.ArrayList;

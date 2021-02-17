@@ -1,12 +1,9 @@
 package com.lazuardifachri.bps.lekdarjoapp.view.adapter;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,7 +15,7 @@ import com.lazuardifachri.bps.lekdarjoapp.R;
 import com.lazuardifachri.bps.lekdarjoapp.databinding.ItemDateBinding;
 import com.lazuardifachri.bps.lekdarjoapp.databinding.ItemStatisticalNewsBinding;
 import com.lazuardifachri.bps.lekdarjoapp.model.StatisticalNews;
-import com.lazuardifachri.bps.lekdarjoapp.view.StatisticalNewsCLickListener;
+import com.lazuardifachri.bps.lekdarjoapp.view.listener.StatisticalNewsCLickListener;
 import com.lazuardifachri.bps.lekdarjoapp.view.list_fragment.StatisticalNewsListFragmentDirections;
 
 import java.util.ArrayList;

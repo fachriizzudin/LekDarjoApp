@@ -6,14 +6,18 @@ import java.io.IOException;
 
 import okhttp3.Interceptor;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 public class DownloadInterceptor implements Interceptor {
 
     private FileDownloadListener listener;
+    private DetailFileDownloadListener newListener;
 
     public DownloadInterceptor(FileDownloadListener listener) {
         this.listener = listener;
+    }
+
+    public DownloadInterceptor(DetailFileDownloadListener listener) {
+        this.newListener = listener;
     }
 
     @Override

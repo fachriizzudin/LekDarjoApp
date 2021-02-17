@@ -9,14 +9,13 @@
 
         <variable
             name="listener"
-            type="com.lazuardifachri.bps.lekdarjoapp.view.StatisticalNewsCLickListener" />
+            type="com.lazuardifachri.bps.lekdarjoapp.view.listener.StatisticalNewsCLickListener" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginHorizontal="13dp">
+        android:layout_margin="10dp">
 
         <LinearLayout
             android:id="@+id/statisticalNewsListItemLayout"

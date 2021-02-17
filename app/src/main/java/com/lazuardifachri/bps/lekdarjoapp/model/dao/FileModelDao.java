@@ -6,6 +6,7 @@ import androidx.room.Query;
 
 import com.lazuardifachri.bps.lekdarjoapp.model.FileModel;
 
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Single;
 
 
@@ -22,4 +23,7 @@ public interface FileModelDao {
 
     @Query("SELECT file_name FROM file_model WHERE id = :fileId")
     Single<String> getFileName(int fileId);
+
+    @Query("DELETE FROM file_model WHERE id = :fileId")
+    Completable deleteFile(int fileId);
 }

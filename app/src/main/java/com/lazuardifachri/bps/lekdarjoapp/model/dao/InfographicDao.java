@@ -5,7 +5,6 @@ import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.lazuardifachri.bps.lekdarjoapp.model.Infographic;
-import com.lazuardifachri.bps.lekdarjoapp.model.Publication;
 
 import java.util.List;
 
@@ -23,6 +22,9 @@ public interface InfographicDao {
 
     @Query("SELECT * FROM infographic WHERE uuid = :uuid")
     Single<Infographic> getInfographicByUuid(int uuid);
+
+    @Query("SELECT * FROM infographic WHERE subject_id = :subjectId")
+    Single<List<Infographic>> getInfographicBySubject(int subjectId);
 
     @Query("SELECT EXISTS(SELECT * FROM infographic WHERE uuid = :uuid)")
     Single<Boolean> isInfographicExist(int uuid);

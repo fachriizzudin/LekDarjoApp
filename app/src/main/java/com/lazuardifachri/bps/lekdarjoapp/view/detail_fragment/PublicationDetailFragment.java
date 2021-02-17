@@ -18,13 +18,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.lazuardifachri.bps.lekdarjoapp.R;
 import com.lazuardifachri.bps.lekdarjoapp.databinding.FragmentPublicationDetailBinding;
 import com.lazuardifachri.bps.lekdarjoapp.model.ColorPalette;
 import com.lazuardifachri.bps.lekdarjoapp.model.Publication;
 import com.lazuardifachri.bps.lekdarjoapp.util.FileDownloadListener;
+import com.lazuardifachri.bps.lekdarjoapp.util.StringUtil;
 import com.lazuardifachri.bps.lekdarjoapp.viewmodel.FileModelViewModel;
 import com.lazuardifachri.bps.lekdarjoapp.viewmodel.PublicationDetailViewModel;
 
@@ -35,12 +38,10 @@ public class PublicationDetailFragment extends Fragment {
 
     private FragmentPublicationDetailBinding binding;
     private PublicationDetailViewModel viewModel;
-    private FileModelViewModel fileModelViewModel;
 
     private static final int PERMISSION_REQUEST_CODE = 1;
     private String title;
     private String documentUri;
-    private Uri filePathUri;
     private int uuid;
 
     public PublicationDetailFragment() {
@@ -51,112 +52,79 @@ public class PublicationDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentPublicationDetailBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-
         viewModel = new ViewModelProvider(getActivity()).get(PublicationDetailViewModel.class);
-        fileModelViewModel = new ViewModelProvider(getActivity()).get(FileModelViewModel.class);
-
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         if (getArguments() != null) {
             uuid = PublicationDetailFragmentArgs.fromBundle(getArguments()).getUuid();
             if (uuid != 0) {
                 viewModel.checkIfPublicationExistFromDatabase(uuid);
             }
         }
-
-        observeViewModel();
-
-        observeFileModelViewModel();
-
-        if (filePathUri == null) {
-            binding.downloadActionFab.setOnClickListener(v -> {
-                if (checkPermission()) {
-                    try {
-                        if (documentUri != null && title != null)
-                            fileModelViewModel.fetchFileFromRemote(documentUri, title);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    requestPermission();
-                }
-            });
-        }
-
     }
 
     private void observeViewModel() {
-        viewModel.publicationExist.observe(getViewLifecycleOwner(), isExist -> {
-            if (isExist instanceof Boolean && getContext() != null) {
-                if (isExist) {
-                    viewModel.fetchByIdFromDatabase(uuid);
-                }
-            }
-        });
         viewModel.publicationLiveData.observe(getViewLifecycleOwner(), publication -> {
-            if (publication instanceof Publication && getContext() != null) {
+            if (publication != null && getContext() != null) {
                 binding.setPublication(publication);
-                viewModel.setupBackgroundColor(publication.getImageUri());
-                viewModel.checkIfPublicationExistFromDatabase(publication.getUuid());
                 title = publication.getTitle();
                 documentUri = publication.getDocumentUri();
-                fileModelViewModel.checkIfFileExistFromDatabase(documentUri);
+                binding.downloadActionFab.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_download));
+                binding.downloadActionFab.setOnClickListener(v -> {
+                    if (checkPermission()) {
+                        try {
+                            viewModel.fetchFileFromRemote(documentUri, title);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        requestPermission();
+                    }
+                });
             }
         });
         viewModel.pubPaletteLiveData.observe(getViewLifecycleOwner(), colorPalette -> {
-            if (colorPalette instanceof ColorPalette && getContext() != null)
+            if (colorPalette != null && getContext() != null)
                 binding.setPubPalette(colorPalette);
         });
-    }
-    private void observeFileModelViewModel() {
-        fileModelViewModel.downloadLoading.observe(getViewLifecycleOwner(), isLoading -> {
-            if (isLoading instanceof Boolean) {
-                Log.d("downloadLoading", "inside");
+        viewModel.filePathUri.observe(getViewLifecycleOwner(), uri -> {
+            if (uri != null && getContext() != null) {
+                binding.downloadActionFab.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_view));
+                binding.downloadActionFab.setOnClickListener(v -> {
+                    readFile(uri);
+                });
+            }
+        });
+        viewModel.downloadLoading.observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading != null && getContext() != null) {
                 if (isLoading) {
+                    Log.d("fragment loading", "yes");
                     binding.horizontalProgressBar.setVisibility(View.VISIBLE);
                     binding.downloadActionFab.setOnClickListener(v -> {
                         Toast.makeText(getContext(), "Please wait", Toast.LENGTH_SHORT).show();
                     });
                 } else {
+                    Log.d("fragment loading", "no");
                     binding.horizontalProgressBar.setVisibility(View.GONE);
                 }
             }
         });
-        fileModelViewModel.downloadError.observe(getViewLifecycleOwner(), isError -> {
-            if (isError instanceof Boolean) {
-                Log.d("observe", "downloadError");
+        viewModel.downloadError.observe(getViewLifecycleOwner(), isError -> {
+            if (isError != null && getContext() != null) {
                 if (isError) {
                     binding.horizontalProgressBar.setVisibility(View.GONE);
                     binding.downloadActionFab.setOnClickListener(v -> {
                         try {
-                            fileModelViewModel.fetchFileFromRemote(documentUri, title);
+                            viewModel.fetchFileFromRemote(documentUri, title);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     });
                 }
-            }
-        });
-        fileModelViewModel.fileExist.observe(getViewLifecycleOwner(), isExist -> {
-            if (isExist instanceof Boolean && getContext() != null) {
-                if (isExist) {
-                    if (documentUri != null)
-                        fileModelViewModel.fetchFileNameFromDatabase(documentUri);
-                }
-            }
-        });
-        fileModelViewModel.filePathUri.observe(getViewLifecycleOwner(), uri -> {
-            if (uri instanceof Uri && getContext() != null) {
-                filePathUri = uri;
-                binding.downloadActionFab.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_view));
-                binding.downloadActionFab.setOnClickListener(v -> {
-                    readFile(uri);
-                });
             }
         });
     }
@@ -176,6 +144,12 @@ public class PublicationDetailFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        observeViewModel();
+    }
+
     private boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
         return result == PackageManager.PERMISSION_GRANTED;
@@ -193,7 +167,7 @@ public class PublicationDetailFragment extends Fragment {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (documentUri != null && title != null) {
                         try {
-                            fileModelViewModel.fetchFileFromRemote(documentUri, title);
+                            viewModel.fetchFileFromRemote(documentUri, title);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

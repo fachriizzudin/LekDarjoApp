@@ -2,7 +2,6 @@ package com.lazuardifachri.bps.lekdarjoapp.view.list_fragment;
 
 import android.app.SearchManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -10,31 +9,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.button.MaterialButton;
 import com.lazuardifachri.bps.lekdarjoapp.R;
 import com.lazuardifachri.bps.lekdarjoapp.databinding.FragmentInfographicListBinding;
-import com.lazuardifachri.bps.lekdarjoapp.model.Infographic;
-import com.lazuardifachri.bps.lekdarjoapp.view.InfographicClickListener;
-import com.lazuardifachri.bps.lekdarjoapp.view.InfographicItemListener;
 import com.lazuardifachri.bps.lekdarjoapp.view.adapter.InfographicAdapter;
+import com.lazuardifachri.bps.lekdarjoapp.view.dialog_fragment.InfographicFilterDialogFragment;
+import com.lazuardifachri.bps.lekdarjoapp.view.dialog_fragment.PublicationFilterDialogFragment;
 import com.lazuardifachri.bps.lekdarjoapp.viewmodel.FileModelViewModel;
 import com.lazuardifachri.bps.lekdarjoapp.viewmodel.InfographicListViewModel;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InfographicListFragment extends Fragment {
+public class InfographicListFragment extends Fragment implements InfographicFilterDialogFragment.OnFilterSelected {
 
     private MaterialButton downloadButton;
     private ProgressBar downloadProgressBar;
@@ -60,6 +56,8 @@ public class InfographicListFragment extends Fragment {
         fileModelViewModel = new ViewModelProvider(getActivity()).get(FileModelViewModel.class);
 
         adapter = new InfographicAdapter(new ArrayList<>());
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Infografis");
 
         setHasOptionsMenu(true);
 
@@ -125,7 +123,7 @@ public class InfographicListFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
-        inflater.inflate(R.menu.infographic_action_menu, menu);
+        inflater.inflate(R.menu.action_menu, menu);
 
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(getContext().SEARCH_SERVICE);
 
@@ -149,6 +147,15 @@ public class InfographicListFragment extends Fragment {
             }
         });
 
+        MenuItem filterMenuItem = menu.findItem(R.id.filterAction);
+
+        filterMenuItem.setOnMenuItemClickListener(item -> {
+            InfographicFilterDialogFragment dialog = new InfographicFilterDialogFragment();
+            dialog.setTargetFragment(this, 0);
+            dialog.show(getParentFragmentManager(), "dialog");
+            return true;
+        });
+
         MenuItem refreshMenuItem = menu.findItem(R.id.refreshAction);
 
         refreshMenuItem.setOnMenuItemClickListener(item -> {
@@ -162,5 +169,20 @@ public class InfographicListFragment extends Fragment {
             binding.refreshLayout.setRefreshing(false);
             return true;
         });
+    }
+
+    @Override
+    public void sendInput(int subjectId) {
+        binding.recyclerView.setVisibility(View.GONE);
+        binding.error.setVisibility(View.GONE);
+        binding.loadingProgressBar.setVisibility(View.VISIBLE);
+
+        if (subjectId == 999) {
+            viewModel.fetchAllFromDatabase();
+        } else {
+            viewModel.fetchBySubjectFromDatabase(subjectId);
+        }
+
+        binding.refreshLayout.setRefreshing(false);
     }
 }

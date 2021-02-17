@@ -24,16 +24,15 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class InfographicListViewModel extends AndroidViewModel {
 
-    public MutableLiveData<List<Infographic>> infographicLiveData = new MutableLiveData<List<Infographic>>();
-    public MutableLiveData<Boolean> error = new MutableLiveData<Boolean>();
-    public MutableLiveData<Boolean> notFound = new MutableLiveData<Boolean>();
-    public MutableLiveData<Boolean> loading = new MutableLiveData<Boolean>();
+    public MutableLiveData<List<Infographic>> infographicLiveData = new MutableLiveData<>();
+    public MutableLiveData<Boolean> error = new MutableLiveData<>();
+    public MutableLiveData<Boolean> notFound = new MutableLiveData<>();
+    public MutableLiveData<Boolean> loading = new MutableLiveData<>();
 
     private final InfographicApi infographicApi = ServiceGenerator.createService(InfographicApi.class, getApplication());
     private final CompositeDisposable disposable = new CompositeDisposable();
 
     private final SharedPreferencesHelper preferencesHelper = SharedPreferencesHelper.getInstance(getApplication());
-    private final long refreshTimeMonth = 30 * 24 * 60 * 60 * 1000 * 1000 * 1000L;
 
     public InfographicListViewModel(@NonNull Application application) {
         super(application);
@@ -47,9 +46,10 @@ public class InfographicListViewModel extends AndroidViewModel {
     }
 
     public void refresh() {
-        long updateTime = preferencesHelper.getUpdateTime();
+        long updateTime = preferencesHelper.getInfoUpdateTime();
         long currentTime = System.nanoTime();
-        if (updateTime != 0 && currentTime - updateTime < refreshTimeMonth) {
+        long refreshTime = 30 * 24 * 60 * 60 * 1000 * 1000 * 1000L;
+        if (updateTime != 0 && currentTime - updateTime < refreshTime) {
             fetchAllFromDatabase();
         } else {
             fetchAllFromRemote();
@@ -66,7 +66,6 @@ public class InfographicListViewModel extends AndroidViewModel {
                             @Override
                             public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Infographic> infographics) {
                                 deleteAllFromDatabase(infographics);
-                                Toast.makeText(getApplication(), "Statistical news retrieved from endpoint", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
@@ -91,7 +90,32 @@ public class InfographicListViewModel extends AndroidViewModel {
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Infographic> infographics) {
                         if (!infographics.isEmpty()) {
                             infographicRetrieved(infographics);
-                            Toast.makeText(getApplication(), "Publication retrieved from database", Toast.LENGTH_SHORT).show();
+                        } else {
+                            notFound.setValue(true);
+                            loading.setValue(false);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        error.setValue(true);
+                        loading.setValue(false);
+                        e.printStackTrace();
+                    }
+                }));
+    }
+
+    public void fetchBySubjectFromDatabase(int subjectId) {
+        loading.setValue(true);
+        disposable.add(myDatabase.getInstance(getApplication())
+                .infographicDao().getInfographicBySubject(subjectId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSingleObserver<List<Infographic>>() {
+                    @Override
+                    public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Infographic> infographics) {
+                        if (!infographics.isEmpty()) {
+                            infographicRetrieved(infographics);
                         } else {
                             notFound.setValue(true);
                             loading.setValue(false);
@@ -115,7 +139,7 @@ public class InfographicListViewModel extends AndroidViewModel {
                 .subscribeWith(new DisposableSingleObserver<List<Long>>() {
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Long> results) {
-                        preferencesHelper.saveUpdateTime(System.nanoTime());
+                        preferencesHelper.saveInfoUpdateTime(System.nanoTime());
                         fetchAllFromDatabase();
                     }
 
@@ -128,7 +152,6 @@ public class InfographicListViewModel extends AndroidViewModel {
     }
 
     public void deleteAllFromDatabase(List<Infographic> infographics) {
-        Log.d("delete", "masuk");
         disposable.add(myDatabase.getInstance(getApplication())
                 .infographicDao().deleteAllInfographics()
                 .subscribeOn(Schedulers.io())
