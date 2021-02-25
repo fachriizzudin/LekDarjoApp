@@ -47,7 +47,7 @@ public class PublicationListViewModel extends AndroidViewModel {
     public void refresh() {
         long updateTime = preferencesHelper.getPubUpdateTime();
         long currentTime = System.nanoTime();
-        long refreshTime = 15 * 24 * 60 * 60 * 1000 * 1000 * 1000L;
+        long refreshTime = 30 * 24 * 60 * 60 * 1000 * 1000 * 1000L;
         if (updateTime != 0 && currentTime - updateTime < refreshTime) {
             fetchAllFromDatabase();
         } else {

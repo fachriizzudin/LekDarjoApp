@@ -1,4 +1,4 @@
-package com.lazuardifachri.bps.lekdarjoapp.view;
+ package com.lazuardifachri.bps.lekdarjoapp.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -63,8 +63,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         setupNavigation();
 
+        // androidapp@mail.com
+        // l1e2k3d4r5j6o
+
         // loginApp();
-        SharedPreferencesHelper.getInstance(getApplicationContext()).saveAuthToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbmRyb2lkYXBwQG1haWwuY29tIiwiaWF0IjoxNjExMzc1NTEzLCJleHAiOjI2MTEzNzU1MTN9.Qyy706g2vfLyWFJmKob_skxiwxM6n76OF-MTtkEFj_ce9n4p9eQZLMUq8IY1n0P-AWJkFEt2XCFo-An9Q1PBGg");
+        SharedPreferencesHelper.getInstance(getApplicationContext()).saveAuthToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbmRyb2lkYXBwQG1haWwuY29tIiwiaWF0IjoxNjE0MDY1NTAxLCJleHAiOjI2MTQwNjU1MDF9.ZAEWqEwYJ7LpS8aRckyJ1hlOg_9qbvN0pNghjpm6wAaXJ7c-28iYQKwoFp5Yi1ibxov5lbFReDgA0_MG1K8hjg");
 
         File root = new File(getApplication().getFilesDir().getAbsolutePath());
         if (!root.exists()) {

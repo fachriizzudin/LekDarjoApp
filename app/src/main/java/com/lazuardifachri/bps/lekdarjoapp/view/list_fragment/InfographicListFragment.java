@@ -1,6 +1,8 @@
 package com.lazuardifachri.bps.lekdarjoapp.view.list_fragment;
 
 import android.app.SearchManager;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -104,6 +106,11 @@ public class InfographicListFragment extends Fragment implements InfographicFilt
         viewModel.notFound.observe(getViewLifecycleOwner(), isNotFound -> {
             if (isNotFound instanceof Boolean) {
                 binding.notFound.setVisibility(isNotFound ? View.VISIBLE : View.GONE);
+                binding.notFoundLink.setOnClickListener(v -> {
+                    Intent website;
+                    website = new Intent(Intent.ACTION_VIEW, Uri.parse("https://sidoarjokab.bps.go.id"));
+                    startActivity(website);
+                });
             }
         });
 

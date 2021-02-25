@@ -2,6 +2,7 @@ package com.lazuardifachri.bps.lekdarjoapp.view.list_fragment;
 
 import android.Manifest;
 import android.app.SearchManager;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -154,6 +155,11 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
         viewModel.notFound.observe(getViewLifecycleOwner(), isNotFound -> {
             if (isNotFound != null) {
                 binding.notFound.setVisibility(isNotFound ? View.VISIBLE : View.GONE);
+                binding.notFoundLink.setOnClickListener(v -> {
+                    Intent website;
+                    website = new Intent(Intent.ACTION_VIEW, Uri.parse("https://sidoarjokab.bps.go.id"));
+                    startActivity(website);
+                });
             }
         });
 

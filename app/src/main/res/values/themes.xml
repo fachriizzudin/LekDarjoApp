@@ -60,6 +60,10 @@
         <item name="android:color">@color/white</item>
     </style>
 
+    <style name="Link">
+        <item name="android:color">#0000EE</item>
+    </style>
+
     <style name="DrawerSubText">
         <item name="android:textSize">12sp</item>
         <item name="android:color">@color/white</item>

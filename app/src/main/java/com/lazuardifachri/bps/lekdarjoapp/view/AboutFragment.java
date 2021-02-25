@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.lazuardifachri.bps.lekdarjoapp.databinding.FragmentAboutBinding;
@@ -27,6 +28,8 @@ public class AboutFragment extends Fragment {
         binding = FragmentAboutBinding.inflate(inflater, container, false);
 
         View view = binding.getRoot();
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Tentang");
 
         return view;
     }
@@ -84,6 +87,11 @@ public class AboutFragment extends Fragment {
             Intent mail = new Intent(Intent.ACTION_SENDTO);
             mail.setData(Uri.parse("mailto:bps3515@bps.go.id"));
             startActivity(mail);
+        });
+
+        binding.websiteIcon.setOnClickListener(v -> {
+            Intent website = new Intent(Intent.ACTION_VIEW, Uri.parse("https://sidoarjokab.bps.go.id"));
+            startActivity(website);
         });
     }
 }
