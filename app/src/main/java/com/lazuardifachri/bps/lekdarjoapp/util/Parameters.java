@@ -42,9 +42,10 @@ public class Parameters {
         socialCategories.add(new Category(11, "Perumahan", kependudukan));
         socialCategories.add(new Category(12, "Politik dan Keamanan", kependudukan));
         socialCategories.add(new Category(13, "Sosial Budaya", kependudukan));
-        socialCategories.add(new Category(14, "Tenaga Kerja", kependudukan));
+
 
         economyCategories.add(new Category(999, "Semua", ekonomi));
+        economyCategories.add(new Category(14, "Tenaga Kerja", kependudukan));
         economyCategories.add(new Category(15, "Energi", ekonomi));
         economyCategories.add(new Category(16, "Industri", ekonomi));
         economyCategories.add(new Category(17, "Inflasi", ekonomi));

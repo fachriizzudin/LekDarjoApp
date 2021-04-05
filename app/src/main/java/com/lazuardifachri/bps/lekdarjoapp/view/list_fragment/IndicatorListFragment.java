@@ -117,6 +117,9 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerView.setAdapter(adapter);
 
+        binding.error.setVisibility(View.GONE);
+        binding.notFound.setVisibility(View.GONE);
+
         viewModel.refresh(subjectId);
 
         binding.refreshLayout.setOnRefreshListener(() -> {
@@ -133,6 +136,8 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
     public void onResume() {
         super.onResume();
         setHasOptionsMenu(true);
+        binding.error.setVisibility(View.GONE);
+        binding.notFound.setVisibility(View.GONE);
         observeViewModel();
     }
 
@@ -140,20 +145,20 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
     private void observeViewModel() {
         Log.d("observe", "run " + subjectId);
         viewModel.indicatorLiveData.observe(getViewLifecycleOwner(), indicators -> {
-            if (indicators != null) {
+            if (indicators instanceof List) {
                 adapter.updateIndicator(indicators);
                 binding.recyclerView.setVisibility(View.VISIBLE);
             }
         });
 
         viewModel.error.observe(getViewLifecycleOwner(), isError -> {
-            if (isError != null) {
+            if (isError instanceof Boolean) {
                 binding.error.setVisibility(isError ? View.VISIBLE : View.GONE);
             }
         });
 
         viewModel.notFound.observe(getViewLifecycleOwner(), isNotFound -> {
-            if (isNotFound != null) {
+            if (isNotFound instanceof Boolean) {
                 binding.notFound.setVisibility(isNotFound ? View.VISIBLE : View.GONE);
                 binding.notFoundLink.setOnClickListener(v -> {
                     Intent website;
@@ -164,7 +169,7 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
         });
 
         viewModel.loading.observe(getViewLifecycleOwner(), isLoading -> {
-            if (isLoading != null) {
+            if (isLoading instanceof Boolean) {
                 binding.loadingProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
                 if (isLoading) {
                     binding.error.setVisibility(View.GONE);
@@ -234,39 +239,14 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
 
 
     @Override
-    public void sendInput(int categoryId, String monthString, int year) {
+    public void sendInput(int categoryId) {
 
         binding.recyclerView.setVisibility(View.GONE);
         binding.error.setVisibility(View.GONE);
         binding.loadingProgressBar.setVisibility(View.VISIBLE);
 
-        int filterCase = 0;
-
-        // kategori semua
-        if (categoryId == 999) filterCase++;
-
-        // month = 0
-        if (monthString.equals("00")) filterCase = filterCase + 10;
-
-        switch (filterCase) {
-            case 0:
-                // fetch by category and month year
-                viewModel.fetchByCategoryFromDatabase(categoryId, monthString, year);
-                binding.refreshLayout.setRefreshing(false);
-            case 1:
-                // fetch by month and year
-                viewModel.fetchByMonthYearFromDatabase(subjectId, monthString, year);
-                binding.refreshLayout.setRefreshing(false);
-                break;
-            case 10:
-                // fetch by category and year
-                viewModel.fetchByCategoryFromDatabase(categoryId, year);
-                binding.refreshLayout.setRefreshing(false);
-            case 11:
-                // fetch by year
-                viewModel.fetchByYearFromDatabase(subjectId, year);
-                binding.refreshLayout.setRefreshing(false);
-        }
+        viewModel.fetchByCategoryFromDatabase(categoryId);
+        binding.refreshLayout.setRefreshing(false);
     }
 
 

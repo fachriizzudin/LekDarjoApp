@@ -69,7 +69,7 @@ public class SharedPreferencesHelper {
         return pref.getLong(INFO_TIME, 0);
     }
 
-    public void saveAuthToken(String token) { pref.edit().putString(TOKEN, token).apply(); }
+    public void saveAuthToken(String token) { pref.edit().putString(TOKEN, token).commit(); }
 
     public String fetchAuthToken() {
         return pref.getString(TOKEN, null);

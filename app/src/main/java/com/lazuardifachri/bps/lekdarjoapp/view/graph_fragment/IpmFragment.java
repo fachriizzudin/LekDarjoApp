@@ -58,7 +58,7 @@ public class IpmFragment extends Fragment implements OnSeekChangeListener {
         // get chart view
         lineChart = binding.chart;
 
-        lineChart = GraphUtil.setChart(lineChart);
+        lineChart = GraphUtil.setChart(lineChart, 1);
 
         viewModel.ipmDataLive.observe(getViewLifecycleOwner(), graphData -> {
 
@@ -90,7 +90,7 @@ public class IpmFragment extends Fragment implements OnSeekChangeListener {
                 ySeekBar.setMin(0.25f);
                 ySeekBar.setProgress(2);
 
-                lineChart = GraphUtil.setChartData(lineChart, graphData, minYear, 2);
+                lineChart = GraphUtil.setChartData(lineChart, graphData, minYear, 2, 1);
 
             }
 
@@ -109,7 +109,7 @@ public class IpmFragment extends Fragment implements OnSeekChangeListener {
 
     @Override
     public void onSeeking(SeekParams seekParams) {
-        lineChart = GraphUtil.setChartData(lineChart, this.graphData, xSeekBar.getProgress(), ySeekBar.getProgressFloat());
+        lineChart = GraphUtil.setChartData(lineChart, this.graphData, xSeekBar.getProgress(), ySeekBar.getProgressFloat(), 1);
     }
 
     @Override

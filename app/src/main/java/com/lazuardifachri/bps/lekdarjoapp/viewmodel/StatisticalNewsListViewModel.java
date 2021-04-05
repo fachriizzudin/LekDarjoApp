@@ -2,6 +2,7 @@ package com.lazuardifachri.bps.lekdarjoapp.viewmodel;
 
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -50,8 +51,10 @@ public class StatisticalNewsListViewModel extends AndroidViewModel {
         long currentTime = System.nanoTime();
         long refreshTimeMonth = 30 * 24 * 60 * 60 * 1000 * 1000 * 1000L;
         if (updateTime != 0 && currentTime - updateTime < refreshTimeMonth) {
+            Log.d("prefStat", "database");
             fetchAllFromDatabase();
         } else {
+            Log.d("prefStat", "remote");
             fetchAllFromRemote();
         }
     }

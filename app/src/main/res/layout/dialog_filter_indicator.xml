@@ -22,66 +22,6 @@
         android:layout_height="wrap_content"
         android:prompt="@string/spinner_prompt" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2">
-
-        <TextView
-            android:id="@+id/monthDialogText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="5dp"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:text="Bulan :" />
-
-        <TextView
-            android:id="@+id/yearDialogText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="5dp"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:text="Tahun :" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2">
-
-        <NumberPicker
-            android:id="@+id/monthDialogNumberPicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="1" />
-
-        <NumberPicker
-            android:id="@+id/yearDialogNumberPicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="1" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/information"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="5dp"
-        android:layout_weight="1"
-        android:gravity="center_horizontal"
-        android:text="*Pilih bulan 0 untuk menampilkan data dalam satu tahun"
-        android:textSize="10sp" />
-
     <Button
         android:id="@+id/dialogSearchButton"
         android:layout_width="match_parent"

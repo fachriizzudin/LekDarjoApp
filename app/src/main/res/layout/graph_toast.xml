@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/graph_toast"
+    android:orientation="horizontal"
+    android:background="@drawable/toast_background">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        style="@style/Title"
+        android:text="Mohon tunggu, pembaruan awal biasanya cukup lama (15 detik)"/>
+
+</LinearLayout>

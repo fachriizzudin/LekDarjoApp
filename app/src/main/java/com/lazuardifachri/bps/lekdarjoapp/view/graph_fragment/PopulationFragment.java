@@ -56,8 +56,8 @@ public class PopulationFragment extends Fragment implements OnSeekChangeListener
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel.refresh(2);
-        viewModel.refresh(3);
+        viewModel.refresh(7);
+        viewModel.refresh(8);
 
         xSeekBar = (IndicatorSeekBar) binding.xSeekBar;
 

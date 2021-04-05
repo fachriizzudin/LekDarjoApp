@@ -28,7 +28,7 @@ public class IndicatorFilterDialogFragment extends DialogFragment {
     List<Category> categories;
 
     public interface OnFilterSelected {
-        void sendInput(int categoryId, String monthString, int year);
+        void sendInput(int categoryId);
     }
 
     IndicatorFilterDialogFragment.OnFilterSelected onFilterSelected;
@@ -64,31 +64,11 @@ public class IndicatorFilterDialogFragment extends DialogFragment {
         categorySpinner.setAdapter(new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, categories));
         categorySpinner.setSelection(0);
 
-        NumberPicker monthNumberPicker = binding.monthDialogNumberPicker;
-        monthNumberPicker.setMinValue(0);
-        monthNumberPicker.setMaxValue(12);
-        monthNumberPicker.setValue(0);
-
-        NumberPicker yearNumberPicker = binding.yearDialogNumberPicker;
-        yearNumberPicker.setMinValue(2000);
-        yearNumberPicker.setMaxValue(2100);
-        yearNumberPicker.setValue(2020);
-
         binding.dialogSearchButton.setOnClickListener(v -> {
             Category category = (Category) categorySpinner.getSelectedItem();
             int categoryId = category.getId();
 
-            int month = monthNumberPicker.getValue();
-
-            String monthString;
-            if (month < 10) {
-                monthString = "0" + month;
-            } else {
-                monthString = String.valueOf(month);
-            }
-            int year = yearNumberPicker.getValue();
-
-            onFilterSelected.sendInput(categoryId, monthString, year);
+            onFilterSelected.sendInput(categoryId);
             dismiss();
         });
 

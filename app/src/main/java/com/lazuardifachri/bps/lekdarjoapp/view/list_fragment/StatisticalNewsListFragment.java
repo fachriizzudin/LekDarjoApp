@@ -28,7 +28,11 @@ import com.lazuardifachri.bps.lekdarjoapp.view.adapter.StatisticalNewsAdapter;
 import com.lazuardifachri.bps.lekdarjoapp.view.adapter.StatisticalNewsObject;
 import com.lazuardifachri.bps.lekdarjoapp.viewmodel.StatisticalNewsListViewModel;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -123,14 +127,14 @@ public class StatisticalNewsListFragment extends Fragment implements Statistical
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.news_action_menu, menu);
 
-        MenuItem filterMenuItem = menu.findItem(R.id.filterAction);
-
-        filterMenuItem.setOnMenuItemClickListener(item -> {
-            StatisticalNewsFilterDialogFragment dialog = new StatisticalNewsFilterDialogFragment();
-            dialog.setTargetFragment(this, 0);
-            dialog.show(getParentFragmentManager(), "dialog");
-            return true;
-        });
+//        MenuItem filterMenuItem = menu.findItem(R.id.filterAction);
+//
+//        filterMenuItem.setOnMenuItemClickListener(item -> {
+//            StatisticalNewsFilterDialogFragment dialog = new StatisticalNewsFilterDialogFragment();
+//            dialog.setTargetFragment(this, 0);
+//            dialog.show(getParentFragmentManager(), "dialog");
+//            return true;
+//        });
 
         MenuItem refreshMenuItem = menu.findItem(R.id.refreshAction);
 
@@ -218,7 +222,8 @@ public class StatisticalNewsListFragment extends Fragment implements Statistical
         LinkedHashMap<String, Set<StatisticalNews>> groupedHashMap = new LinkedHashMap<>();
         Set<StatisticalNews> set = null;
         for (StatisticalNews news : statisticalNews) {
-            String hashMapKey = news.getReleaseDate();
+            String hashMapKey = "01-" + news.getReleaseDate().substring(3);
+            Log.d("hashmapkey", hashMapKey);
             if (groupedHashMap.containsKey(hashMapKey)) {
                 groupedHashMap.get(hashMapKey).add(news);
             } else {
@@ -227,7 +232,22 @@ public class StatisticalNewsListFragment extends Fragment implements Statistical
                 groupedHashMap.put(hashMapKey, set);
             }
         }
-        generateListFromMap(groupedHashMap);
+        ArrayList<String> sortedKeys = new ArrayList<>(groupedHashMap.keySet());
+        LinkedHashMap<String, Set<StatisticalNews>> sortedGroupedHashMap = new LinkedHashMap<>();
+        Collections.sort(sortedKeys, (o1, o2) -> {
+            DateFormat f = new SimpleDateFormat("dd-MM-yyyy");
+            try {
+                return f.parse(o2).compareTo(f.parse(o1));
+            } catch (ParseException e) {
+                throw new IllegalArgumentException(e);
+            }
+        });
+
+        for (String key: sortedKeys) {
+            sortedGroupedHashMap.put(key, groupedHashMap.get(key));
+        }
+
+        generateListFromMap(sortedGroupedHashMap);
     }
 
 

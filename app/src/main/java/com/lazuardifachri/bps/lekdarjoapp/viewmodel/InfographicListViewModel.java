@@ -50,8 +50,10 @@ public class InfographicListViewModel extends AndroidViewModel {
         long currentTime = System.nanoTime();
         long refreshTime = 30 * 24 * 60 * 60 * 1000 * 1000 * 1000L;
         if (updateTime != 0 && currentTime - updateTime < refreshTime) {
+            Log.d("prefPub", "database");
             fetchAllFromDatabase();
         } else {
+            Log.d("prefPub", "remote");
             fetchAllFromRemote();
         }
     }

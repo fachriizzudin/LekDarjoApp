@@ -51,7 +51,7 @@ public class RiceProductionFragment extends Fragment implements OnSeekChangeList
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel.refresh(7);
+        viewModel.refresh(9);
 
         xSeekBar = (IndicatorSeekBar) binding.xSeekBar;
         ySeekBar = (IndicatorSeekBar) binding.ySeekBar;
@@ -59,7 +59,7 @@ public class RiceProductionFragment extends Fragment implements OnSeekChangeList
         // get chart view
         lineChart = binding.chart;
 
-        lineChart = GraphUtil.setChart(lineChart);
+        lineChart = GraphUtil.setChart(lineChart, 1);
 
         viewModel.riceProductionDataLive.observe(getViewLifecycleOwner(), graphData -> {
 
@@ -91,7 +91,7 @@ public class RiceProductionFragment extends Fragment implements OnSeekChangeList
                 ySeekBar.setMin(0.25f);
                 ySeekBar.setProgress(2);
 
-                lineChart = GraphUtil.setChartData(lineChart, graphData, minYear, 2);
+                lineChart = GraphUtil.setChartData(lineChart, graphData, minYear, 2, 1);
 
             }
 
@@ -108,7 +108,7 @@ public class RiceProductionFragment extends Fragment implements OnSeekChangeList
 
     @Override
     public void onSeeking(SeekParams seekParams) {
-        lineChart = GraphUtil.setChartData(lineChart, this.graphData, xSeekBar.getProgress(), ySeekBar.getProgressFloat());
+        lineChart = GraphUtil.setChartData(lineChart, this.graphData, xSeekBar.getProgress(), ySeekBar.getProgressFloat(), 1);
     }
 
     @Override

@@ -94,6 +94,7 @@ public class IndicatorListViewModel extends AndroidViewModel {
                             public void onError(@NonNull Throwable e) {
                                 error.setValue(true);
                                 loading.setValue(false);
+
                                 e.printStackTrace();
                             }
                         })
@@ -158,6 +159,32 @@ public class IndicatorListViewModel extends AndroidViewModel {
         String likeYear = "%" + year;
         disposable.add(myDatabase.getInstance(getApplication())
                 .indicatorDao().getIndicatorByCategory(categoryId, likeYear)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSingleObserver<List<Indicator>>() {
+                    @Override
+                    public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Indicator> indicators) {
+                        if (!indicators.isEmpty()) {
+                            indicatorRetrieved(indicators);
+                        } else {
+                            notFound.setValue(true);
+                            loading.setValue(false);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        notFound.setValue(true);
+                        loading.setValue(false);
+                        e.printStackTrace();
+                    }
+                }));
+    }
+
+    public void fetchByCategoryFromDatabase(int categoryId) {
+        loading.setValue(true);
+        disposable.add(myDatabase.getInstance(getApplication())
+                .indicatorDao().getIndicatorByCategory(categoryId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableSingleObserver<List<Indicator>>() {

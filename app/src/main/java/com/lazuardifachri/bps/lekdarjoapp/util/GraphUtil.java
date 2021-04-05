@@ -38,8 +38,8 @@ import java.util.Locale;
 
 public class GraphUtil {
 
-    public static LineChart setChartData(LineChart lineChart, GraphData graphData, int seekBarX, double seekBarY) {
-
+    public static LineChart setChartData(LineChart lineChart, GraphData graphData, int seekBarX, double seekBarY, int type) {
+        Log.d("setchartdata", "masuk");
         ArrayList<Entry> values = new ArrayList<>();
 
         double sum = 0;
@@ -82,14 +82,28 @@ public class GraphUtil {
             LineData data = new LineData(dataSet);
             data.setValueTextColor(Color.BLACK);
             data.setValueTextSize(15f);
-            data.setValueFormatter(new ValueFormatter() {
-                @Override
-                public String getFormattedValue(float value) {
-                    BigDecimal bd = new BigDecimal(Float.toString(value));
-                    bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
-                    return String.valueOf(bd.floatValue());
-                }
-            });
+
+            if (type == 1) {
+                Log.d("setchartdata type", String.valueOf(type));
+                data.setValueFormatter(new ValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        BigDecimal bd = new BigDecimal(Float.toString(value));
+                        bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+                        return String.valueOf(bd.floatValue());
+                    }
+                });
+            } else if (type == 3) {
+                Log.d("setchartdata type", String.valueOf(type));
+                Log.d("type", String.valueOf(type));
+                data.setValueFormatter(new ValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return String.format("%.2f",value/1000000.0);
+                        //return String.valueOf(bd.floatValue());
+                    }
+                });
+            }
 
             // set data
             lineChart.setData(data);
@@ -104,7 +118,8 @@ public class GraphUtil {
 
     }
 
-    public static LineChart setChart(LineChart lineChart) {
+    public static LineChart setChart(LineChart lineChart, int type) {
+        Log.d("setchart", "masuk");
         lineChart.setBackgroundColor(Color.WHITE);
 
         // no description text
@@ -135,15 +150,28 @@ public class GraphUtil {
         xAxis.setTextColor(Color.BLACK);
         xAxis.setCenterAxisLabels(false);
         xAxis.setGranularity(1f);
-        xAxis.setValueFormatter(new ValueFormatter() {
-            @SuppressLint("DefaultLocale")
-            @Override
-            public String getFormattedValue(float value) {
-                BigDecimal bd = new BigDecimal(Float.toString(value));
-                bd = bd.setScale(0, BigDecimal.ROUND_HALF_UP);
-                return String.format("%.0f", bd.floatValue());
-            }
-        });
+
+        if (type == 1) {
+            Log.d("setchart type", String.valueOf(type));
+            xAxis.setValueFormatter(new ValueFormatter() {
+                @SuppressLint("DefaultLocale")
+                @Override
+                public String getFormattedValue(float value) {
+                    BigDecimal bd = new BigDecimal(Float.toString(value));
+                    bd = bd.setScale(0, BigDecimal.ROUND_HALF_UP);
+                    return String.format("%.0f", bd.floatValue());
+                    }
+            });
+        } else if (type == 3) {
+            Log.d("setchart type", String.valueOf(type));
+            xAxis.setValueFormatter(new ValueFormatter() {
+                @SuppressLint("DefaultLocale")
+                @Override
+                public String getFormattedValue(float value) {
+                    return String.format("%.2f",value/1000000.0);
+                }
+            });
+        }
 
         // left y Axis
         YAxis leftAxis = lineChart.getAxisLeft();

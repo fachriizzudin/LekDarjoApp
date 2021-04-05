@@ -41,8 +41,20 @@
             android:id="@+id/actionMainToRiceProduction"
             app:destination="@id/riceProductionFragment" />
         <action
-            android:id="@+id/actionMainToRiceProductivity"
-            app:destination="@id/riceProductivityFragment" />
+            android:id="@+id/actionMainToIndustry"
+            app:destination="@id/industryFragment" />
+        <action
+            android:id="@+id/actionMainToLuasPanen"
+            app:destination="@id/luasPanenFragment" />
+        <action
+            android:id="@+id/actionMainToPDRB"
+            app:destination="@id/PDRBFragment" />
+        <action
+            android:id="@+id/actionMainToInflation"
+            app:destination="@id/inflationFragment" />
+        <action
+            android:id="@+id/actionMaintToGiniRatio"
+            app:destination="@id/giniRatioFragment" />
     </fragment>
     <fragment
         android:id="@+id/publicationListFragment"
@@ -144,7 +156,23 @@
         android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.RiceProductionFragment"
         android:label="RiceProductionFragment" />
     <fragment
-        android:id="@+id/riceProductivityFragment"
-        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.RiceProductivityFragment"
-        android:label="RiceProductivityFragment" />
+        android:id="@+id/inflationFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.InflationFragment"
+        android:label="InflationFragment" />
+    <fragment
+        android:id="@+id/PDRBFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.PDRBFragment"
+        android:label="PDRBFragment" />
+    <fragment
+        android:id="@+id/luasPanenFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.LuasPanenFragment"
+        android:label="LuasPanenFragment" />
+    <fragment
+        android:id="@+id/industryFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.IndustryFragment"
+        android:label="IndustryFragment" />
+    <fragment
+        android:id="@+id/giniRatioFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.GiniRatioFragment"
+        android:label="GiniRatioFragment" />
 </navigation>

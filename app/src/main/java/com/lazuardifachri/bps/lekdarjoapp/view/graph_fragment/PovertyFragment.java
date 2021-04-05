@@ -51,7 +51,7 @@ public class PovertyFragment extends Fragment implements OnSeekChangeListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel.refresh(4);
+        viewModel.refresh(1);
 
         xSeekBar = (IndicatorSeekBar) binding.xSeekBar;
         ySeekBar = (IndicatorSeekBar) binding.ySeekBar;
@@ -59,7 +59,7 @@ public class PovertyFragment extends Fragment implements OnSeekChangeListener {
         // get chart view
         lineChart = binding.chart;
 
-        lineChart = GraphUtil.setChart(lineChart);
+        lineChart = GraphUtil.setChart(lineChart, 1);
 
         viewModel.povertyDataLive.observe(getViewLifecycleOwner(), graphData -> {
 
@@ -91,7 +91,7 @@ public class PovertyFragment extends Fragment implements OnSeekChangeListener {
                 ySeekBar.setMin(0.25f);
                 ySeekBar.setProgress(2);
 
-                lineChart = GraphUtil.setChartData(lineChart, graphData, minYear, 2);
+                lineChart = GraphUtil.setChartData(lineChart, graphData, minYear, 2, 1);
 
             }
 
@@ -108,7 +108,7 @@ public class PovertyFragment extends Fragment implements OnSeekChangeListener {
 
     @Override
     public void onSeeking(SeekParams seekParams) {
-        lineChart = GraphUtil.setChartData(lineChart, this.graphData, xSeekBar.getProgress(), ySeekBar.getProgressFloat());
+        lineChart = GraphUtil.setChartData(lineChart, this.graphData, xSeekBar.getProgress(), ySeekBar.getProgressFloat(), 1);
     }
 
     @Override

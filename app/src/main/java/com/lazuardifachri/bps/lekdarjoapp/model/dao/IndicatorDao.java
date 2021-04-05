@@ -20,6 +20,9 @@ public interface IndicatorDao {
     @Query("SELECT * FROM indicator WHERE subject_id =:subjectId")
     Single<List<Indicator>> getIndicatorBySubject(int subjectId);
 
+    @Query("SELECT * FROM indicator WHERE category_id =:categoryId")
+    Single<List<Indicator>> getIndicatorByCategory(int categoryId);
+
     @Query("SELECT * FROM indicator WHERE category_id =:categoryId AND release_date LIKE :monthYear")
     Single<List<Indicator>> getIndicatorByCategory(int categoryId, String monthYear);
 
