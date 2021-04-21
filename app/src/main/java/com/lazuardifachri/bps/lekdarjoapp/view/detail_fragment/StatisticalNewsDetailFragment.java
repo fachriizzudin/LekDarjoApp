@@ -33,6 +33,7 @@ public class StatisticalNewsDetailFragment extends Fragment {
     private StatisticalNewsDetailViewModel viewModel;
 
     private static final int PERMISSION_REQUEST_CODE = 1;
+    private int id;
     private String title;
     private String documentUri;
     private int uuid;
@@ -54,6 +55,7 @@ public class StatisticalNewsDetailFragment extends Fragment {
 
         if (getArguments() != null) {
             uuid = StatisticalNewsDetailFragmentArgs.fromBundle(getArguments()).getUuid();
+            Log.d("uuid statnews", String.valueOf(uuid));
             if (uuid != 0) {
                 viewModel.checkIfStatisticalNewsExistFromDatabase(uuid);
             }
@@ -62,16 +64,17 @@ public class StatisticalNewsDetailFragment extends Fragment {
     }
 
     private void observeViewModel() {
-        viewModel.statisticalNewsLiveData.observe(getViewLifecycleOwner(), publication -> {
-            if (publication != null && getContext() != null) {
-                binding.setStatisticalNews(publication);
-                title = publication.getTitle();
-                documentUri = publication.getDocumentUri();
+        viewModel.statisticalNewsLiveData.observe(getViewLifecycleOwner(), statisticalNews -> {
+            if (statisticalNews != null && getContext() != null) {
+                binding.setStatisticalNews(statisticalNews);
+                id = statisticalNews.getId();
+                title = statisticalNews.getTitle();
+                documentUri = statisticalNews.getDocumentUri();
                 binding.downloadActionFab.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_download));
                 binding.downloadActionFab.setOnClickListener(v -> {
                     if (checkPermission()) {
                         try {
-                            viewModel.fetchFileFromRemote(documentUri, title);
+                            viewModel.fetchFileFromRemote(id, documentUri, title);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -108,7 +111,7 @@ public class StatisticalNewsDetailFragment extends Fragment {
                     binding.horizontalProgressBar.setVisibility(View.GONE);
                     binding.downloadActionFab.setOnClickListener(v -> {
                         try {
-                            viewModel.fetchFileFromRemote(documentUri, title);
+                            viewModel.fetchFileFromRemote(id, documentUri, title);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -150,7 +153,7 @@ public class StatisticalNewsDetailFragment extends Fragment {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (documentUri != null && title != null) {
                         try {
-                            viewModel.fetchFileFromRemote(documentUri, title);
+                            viewModel.fetchFileFromRemote(id, documentUri, title);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

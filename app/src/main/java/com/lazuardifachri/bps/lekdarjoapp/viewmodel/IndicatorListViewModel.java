@@ -14,9 +14,12 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.material.button.MaterialButton;
 import com.lazuardifachri.bps.lekdarjoapp.R;
+import com.lazuardifachri.bps.lekdarjoapp.model.Download;
 import com.lazuardifachri.bps.lekdarjoapp.model.FileModel;
 import com.lazuardifachri.bps.lekdarjoapp.model.Indicator;
+import com.lazuardifachri.bps.lekdarjoapp.model.Infographic;
 import com.lazuardifachri.bps.lekdarjoapp.model.api.FileDownloadApi;
+import com.lazuardifachri.bps.lekdarjoapp.model.api.FileHeaderApi;
 import com.lazuardifachri.bps.lekdarjoapp.model.api.IndicatorApi;
 import com.lazuardifachri.bps.lekdarjoapp.model.myDatabase;
 import com.lazuardifachri.bps.lekdarjoapp.model.response.IndicatorResponse;
@@ -32,17 +35,25 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.observers.DefaultObserver;
 import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import static androidx.core.content.FileProvider.getUriForFile;
+import static com.lazuardifachri.bps.lekdarjoapp.util.Constant.refreshTime;
 
 public class IndicatorListViewModel extends AndroidViewModel {
 
@@ -70,7 +81,7 @@ public class IndicatorListViewModel extends AndroidViewModel {
     public void refresh(int subjectId) {
         long updateTime = preferencesHelper.getIdxUpdateTime();
         long currentTime = System.nanoTime();
-        long refreshTime = 30 * 24 * 60 * 60 * 1000 * 1000 * 1000L;
+
         if (updateTime != 0 && currentTime - updateTime < refreshTime) {
             fetchBySubjectFromDatabase(subjectId);
         } else {
@@ -87,6 +98,7 @@ public class IndicatorListViewModel extends AndroidViewModel {
                         .subscribeWith(new DisposableSingleObserver<IndicatorResponse>() {
                             @Override
                             public void onSuccess(@NonNull IndicatorResponse response) {
+                                Log.d("response indicators", String.valueOf(response.getIndicators().size()));
                                 deleteAllFromDatabase(response.getIndicators(), subjectId);
                             }
 
@@ -127,118 +139,10 @@ public class IndicatorListViewModel extends AndroidViewModel {
                 }));
     }
 
-    public void fetchByCategoryFromDatabase(int categoryId, String monthString, int year) {
-        loading.setValue(true);
-        String monthYear = "%" + monthString + "-" + year;
-        disposable.add(myDatabase.getInstance(getApplication())
-                .indicatorDao().getIndicatorByCategory(categoryId, monthYear)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<List<Indicator>>() {
-                    @Override
-                    public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Indicator> indicators) {
-                        if (!indicators.isEmpty()) {
-                            indicatorRetrieved(indicators);
-                        } else {
-                            notFound.setValue(true);
-                            loading.setValue(false);
-                        }
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                        notFound.setValue(true);
-                        loading.setValue(false);
-                        e.printStackTrace();
-                    }
-                }));
-    }
-
-    public void fetchByCategoryFromDatabase(int categoryId, int year) {
-        loading.setValue(true);
-        String likeYear = "%" + year;
-        disposable.add(myDatabase.getInstance(getApplication())
-                .indicatorDao().getIndicatorByCategory(categoryId, likeYear)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<List<Indicator>>() {
-                    @Override
-                    public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Indicator> indicators) {
-                        if (!indicators.isEmpty()) {
-                            indicatorRetrieved(indicators);
-                        } else {
-                            notFound.setValue(true);
-                            loading.setValue(false);
-                        }
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                        notFound.setValue(true);
-                        loading.setValue(false);
-                        e.printStackTrace();
-                    }
-                }));
-    }
-
     public void fetchByCategoryFromDatabase(int categoryId) {
         loading.setValue(true);
         disposable.add(myDatabase.getInstance(getApplication())
                 .indicatorDao().getIndicatorByCategory(categoryId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<List<Indicator>>() {
-                    @Override
-                    public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Indicator> indicators) {
-                        if (!indicators.isEmpty()) {
-                            indicatorRetrieved(indicators);
-                        } else {
-                            notFound.setValue(true);
-                            loading.setValue(false);
-                        }
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                        notFound.setValue(true);
-                        loading.setValue(false);
-                        e.printStackTrace();
-                    }
-                }));
-    }
-
-    public void fetchByMonthYearFromDatabase(int subjectId, String month, int year) {
-        loading.setValue(true);
-        String monthYear = "%" + month + "-" + year;
-        disposable.add(myDatabase.getInstance(getApplication())
-                .indicatorDao().getIndicatorByMonthYear(subjectId, monthYear)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<List<Indicator>>() {
-                    @Override
-                    public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Indicator> indicators) {
-                        if (!indicators.isEmpty()) {
-                            indicatorRetrieved(indicators);
-                        } else {
-                            notFound.setValue(true);
-                            loading.setValue(false);
-                        }
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                        notFound.setValue(true);
-                        loading.setValue(false);
-                        e.printStackTrace();
-                    }
-                }));
-    }
-
-    public void fetchByYearFromDatabase(int subjectId, int year) {
-        loading.setValue(true);
-        String likeYear = "%" + year;
-        disposable.add(myDatabase.getInstance(getApplication())
-                .indicatorDao().getIndicatorByMonthYear(subjectId, likeYear)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableSingleObserver<List<Indicator>>() {
@@ -306,20 +210,31 @@ public class IndicatorListViewModel extends AndroidViewModel {
                 }));
     }
 
-    public void fetchFileFromRemote(String documentUri, String title, MaterialButton downloadButton, ProgressBar downloadProgressBar) throws IOException {
-
-        int fileId = StringUtil.getFileIdFromUri(documentUri);
+    public void fetchFileFromRemote(int id, String documentUri, String title, MaterialButton downloadButton, ProgressBar downloadProgressBar) throws IOException {
+        //String fileId = StringUtil.getFileIdFromUri(documentUri);
+        String fileId = "indicator" + id;
 
         FileDownloadListener indicatorListener = new FileDownloadListener() {
             @Override
-            public String onStartDownload(String fileName) throws IOException {
+            public String onStartDownload(String fileName) {
+                //insertDownloadWaitingList(id);
                 downloadProgressBar.setVisibility(View.VISIBLE);
                 Log.d("indiOnStart", "run");
                 try {
                     File root = new File(getApplication().getFilesDir().getAbsolutePath() + "/documents");
-                    if (!root.exists()) root.mkdirs();
+                    if (!root.exists()) {
+                        if (root.mkdirs()) {
+                            root.setReadable(true, false);
+                            root.setExecutable(true, false);
+                        }
+                    }
                     File destinationFile = new File(getApplication().getFilesDir().getAbsolutePath() + "/documents/" + fileName);
-                    if (!destinationFile.exists()) destinationFile.createNewFile();
+                    if (!destinationFile.exists()) {
+                        if(destinationFile.createNewFile()){
+                            destinationFile.setReadable(true, false);
+                            destinationFile.setExecutable(true,false);
+                        }
+                    }
                     return destinationFile.getAbsolutePath();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -335,26 +250,64 @@ public class IndicatorListViewModel extends AndroidViewModel {
             @Override
             public void onFinishDownload() {
                 Log.d("indiOnFinish", "run");
-
                 downloadProgressBar.setVisibility(View.INVISIBLE);
                 fetchFileNameFromDatabase(fileId, downloadButton);
+                //deleteDownloadWaitingList(id);
             }
 
             @Override
             public void onFailDownload(String errorInfo) {
                 Log.d("errorInfo", errorInfo);
+                //deleteDownloadWaitingList(id);
                 Toast.makeText(getApplication(), "Download Failed", Toast.LENGTH_SHORT).show();
             }
+
         };
 
-        FileDownloadApi indicatorFileDownloadApi = ServiceGenerator.createDownloadService(FileDownloadApi.class, getApplication(), indicatorListener);
-        String fileName = title.replaceAll(" ", "").concat(".xls");;
-        String filePath = indicatorListener.onStartDownload(fileName);
+        FileHeaderApi fileHeaderApi = ServiceGenerator.createService(FileHeaderApi.class, getApplication());
 
+        fileHeaderApi.lookup(documentUri)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DefaultObserver<ResponseBody>() {
+                    @Override
+                    public void onNext(@io.reactivex.rxjava3.annotations.NonNull ResponseBody responseBody) {
+                        Log.d("contentType", responseBody.contentType().toString());
+                        String fileName = title.replaceAll(" ", "");
+                        if (responseBody.contentType().equals("application/vnd.ms-excel")) {
+                            fileName = fileName + ".xls";
+                        } else {
+                            fileName = fileName + ".xlsx";
+                        }
+                        Log.d("filename", fileName);
+                        try {
+                            String filePath = indicatorListener.onStartDownload(fileName);
+                            startDownload(id, documentUri, fileName, filePath, indicatorListener);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
+    }
+
+    public void startDownload(int id, String documentUri, String fileName, String filePath, FileDownloadListener indicatorListener) {
+        FileDownloadApi indicatorFileDownloadApi = ServiceGenerator.createDownloadService(FileDownloadApi.class, getApplication(), indicatorListener);
         indicatorFileDownloadApi.download(documentUri)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
-                .map(responseBody -> responseBody.byteStream()).observeOn(Schedulers.computation())
+                .map(responseBody ->  responseBody.byteStream()).observeOn(Schedulers.computation())
                 .doOnNext(inputStream -> writeFile(inputStream, filePath, indicatorListener)).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<InputStream>() {
                     @Override
@@ -364,7 +317,7 @@ public class IndicatorListViewModel extends AndroidViewModel {
 
                     @Override
                     public void onNext(@io.reactivex.rxjava3.annotations.NonNull InputStream inputStream) {
-                        insertPathToDatabase(documentUri, fileName, filePath, indicatorListener);
+                        insertPathToDatabase(id, fileName, filePath, indicatorListener);
                     }
 
                     @Override
@@ -379,8 +332,8 @@ public class IndicatorListViewModel extends AndroidViewModel {
                 });
     }
 
-    public void insertPathToDatabase(String documentUri, String fileName, String filePath, FileDownloadListener downloadListener) {
-        int fileId = StringUtil.getFileIdFromUri(documentUri);
+    public void insertPathToDatabase(int id, String fileName, String filePath, FileDownloadListener downloadListener) {
+        String fileId = "indicator" + id;
         disposable.add(myDatabase.getInstance(getApplication())
                 .fileModelDao().insertFile(new FileModel(fileId, fileName, filePath))
                 .subscribeOn(Schedulers.io())
@@ -397,6 +350,67 @@ public class IndicatorListViewModel extends AndroidViewModel {
                     }
                 })
         );
+    }
+
+    private void insertDownloadWaitingList(int id) {
+        String fileId = "infographic" + id;
+        disposable.add(myDatabase.getInstance(getApplication())
+                .downloadDao().insertWaitingFile(new Download(fileId))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSingleObserver<Long>() {
+                    @Override
+                    public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull Long aLong) {
+                        Log.d("waiting list", "success");
+                        loading.setValue(true);
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        e.printStackTrace();
+                    }
+                })
+        );
+    }
+
+    private void isDownloading(int id) {
+        String fileId = "infographic" + id;
+        disposable.add(myDatabase.getInstance(getApplication())
+                .downloadDao().isWaitingFileExist(fileId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSingleObserver<Boolean>() {
+                    @Override
+                    public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull Boolean downloading) {
+                        Log.d("is downloading", downloading.toString());
+                        loading.setValue(downloading);
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        e.printStackTrace();
+                    }
+                })
+        );
+    }
+
+
+    public void deleteDownloadWaitingList(int id) {
+        String fileId = "infographic" + id;
+        disposable.add(myDatabase.getInstance(getApplication())
+                .downloadDao().deleteWaitingFile(fileId)
+                .subscribeOn(Schedulers.io())
+                .subscribeWith(new DisposableCompletableObserver() {
+                    @Override
+                    public void onComplete() {
+                        loading.postValue(false);
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        e.printStackTrace();
+                    }
+                }));
     }
 
     private void writeFile(InputStream inputString, String filePath, FileDownloadListener downloadListener) {
@@ -424,7 +438,7 @@ public class IndicatorListViewModel extends AndroidViewModel {
 
     }
 
-    public void fetchFileNameFromDatabase(int fileId, MaterialButton button) {
+    public void fetchFileNameFromDatabase(String fileId, MaterialButton button) {
         disposable.add(myDatabase.getInstance(getApplication())
                 .fileModelDao().getFileName(fileId)
                 .subscribeOn(Schedulers.io())
@@ -448,9 +462,8 @@ public class IndicatorListViewModel extends AndroidViewModel {
                 }));
     }
 
-    public void checkIfFileExistFromDatabase(String documentUri, MaterialButton button) {
-        int fileId = StringUtil.getFileIdFromUri(documentUri);
-        String feature = StringUtils.substringBetween(documentUri, "api/", "/");
+    public void checkIfFileExistFromDatabase(int id, MaterialButton button) {
+        String fileId = "indicator" + id;
         disposable.add(myDatabase.getInstance(getApplication())
                 .fileModelDao().isIndicatorExist(fileId)
                 .subscribeOn(Schedulers.io())
@@ -458,7 +471,14 @@ public class IndicatorListViewModel extends AndroidViewModel {
                 .subscribeWith(new DisposableSingleObserver<Integer>() {
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull Integer exist) {
-                        if (exist > 0) fetchFileNameFromDatabase(fileId, button);
+                        Log.d("filename-"+ fileId, String.valueOf(exist));
+                        if (exist > 0) {
+                            fetchFileNameFromDatabase(fileId, button);
+                            button.setIcon(getApplication().getResources().getDrawable(R.drawable.ic_view));
+                        } else {
+                            button.setIcon(getApplication().getResources().getDrawable(R.drawable.ic_download));
+                        }
+                        isDownloading(id);
                     }
 
                     @Override
@@ -469,18 +489,30 @@ public class IndicatorListViewModel extends AndroidViewModel {
     }
 
     private void readFile(Uri uri) {
+        Log.d("uri", uri.getPath());
         Intent ExcelIntent = new Intent(Intent.ACTION_VIEW);
-        ExcelIntent.setDataAndType(uri, "application/vnd.ms-excel");
+
+        if (getExtensionByStringHandling(uri.getPath()).equals("xls")) {
+            Log.d("excel", "xls");
+            ExcelIntent.setDataAndType(uri, "application/vnd.ms-excel");
+        } else {
+            Log.d("excel", getExtensionByStringHandling(uri.getPath()));
+            ExcelIntent.setDataAndType(uri, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        }
+
         ExcelIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         ExcelIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         ExcelIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         ExcelIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Toast.makeText(getApplication(), uri.getPath(), Toast.LENGTH_SHORT).show();
         try {
             getApplication().startActivity(ExcelIntent);
         } catch (Exception e) {
             Toast.makeText(getApplication(), "No Application available to view Excel", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private String getExtensionByStringHandling(String uri) {
+        return uri.substring(uri.lastIndexOf(".") + 1);
     }
 
     @Override

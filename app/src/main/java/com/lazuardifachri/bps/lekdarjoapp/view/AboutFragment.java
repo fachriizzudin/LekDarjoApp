@@ -79,7 +79,7 @@ public class AboutFragment extends Fragment {
 
         binding.phoneIcon.setOnClickListener(v -> {
             Intent call = new Intent(Intent.ACTION_DIAL);
-            call.setData(Uri.parse("tel:0318946473"));
+            call.setData(Uri.parse("tel:08229903515"));
             startActivity(call);
         });
 

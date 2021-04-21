@@ -2,6 +2,7 @@ package com.lazuardifachri.bps.lekdarjoapp.view.list_fragment;
 
 import android.Manifest;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -54,6 +55,7 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
     private static final int PERMISSION_REQUEST_CODE = 1;
 
     private int subjectId;
+    private int id;
     private String title;
     private String documentUri;
 
@@ -84,11 +86,13 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
             public void onIndicatorDownloadClick(View button, View progressBar, Indicator indicator) {
                 downloadButton = (MaterialButton) button;
                 downloadProgressBar = (ProgressBar) progressBar;
+                id = indicator.getId();
                 documentUri = indicator.getDocumentUri();
                 title = indicator.getTitle();
+                Log.d("click indicator", indicator.getDocumentUri());
                 try {
                     if (checkPermission()) {
-                        viewModel.fetchFileFromRemote(indicator.getDocumentUri(), indicator.getTitle(), downloadButton, downloadProgressBar);
+                        viewModel.fetchFileFromRemote(id, documentUri, indicator.getTitle(), downloadButton, downloadProgressBar);
                     } else {
                         requestPermission();
                     }
@@ -99,9 +103,8 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
 
             @Override
             public void checkIfFileExist(View v, Indicator indicator) {
-                Log.d("checkIfFileExist", "run");
                 downloadButton = (MaterialButton) v;
-                viewModel.checkIfFileExistFromDatabase(indicator.getDocumentUri(), downloadButton);
+                viewModel.checkIfFileExistFromDatabase(indicator.getId(), downloadButton);
             }
         });
 
@@ -121,6 +124,7 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
         binding.notFound.setVisibility(View.GONE);
 
         viewModel.refresh(subjectId);
+        observeViewModel();
 
         binding.refreshLayout.setOnRefreshListener(() -> {
             binding.recyclerView.setVisibility(View.GONE);
@@ -138,15 +142,13 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
         setHasOptionsMenu(true);
         binding.error.setVisibility(View.GONE);
         binding.notFound.setVisibility(View.GONE);
-        observeViewModel();
     }
 
-
     private void observeViewModel() {
-        Log.d("observe", "run " + subjectId);
         viewModel.indicatorLiveData.observe(getViewLifecycleOwner(), indicators -> {
             if (indicators instanceof List) {
                 adapter.updateIndicator(indicators);
+                Log.d("indicator length", String.valueOf(indicators.size()));
                 binding.recyclerView.setVisibility(View.VISIBLE);
             }
         });
@@ -237,7 +239,6 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-
     @Override
     public void sendInput(int categoryId) {
 
@@ -248,8 +249,6 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
         viewModel.fetchByCategoryFromDatabase(categoryId);
         binding.refreshLayout.setRefreshing(false);
     }
-
-
 
     private boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -268,7 +267,7 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (documentUri != null && title != null) {
                         try {
-                            viewModel.fetchFileFromRemote(documentUri, title, downloadButton, downloadProgressBar);
+                            viewModel.fetchFileFromRemote(id, documentUri, title, downloadButton, downloadProgressBar);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

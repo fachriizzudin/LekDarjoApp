@@ -21,6 +21,8 @@ import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
+import static com.lazuardifachri.bps.lekdarjoapp.util.Constant.refreshTime;
+
 public class PublicationListViewModel extends AndroidViewModel {
 
     public MutableLiveData<List<Publication>> publicationLiveData = new MutableLiveData<>();
@@ -47,7 +49,6 @@ public class PublicationListViewModel extends AndroidViewModel {
     public void refresh() {
         long updateTime = preferencesHelper.getPubUpdateTime();
         long currentTime = System.nanoTime();
-        long refreshTime = 30 * 24 * 60 * 60 * 1000 * 1000 * 1000L;
         if (updateTime != 0 && currentTime - updateTime < refreshTime) {
             fetchAllFromDatabase();
         } else {

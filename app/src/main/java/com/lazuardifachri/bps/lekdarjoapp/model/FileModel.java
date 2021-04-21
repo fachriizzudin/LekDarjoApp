@@ -10,24 +10,24 @@ public class FileModel {
     @PrimaryKey(autoGenerate = true)
     private int uuid;
 
-    private int id;
+    private String id;
 
     @ColumnInfo(name = "file_name")
     private String fileName;
 
     private String path;
 
-    public FileModel(int id, String fileName, String path) {
+    public FileModel(String id, String fileName, String path) {
         this.id = id;
         this.fileName = fileName;
         this.path = path;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

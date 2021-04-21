@@ -28,15 +28,13 @@ public class InfographicDetailFragment extends Fragment {
 
     private FragmentInfographicDetailBinding binding;
     private InfographicDetailViewModel viewModel;
-    private FileModelViewModel fileModelViewModel;
 
-    private MenuItem saveAction;
     private MenuItem shareAction;
 
-    private static final int PERMISSION_REQUEST_CODE = 1;
-    private int uuid;
-    private String imageUri;
+    private int id;
     private String title;
+    private String imageUri;
+    private int uuid;
 
     public InfographicDetailFragment() {
         // Required empty public constructor
@@ -63,8 +61,9 @@ public class InfographicDetailFragment extends Fragment {
         viewModel.infographicLiveData.observe(getViewLifecycleOwner(), infographic -> {
             if (infographic != null && getContext() != null) {
                 binding.setInfographic(infographic);
-                imageUri = infographic.getImageUri();
+                id = infographic.getId();
                 title = infographic.getTitle();
+                imageUri = infographic.getImageUri();
             }
         });
         viewModel.pubPaletteLiveData.observe(getViewLifecycleOwner(), colorPalette -> {
@@ -73,11 +72,6 @@ public class InfographicDetailFragment extends Fragment {
         });
         viewModel.filePathUri.observe(getViewLifecycleOwner(), uri -> {
             if (uri != null && getContext() != null) {
-                saveAction.setIcon(getContext().getResources().getDrawable(R.drawable.ic_saved));
-                saveAction.setOnMenuItemClickListener(v -> {
-                    Toast.makeText(getContext(), "Image Downloaded", Toast.LENGTH_SHORT).show();
-                    return true;
-                });
                 shareAction.setOnMenuItemClickListener(v -> {
                     shareImage(uri);
                     return true;
@@ -88,18 +82,12 @@ public class InfographicDetailFragment extends Fragment {
         viewModel.downloadLoading.observe(getViewLifecycleOwner(), isLoading -> {
             if (isLoading != null && getContext() != null) {
                 if (isLoading) {
-                    Log.d("fragment loading", "yes");
                     binding.horizontalProgressBar.setVisibility(View.VISIBLE);
-                    saveAction.setOnMenuItemClickListener(v -> {
-                        Toast.makeText(getContext(), "Please Wait", Toast.LENGTH_SHORT).show();
-                        return true;
-                    });
                     shareAction.setOnMenuItemClickListener(v -> {
                         Toast.makeText(getContext(), "Please Wait", Toast.LENGTH_SHORT).show();
                         return true;
                     });
                 } else {
-                    Log.d("fragment loading", "no");
                     binding.horizontalProgressBar.setVisibility(View.GONE);
                 }
             }
@@ -108,9 +96,9 @@ public class InfographicDetailFragment extends Fragment {
             if (isError != null && getContext() != null) {
                 if (isError) {
                     binding.horizontalProgressBar.setVisibility(View.GONE);
-                    saveAction.setOnMenuItemClickListener(v -> {
+                    shareAction.setOnMenuItemClickListener(v -> {
                         try {
-                            viewModel.fetchFileFromRemote(imageUri, title);
+                            viewModel.fetchFileFromRemote(id, imageUri, title);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -125,33 +113,31 @@ public class InfographicDetailFragment extends Fragment {
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("image/jpeg");
         share.putExtra(Intent.EXTRA_STREAM, uri);
-        startActivity(Intent.createChooser(share, "Share Image"));
+        //startActivity(Intent.createChooser(share, "Share Image"));
+        startActivity(share);
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
 
         if (uuid != 0) {
+            Log.d("check if exist", "run");
             viewModel.checkIfInfographicExistFromDatabase(uuid);
         }
 
         inflater.inflate(R.menu.infographic_detail_action_menu, menu);
 
-        saveAction = menu.findItem(R.id.saveAction);
-
-        saveAction.setOnMenuItemClickListener(item -> {
-            try {
-                viewModel.fetchFileFromRemote(imageUri, title);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return true;
-        });
-
         shareAction = menu.findItem(R.id.shareAction);
 
         shareAction.setOnMenuItemClickListener(v -> {
-            Toast.makeText(getContext(), "Download Image First", Toast.LENGTH_SHORT).show();
+            try {
+                viewModel.fetchFileFromRemote(id, imageUri, title);
+                viewModel.filePathUri.observe(getViewLifecycleOwner(), uri -> {
+                    shareImage(uri);
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return true;
         });
 

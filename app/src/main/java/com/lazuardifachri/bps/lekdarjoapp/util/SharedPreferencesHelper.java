@@ -30,7 +30,7 @@ public class SharedPreferencesHelper {
     }
 
     public void saveGraphUpdateTime(long time) {
-        pref.edit().putLong(GRAPH_TIME, time).apply();
+        pref.edit().putLong(GRAPH_TIME, time).commit();
     }
 
     public long getGraphUpdateTime() {
@@ -38,7 +38,7 @@ public class SharedPreferencesHelper {
     }
 
     public void saveNewsUpdateTime(long time) {
-        pref.edit().putLong(NEWS_TIME, time).apply();
+        pref.edit().putLong(NEWS_TIME, time).commit();
     }
 
     public long getNewsUpdateTime() {
@@ -46,7 +46,7 @@ public class SharedPreferencesHelper {
     }
 
     public void savePubUpdateTime(long time) {
-        pref.edit().putLong(PUB_TIME, time).apply();
+        pref.edit().putLong(PUB_TIME, time).commit();
     }
 
     public long getPubUpdateTime() {
@@ -54,7 +54,7 @@ public class SharedPreferencesHelper {
     }
 
     public void saveIdxUpdateTime(long time) {
-        pref.edit().putLong(IDX_TIME, time).apply();
+        pref.edit().putLong(IDX_TIME, time).commit();
     }
 
     public long getIdxUpdateTime() {
@@ -62,7 +62,7 @@ public class SharedPreferencesHelper {
     }
 
     public void saveInfoUpdateTime(long time) {
-        pref.edit().putLong(INFO_TIME, time).apply();
+        pref.edit().putLong(INFO_TIME, time).commit();
     }
 
     public long getInfoUpdateTime() {

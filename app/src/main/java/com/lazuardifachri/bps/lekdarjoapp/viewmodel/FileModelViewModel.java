@@ -102,6 +102,7 @@ public class FileModelViewModel extends AndroidViewModel {
             Log.d("errorInfo", errorInfo);
             downloadError.setValue(true);
         }
+
     };
 
     private final FileDownloadApi fileDownloadApi = ServiceGenerator.createDownloadService(FileDownloadApi.class, getApplication(), listener);
@@ -114,10 +115,10 @@ public class FileModelViewModel extends AndroidViewModel {
     }
 
 
-    private Integer getFileIdFromUri(String documentUri) {
+    private String getFileIdFromUri(String documentUri) {
         Pattern pattern = Pattern.compile("[^files/]*$");
         Matcher matcher = pattern.matcher(documentUri);
-        if (matcher.find()) return Integer.parseInt(matcher.group());
+        if (matcher.find()) return matcher.group();
         return null;
     }
 
@@ -178,7 +179,7 @@ public class FileModelViewModel extends AndroidViewModel {
 
     public void fetchFileFromRemote(String documentUri, String title, MaterialButton downloadButton, ProgressBar downloadProgressBar) throws IOException {
 
-        int fileId = getFileIdFromUri(documentUri);
+        String fileId = getFileIdFromUri(documentUri);
         String feature = StringUtils.substringBetween(documentUri, "api/", "/");
         FileDownloadListener indicatorListener = new FileDownloadListener() {
             @Override
@@ -224,6 +225,7 @@ public class FileModelViewModel extends AndroidViewModel {
             public void onFailDownload(String errorInfo) {
                 Toast.makeText(getApplication(), "Download Error", Toast.LENGTH_SHORT).show();
             }
+
         };
 
         FileDownloadApi indicatorFileDownloadApi = ServiceGenerator.createDownloadService(FileDownloadApi.class, getApplication(), indicatorListener);
@@ -278,7 +280,7 @@ public class FileModelViewModel extends AndroidViewModel {
 
     public void insertPathToDatabase(String documentUri, String fileName, String filePath) {
 
-        int fileId = getFileIdFromUri(documentUri);
+        String fileId = getFileIdFromUri(documentUri);
 
         disposable.add(myDatabase.getInstance(getApplication())
                 .fileModelDao().insertFile(new FileModel(fileId, fileName, filePath))
@@ -301,7 +303,7 @@ public class FileModelViewModel extends AndroidViewModel {
 
     public void insertPathToDatabase(String documentUri, String fileName, String filePath, FileDownloadListener downloadListener, String feature) {
 
-        int fileId = getFileIdFromUri(documentUri);
+        String fileId = getFileIdFromUri(documentUri);
 
         disposable.add(myDatabase.getInstance(getApplication())
                 .fileModelDao().insertFile(new FileModel(fileId, fileName, filePath))
@@ -372,7 +374,7 @@ public class FileModelViewModel extends AndroidViewModel {
     }
 
     public void fetchFileNameFromDatabase(String documentUri) {
-        int fileId = getFileIdFromUri(documentUri);
+        String fileId = getFileIdFromUri(documentUri);
         disposable.add(myDatabase.getInstance(getApplication())
                 .fileModelDao().getFileName(fileId)
                 .subscribeOn(Schedulers.io())
@@ -397,7 +399,7 @@ public class FileModelViewModel extends AndroidViewModel {
                 }));
     }
 
-    public void fetchFileNameFromDatabase(int fileId, MaterialButton button, String feature) {
+    public void fetchFileNameFromDatabase(String fileId, MaterialButton button, String feature) {
         disposable.add(myDatabase.getInstance(getApplication())
                 .fileModelDao().getFileName(fileId)
                 .subscribeOn(Schedulers.io())
@@ -429,7 +431,7 @@ public class FileModelViewModel extends AndroidViewModel {
     }
 
     public void checkIfFileExistFromDatabase(String documentUri) {
-        int fileId = getFileIdFromUri(documentUri);
+        String fileId = getFileIdFromUri(documentUri);
         disposable.add(myDatabase.getInstance(getApplication())
                 .fileModelDao().isFileExist(fileId)
                 .subscribeOn(Schedulers.io())
@@ -449,7 +451,7 @@ public class FileModelViewModel extends AndroidViewModel {
 
 
     public void checkIfFileExistFromDatabase(String documentUri, MaterialButton button) {
-        int fileId = getFileIdFromUri(documentUri);
+        String fileId = getFileIdFromUri(documentUri);
         String feature = StringUtils.substringBetween(documentUri, "api/", "/");
         disposable.add(myDatabase.getInstance(getApplication())
                 .fileModelDao().isIndicatorExist(fileId)
@@ -477,7 +479,6 @@ public class FileModelViewModel extends AndroidViewModel {
         ExcelIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         ExcelIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         ExcelIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Toast.makeText(getApplication(), uri.getPath(), Toast.LENGTH_SHORT).show();
         try {
             getApplication().startActivity(ExcelIntent);
         } catch (Exception e) {

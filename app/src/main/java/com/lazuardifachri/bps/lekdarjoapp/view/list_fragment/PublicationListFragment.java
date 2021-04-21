@@ -24,11 +24,19 @@ import android.view.ViewGroup;
 
 import com.lazuardifachri.bps.lekdarjoapp.R;
 import com.lazuardifachri.bps.lekdarjoapp.databinding.FragmentPublicationListBinding;
+import com.lazuardifachri.bps.lekdarjoapp.model.Publication;
 import com.lazuardifachri.bps.lekdarjoapp.view.dialog_fragment.PublicationFilterDialogFragment;
 import com.lazuardifachri.bps.lekdarjoapp.view.adapter.PublicationAdapter;
 import com.lazuardifachri.bps.lekdarjoapp.viewmodel.PublicationListViewModel;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class PublicationListFragment extends Fragment implements PublicationFilterDialogFragment.OnFilterSelected {
@@ -85,7 +93,7 @@ public class PublicationListFragment extends Fragment implements PublicationFilt
     private void observeViewModel() {
         viewModel.publicationLiveData.observe(getViewLifecycleOwner(), publications -> {
             if (publications != null) {
-                adapter.updatePublication(publications);
+                adapter.updatePublication(sortPublicationsByDate(publications));
                 binding.recyclerView.setVisibility(View.VISIBLE);
             }
         });
@@ -117,6 +125,15 @@ public class PublicationListFragment extends Fragment implements PublicationFilt
                 }
             }
         });
+    }
+
+    private List<Publication> sortPublicationsByDate(List<Publication> publications) {
+        List<Publication> sortedList = new ArrayList<>(publications);
+        Collections.sort(sortedList);
+        for (Publication pub: sortedList) {
+            System.out.println(pub.getReleaseDate());
+        }
+        return sortedList;
     }
 
     @Override

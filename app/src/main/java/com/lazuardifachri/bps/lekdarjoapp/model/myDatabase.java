@@ -16,8 +16,8 @@ import com.lazuardifachri.bps.lekdarjoapp.model.dao.PublicationDao;
 import com.lazuardifachri.bps.lekdarjoapp.model.dao.StatisticalNewsDao;
 
 @Database(entities = {Publication.class, FileModel.class, Download.class,
-        StatisticalNews.class, Indicator.class, Infographic.class,
-        GraphData.class}, version = 16, exportSchema = false)
+        StatisticalNews.class, Indicator.class, Infographic.class, GraphMeta.class,
+        GraphData.class}, version = 19, exportSchema = false)
 @TypeConverters({GraphConverter.class})
 public abstract class myDatabase extends RoomDatabase {
 

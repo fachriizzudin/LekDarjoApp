@@ -1,6 +1,7 @@
 package com.lazuardifachri.bps.lekdarjoapp.model.response;
 
 import com.lazuardifachri.bps.lekdarjoapp.util.FileDownloadListener;
+import com.lazuardifachri.bps.lekdarjoapp.viewmodel.IndicatorListViewModel;
 
 import java.io.IOException;
 

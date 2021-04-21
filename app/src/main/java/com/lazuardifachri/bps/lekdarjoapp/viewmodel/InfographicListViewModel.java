@@ -22,6 +22,8 @@ import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
+import static com.lazuardifachri.bps.lekdarjoapp.util.Constant.refreshTime;
+
 public class InfographicListViewModel extends AndroidViewModel {
 
     public MutableLiveData<List<Infographic>> infographicLiveData = new MutableLiveData<>();
@@ -48,12 +50,9 @@ public class InfographicListViewModel extends AndroidViewModel {
     public void refresh() {
         long updateTime = preferencesHelper.getInfoUpdateTime();
         long currentTime = System.nanoTime();
-        long refreshTime = 30 * 24 * 60 * 60 * 1000 * 1000 * 1000L;
         if (updateTime != 0 && currentTime - updateTime < refreshTime) {
-            Log.d("prefPub", "database");
             fetchAllFromDatabase();
         } else {
-            Log.d("prefPub", "remote");
             fetchAllFromRemote();
         }
     }

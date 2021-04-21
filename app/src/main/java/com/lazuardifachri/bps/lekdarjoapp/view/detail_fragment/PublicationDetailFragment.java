@@ -40,6 +40,7 @@ public class PublicationDetailFragment extends Fragment {
     private PublicationDetailViewModel viewModel;
 
     private static final int PERMISSION_REQUEST_CODE = 1;
+    private int id;
     private String title;
     private String documentUri;
     private int uuid;
@@ -71,13 +72,14 @@ public class PublicationDetailFragment extends Fragment {
         viewModel.publicationLiveData.observe(getViewLifecycleOwner(), publication -> {
             if (publication != null && getContext() != null) {
                 binding.setPublication(publication);
+                id = publication.getId();
                 title = publication.getTitle();
                 documentUri = publication.getDocumentUri();
                 binding.downloadActionFab.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_download));
                 binding.downloadActionFab.setOnClickListener(v -> {
                     if (checkPermission()) {
                         try {
-                            viewModel.fetchFileFromRemote(documentUri, title);
+                            viewModel.fetchFileFromRemote(id, documentUri, title);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -119,7 +121,7 @@ public class PublicationDetailFragment extends Fragment {
                     binding.horizontalProgressBar.setVisibility(View.GONE);
                     binding.downloadActionFab.setOnClickListener(v -> {
                         try {
-                            viewModel.fetchFileFromRemote(documentUri, title);
+                            viewModel.fetchFileFromRemote(id, documentUri, title);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -167,7 +169,7 @@ public class PublicationDetailFragment extends Fragment {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (documentUri != null && title != null) {
                         try {
-                            viewModel.fetchFileFromRemote(documentUri, title);
+                            viewModel.fetchFileFromRemote(id, documentUri, title);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

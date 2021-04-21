@@ -3,6 +3,7 @@ package com.lazuardifachri.bps.lekdarjoapp;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lazuardifachri.bps.lekdarjoapp.model.Graph;
+import com.lazuardifachri.bps.lekdarjoapp.util.StringUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -39,6 +40,15 @@ public class ExampleUnitTest {
         }
 
         assertEquals(Integer.parseInt(matcher.group()), 28);
+
+    }
+
+    @Test
+    public void getIntegerFromUrlTest() {
+
+        String mydata = "https://lekdarjo.herokuapp.com/api/publications/files/28";
+        String code = StringUtil.generateFileIdFromUri(mydata);
+        System.out.println(code);
 
     }
 
@@ -91,6 +101,13 @@ public class ExampleUnitTest {
         String populationString = String.format("%.2f Juta", population/ 1000000.0);
         System.out.println(populationString);
 
+    }
+
+    @Test
+    public void getExcelFormat() {
+        String filename = "/documents/PDRBKabupatenSidoarjoAtasDasarHargaKonstanMenurutLapanganUsaha(2010-2020).xls";
+        System.out.println("excel filename");
+        System.out.println(filename.substring(filename.lastIndexOf(".") + 1));
     }
 
     @Test

@@ -8,9 +8,12 @@ import androidx.room.PrimaryKey;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 @Entity(tableName = "publication")
-public class Publication {
+public class Publication implements Comparable<Publication> {
 
     @ColumnInfo(name = "pub_id")
     @SerializedName("id")
@@ -177,4 +180,13 @@ public class Publication {
                 '}';
     }
 
+    @Override
+    public int compareTo(Publication o) {
+        final DateFormat f = new SimpleDateFormat("dd-MM-yyyy");
+        try {
+            return f.parse(o.getReleaseDate()).compareTo(f.parse(getReleaseDate()));
+        } catch (ParseException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 }

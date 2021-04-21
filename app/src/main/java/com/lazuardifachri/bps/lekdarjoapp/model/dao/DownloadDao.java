@@ -17,8 +17,8 @@ public interface DownloadDao {
     Single<Long> insertWaitingFile(Download download);
 
     @Query("SELECT EXISTS(SELECT * FROM download WHERE id = :fileId)")
-    Single<Boolean> isWaitingFileExist(int fileId);
+    Single<Boolean> isWaitingFileExist(String fileId);
 
     @Query("DELETE FROM download WHERE id = :fileId")
-    Completable deleteWaitingFile(int fileId);
+    Completable deleteWaitingFile(String fileId);
 }

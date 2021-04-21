@@ -2,7 +2,6 @@ package com.lazuardifachri.bps.lekdarjoapp.viewmodel;
 
 import android.app.Application;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -13,7 +12,7 @@ import com.lazuardifachri.bps.lekdarjoapp.model.Graph;
 import com.lazuardifachri.bps.lekdarjoapp.model.GraphData;
 import com.lazuardifachri.bps.lekdarjoapp.model.api.GraphDataApi;
 import com.lazuardifachri.bps.lekdarjoapp.model.myDatabase;
-import com.lazuardifachri.bps.lekdarjoapp.util.Constant;
+import static com.lazuardifachri.bps.lekdarjoapp.util.Constant.*;
 import com.lazuardifachri.bps.lekdarjoapp.util.ServiceGenerator;
 import com.lazuardifachri.bps.lekdarjoapp.util.SharedPreferencesHelper;
 
@@ -25,6 +24,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+
 
 public class GraphViewModel extends AndroidViewModel {
 
@@ -40,7 +40,8 @@ public class GraphViewModel extends AndroidViewModel {
     public MutableLiveData<GraphData> riceProductionDataLive = new MutableLiveData<>();
     public MutableLiveData<GraphData> luasPanenDataLive = new MutableLiveData<>();
     public MutableLiveData<GraphData> industryDataLive = new MutableLiveData<>();
-    public MutableLiveData<GraphData> areanDataLive = new MutableLiveData<>();
+    public MutableLiveData<GraphData> areaDataLive = new MutableLiveData<>();
+
 
     public MutableLiveData<GraphData> populationDataLive = new MutableLiveData<>();
     public MutableLiveData<List<GraphData>> mixPopulationDataLive = new MutableLiveData<>();
@@ -57,59 +58,52 @@ public class GraphViewModel extends AndroidViewModel {
         super(application);
     }
 
-    private GraphData mergeData(GraphData gd1, GraphData gd2) {
-        List<Graph> mergeGraph = new ArrayList<>();
-        for (int i = 0; i < gd1.getData().size(); i++) {
-            mergeGraph.add(new Graph(gd1.getData().get(i).getId(),
-                    gd1.getData().get(i).getValue() + gd2.getData().get(i).getValue(),
-                    gd1.getData().get(i).getYear()));
-        }
-        return new GraphData(mergeGraph, gd1.getMeta(), gd1.getUuid());
-    }
 
     private void graphDataRetrieved(GraphData graphData, int metaId) {
         switch (metaId) {
-            case 1:
+            case POVERTY:
                 povertyDataLive.setValue(graphData);
                 break;
-            case 2:
+            case EMPLOY:
                 unemploymentDataLive.setValue(graphData);
                 break;
-            case 3:
+            case INFLATION:
                 inflationDataLive.setValue(graphData);
                 break;
-            case 4:
+            case ECONOMY:
                 economyGrowthDataLive.setValue(graphData);
                 break;
-            case 5:
+            case PDRB:
                 pdrbDataLive.setValue(graphData);
                 break;
-            case 6:
+            case IPM:
                 ipmDataLive.setValue(graphData);
                 break;
-            case 7:
+            case MALE:
                 malePopulationDataLive.setValue(graphData);
                 break;
-            case 8:
+            case FEMALE:
                 femalePopulationDataLive.setValue(graphData);
                 break;
-            case 9:
+            case RICE:
                 riceProductionDataLive.setValue(graphData);
                 break;
-            case 10:
+            case PANEN:
                 luasPanenDataLive.setValue(graphData);
                 break;
-            case 11:
+            case INDUSTRY:
                 industryDataLive.setValue(graphData);
                 break;
-            case 12:
-                areanDataLive.setValue(graphData);
+            case AREA:
+                areaDataLive.setValue(graphData);
                 break;
-            case 13:
+            case GINI:
                 giniRatioDataLive.setValue(graphData);
                 break;
         }
 
+        // untuk menggabungkan data populasi laki-laki dan perempuan
+        // counter digunakan apabila iterasi di atas sudah melewati data populasi keduanya
         if (populationCounter.getValue() == 2) {
             if (malePopulationDataLive.getValue() != null && femalePopulationDataLive.getValue() != null) {
                 populationDataLive.setValue(mergeData(malePopulationDataLive.getValue(), femalePopulationDataLive.getValue()));
@@ -119,36 +113,31 @@ public class GraphViewModel extends AndroidViewModel {
                 mixPopulationDataLive.setValue(mix);
             }
         }
-
     }
 
     public void fetchAllFromRemote(Toast toast) {
         counter.setValue(0);
         populationCounter.setValue(0);
-        Log.d("toast","run");
         toast.show();
-        for (int i = 1; i <= Constant.NUMBER_OF_INDICATORS; i++) {
+        for (int i = 1; i <= MAX_GRAPH; i++) {
             fetchByMetaIdFromRemote(i);
         }
     }
 
-
     public void refresh(Toast toast) {
         long updateTime = preferencesHelper.getGraphUpdateTime();
         long currentTime = System.nanoTime();
-        long refreshTime = 30 * 24 * 60 * 60 * 1000 * 1000 * 1000L;
 
         counter.setValue(0);
         populationCounter.setValue(0);
         if (updateTime != 0 && currentTime - updateTime < refreshTime) {
-            for (int i = 1; i <= 13; i++) {
+            for (int i = 1; i <= MAX_GRAPH; i++) {
                 fetchByMetaIdFromDatabase(i);
             }
 
         } else {
-            Log.d("toast","run");
             toast.show();
-            for (int i = 1; i <= 13; i++) {
+            for (int i = 1; i <= MAX_GRAPH; i++) {
                 fetchByMetaIdFromRemote(i);
             }
         }
@@ -157,7 +146,7 @@ public class GraphViewModel extends AndroidViewModel {
     public void refresh(int metaId) {
         long updateTime = preferencesHelper.getGraphUpdateTime();
         long currentTime = System.nanoTime();
-        long refreshTime = 30 * 24 * 60 * 60 * 1000 * 1000 * 1000L;
+
         counter.setValue(0);
         populationCounter.setValue(0);
         if (updateTime != 0 && currentTime - updateTime < refreshTime) {
@@ -243,6 +232,19 @@ public class GraphViewModel extends AndroidViewModel {
                         e.printStackTrace();
                     }
                 }));
+
+
+
+    }
+
+    private GraphData mergeData(GraphData gd1, GraphData gd2) {
+        List<Graph> mergeGraph = new ArrayList<>();
+        for (int i = 0; i < gd1.getData().size(); i++) {
+            mergeGraph.add(new Graph(gd1.getData().get(i).getId(),
+                    gd1.getData().get(i).getValue() + gd2.getData().get(i).getValue(),
+                    gd1.getData().get(i).getYear()));
+        }
+        return new GraphData(mergeGraph, gd1.getMeta(), gd1.getUuid());
     }
 
     @Override

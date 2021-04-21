@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // l1e2k3d4r5j6o
 
         // loginApp();
-        SharedPreferencesHelper.getInstance(getApplicationContext()).saveAuthToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbmRyb2lkYXBwQG1haWwuY29tIiwiaWF0IjoxNjE0MDY1NTAxLCJleHAiOjI2MTQwNjU1MDF9.ZAEWqEwYJ7LpS8aRckyJ1hlOg_9qbvN0pNghjpm6wAaXJ7c-28iYQKwoFp5Yi1ibxov5lbFReDgA0_MG1K8hjg");
+        SharedPreferencesHelper.getInstance(getApplicationContext()).saveAuthToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJsZWtkYXJqb3B5QGVtYWlsLmNvbSIsImlhdCI6MTYxODU4ODU2MiwiZXhwIjoyNjE4NTg4NTYyfQ.oLZc8sVSZIZMX1MkxVTWSlHhhGkmbLE4B6teQV1NTtMfcCN8A7lvXj6OOtLELuZK43imKiDy8lheMlHNhNDwEw");
 
         File root = new File(getApplication().getFilesDir().getAbsolutePath());
         if (!root.exists()) {
@@ -174,4 +174,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (this.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            this.drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

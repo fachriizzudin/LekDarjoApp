@@ -1,10 +1,7 @@
 package com.lazuardifachri.bps.lekdarjoapp.view;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
 import android.os.Bundle;
-import android.text.Html;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,12 +9,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -26,15 +21,9 @@ import androidx.navigation.Navigation;
 import com.lazuardifachri.bps.lekdarjoapp.R;
 import com.lazuardifachri.bps.lekdarjoapp.databinding.FragmentGraphBinding;
 import com.lazuardifachri.bps.lekdarjoapp.model.Graph;
-import com.lazuardifachri.bps.lekdarjoapp.model.GraphData;
-import com.lazuardifachri.bps.lekdarjoapp.util.Constant;
 import com.lazuardifachri.bps.lekdarjoapp.viewmodel.GraphViewModel;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 public class GraphFragment extends Fragment {
 
@@ -304,7 +293,7 @@ public class GraphFragment extends Fragment {
         });
 
         // luas wilayah
-        viewModel.areanDataLive.observe(getViewLifecycleOwner(), graphData -> {
+        viewModel.areaDataLive.observe(getViewLifecycleOwner(), graphData -> {
             binding.areaNewValue.setText(String.valueOf(graphData.getData().get(0).getValue()));
         });
 

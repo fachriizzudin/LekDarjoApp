@@ -1,6 +1,7 @@
 package com.lazuardifachri.bps.lekdarjoapp.viewmodel;
 
 import android.app.Application;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -42,6 +43,7 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import okhttp3.ResponseBody;
 
 import static androidx.core.content.FileProvider.getUriForFile;
 
@@ -83,6 +85,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
     }
 
     public void fetchByIdFromDatabase(int uuid) {
+        Log.d("fetch by id database", "run");
         disposable.add(myDatabase.getInstance(getApplication())
                 .infographicDao().getInfographicByUuid(uuid)
                 .subscribeOn(Schedulers.io())
@@ -90,9 +93,10 @@ public class InfographicDetailViewModel extends AndroidViewModel {
                 .subscribeWith(new DisposableSingleObserver<Infographic>() {
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull Infographic infographic) {
+                        Log.d("fetch by id database", "success");
                         infographicLiveData.setValue(infographic);
                         setupBackgroundColor(infographic.getImageUri());
-                        checkIfFileExistFromDatabase(infographic.getImageUri());
+                        checkIfFileExistFromDatabase(infographic.getId());
                     }
 
                     @Override
@@ -110,6 +114,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
                 .subscribeWith(new DisposableSingleObserver<Boolean>() {
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull Boolean exist) {
+                        Log.d("check if exist", "success");
                         fetchByIdFromDatabase(uuid);
                     }
 
@@ -121,13 +126,13 @@ public class InfographicDetailViewModel extends AndroidViewModel {
 
     }
 
-    public void fetchFileFromRemote(String documentUri, String title) throws IOException {
+    public void fetchFileFromRemote(int id, String documentUri, String title) throws IOException {
 
         DetailFileDownloadListener listener = new DetailFileDownloadListener() {
             @Override
-            public String onStartDownload(String fileName, String documentUri) throws IOException {
+            public String onStartDownload(String fileName, String documentUri) {
                 Log.d("listener", "onStartDownload");
-                insertDownloadWaitingList(documentUri);
+                insertDownloadWaitingList(id);
                 downloadLoading.setValue(true);
                 try {
                     File root = new File(getApplication().getFilesDir().getAbsolutePath() + "/images");
@@ -144,6 +149,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
                             destinationFile.setExecutable(true,false);
                         }
                     }
+                    Log.d("listenerOnStart", destinationFile.getAbsolutePath());
                     return destinationFile.getAbsolutePath();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -153,6 +159,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
 
             @Override
             public void onProgressDownload(int progress) {
+                Log.d("listenerOnProgress", "run");
                 downloadLoading.postValue(true);
             }
 
@@ -160,16 +167,17 @@ public class InfographicDetailViewModel extends AndroidViewModel {
             public void onFinishDownload(String documentUri) {
                 Log.d("listener", "onFinishDownload");
                 downloadLoading.postValue(false);
-                deleteDownloadWaitingList(documentUri);
+                deleteDownloadWaitingList(id);
                 Toast.makeText(getApplication(), "Download Finished", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailDownload(String errorInfo, String documentUri) {
+                Log.d("listenerOnFail", "run");
+                Log.d("error", errorInfo);
                 downloadLoading.postValue(false);
                 downloadError.postValue(true);
-                deleteDownloadWaitingList(documentUri);
-                Log.d("fragment loading", "yes");
+                deleteDownloadWaitingList(id);
                 Toast.makeText(getApplication(), "Download Failed", Toast.LENGTH_SHORT).show();
             }
         };
@@ -181,7 +189,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
         fileDownloadApi.download(documentUri)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
-                .map(responseBody -> responseBody.byteStream()).observeOn(Schedulers.computation())
+                .map(ResponseBody::byteStream).observeOn(Schedulers.computation())
                 .doOnNext(inputStream -> writeFile(inputStream, filePath, documentUri, listener)).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<InputStream>() {
                     @Override
@@ -191,7 +199,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
 
                     @Override
                     public void onNext(@io.reactivex.rxjava3.annotations.NonNull InputStream inputStream) {
-                        insertPathToDatabase(documentUri, fileName, filePath, listener);
+                        insertPathToDatabase(id, documentUri, fileName, filePath, listener);
                     }
 
                     @Override
@@ -206,8 +214,8 @@ public class InfographicDetailViewModel extends AndroidViewModel {
                 });
     }
 
-    public void insertPathToDatabase(String documentUri, String fileName, String filePath, DetailFileDownloadListener listener) {
-        int fileId = StringUtil.getFileIdFromUri(documentUri);
+    public void insertPathToDatabase(int id, String documentUri, String fileName, String filePath, DetailFileDownloadListener listener) {
+        String fileId = "infographic" + id;
         disposable.add(myDatabase.getInstance(getApplication())
                 .fileModelDao().insertFile(new FileModel(fileId, fileName, filePath))
                 .subscribeOn(Schedulers.io())
@@ -215,7 +223,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
                 .subscribeWith(new DisposableSingleObserver<Long>() {
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull Long aLong) {
-                        checkIfFileExistFromDatabase(documentUri);
+                        checkIfFileExistFromDatabase(id);
                         listener.onFinishDownload(documentUri);
                     }
 
@@ -227,8 +235,8 @@ public class InfographicDetailViewModel extends AndroidViewModel {
         );
     }
 
-    public void checkIfFileExistFromDatabase(String documentUri) {
-        int fileId = StringUtil.getFileIdFromUri(documentUri);
+    public void checkIfFileExistFromDatabase(int id) {
+        String fileId = "infographic" + id;
         disposable.add(myDatabase.getInstance(getApplication())
                 .fileModelDao().isFileExist(fileId)
                 .subscribeOn(Schedulers.io())
@@ -237,10 +245,11 @@ public class InfographicDetailViewModel extends AndroidViewModel {
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull Boolean exist) {
                         if (exist) {
-                            fetchFileNameFromDatabase(documentUri);
+                            Log.d("check file in database", "exist");
+                            fetchFileNameFromDatabase(id);
                         }
                         // harus tetap dijalankan untuk kasus berganti ke detail yang sudah didownload
-                        isDownloading(documentUri);
+                        isDownloading(id);
 
                     }
 
@@ -251,8 +260,8 @@ public class InfographicDetailViewModel extends AndroidViewModel {
                 }));
     }
 
-    public void fetchFileNameFromDatabase(String documentUri) {
-        int fileId = StringUtil.getFileIdFromUri(documentUri);
+    public void fetchFileNameFromDatabase(int id) {
+        String fileId = "infographic" + id;
         disposable.add(myDatabase.getInstance(getApplication())
                 .fileModelDao().getFileName(fileId)
                 .subscribeOn(Schedulers.io())
@@ -273,8 +282,8 @@ public class InfographicDetailViewModel extends AndroidViewModel {
                 }));
     }
 
-    private void insertDownloadWaitingList(String documentUri) {
-        int fileId = StringUtil.getFileIdFromUri(documentUri);
+    private void insertDownloadWaitingList(int id) {
+        String fileId = "infographic" + id;
         disposable.add(myDatabase.getInstance(getApplication())
                 .downloadDao().insertWaitingFile(new Download(fileId))
                 .subscribeOn(Schedulers.io())
@@ -282,6 +291,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
                 .subscribeWith(new DisposableSingleObserver<Long>() {
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull Long aLong) {
+                        Log.d("waiting list", "success");
                         downloadLoading.setValue(true);
                     }
 
@@ -293,9 +303,8 @@ public class InfographicDetailViewModel extends AndroidViewModel {
         );
     }
 
-    private void isDownloading(String documentUri) {
-        int fileId = StringUtil.getFileIdFromUri(documentUri);
-        Log.d("fileIdDownloading", String.valueOf(fileId));
+    private void isDownloading(int id) {
+        String fileId = "infographic" + id;
         disposable.add(myDatabase.getInstance(getApplication())
                 .downloadDao().isWaitingFileExist(fileId)
                 .subscribeOn(Schedulers.io())
@@ -303,6 +312,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
                 .subscribeWith(new DisposableSingleObserver<Boolean>() {
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull Boolean downloading) {
+                        Log.d("is downloading", downloading.toString());
                         downloadLoading.setValue(downloading);
                     }
 
@@ -315,8 +325,8 @@ public class InfographicDetailViewModel extends AndroidViewModel {
     }
 
 
-    public void deleteDownloadWaitingList(String documentUri) {
-        int fileId = StringUtil.getFileIdFromUri(documentUri);
+    private void deleteDownloadWaitingList(int id) {
+        String fileId = "infographic" + id;
         disposable.add(myDatabase.getInstance(getApplication())
                 .downloadDao().deleteWaitingFile(fileId)
                 .subscribeOn(Schedulers.io())

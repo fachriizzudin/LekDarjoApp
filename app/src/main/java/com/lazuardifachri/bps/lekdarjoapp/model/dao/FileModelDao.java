@@ -16,13 +16,13 @@ public interface FileModelDao {
     Single<Long> insertFile(FileModel file);
 
     @Query("SELECT EXISTS(SELECT * FROM file_model WHERE id = :fileId)")
-    Single<Boolean> isFileExist(int fileId);
+    Single<Boolean> isFileExist(String fileId);
 
     @Query("SELECT EXISTS(SELECT * FROM file_model WHERE id = :fileId)")
-    Single<Integer> isIndicatorExist(int fileId);
+    Single<Integer> isIndicatorExist(String fileId);
 
     @Query("SELECT file_name FROM file_model WHERE id = :fileId")
-    Single<String> getFileName(int fileId);
+    Single<String> getFileName(String fileId);
 
     @Query("DELETE FROM file_model WHERE id = :fileId")
     Completable deleteFile(int fileId);

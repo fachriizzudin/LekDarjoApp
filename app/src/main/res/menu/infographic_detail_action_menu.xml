@@ -7,9 +7,9 @@
         android:title="refresh"
         app:showAsAction="always"/>
 
-    <item android:id="@+id/saveAction"
-        android:icon="@drawable/ic_save"
-        android:title="save"
-        app:showAsAction="always"/>
+<!--    <item android:id="@+id/saveAction"-->
+<!--        android:icon="@drawable/ic_save"-->
+<!--        android:title="save"-->
+<!--        app:showAsAction="always"/>-->
 
 </menu>

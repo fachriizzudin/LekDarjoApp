@@ -14,9 +14,9 @@ public interface GraphDataDao {
     @Insert
     Single<Long> insertALl(GraphData graphData);
 
-    @Query("SELECT * FROM graph_data WHERE meta_id=:metaId")
+    @Query("SELECT * FROM graph_data WHERE serial_number=:metaId")
     Single<GraphData> getGraphDataByMetaId(int metaId);
 
-    @Query("DELETE FROM graph_data WHERE meta_id= :metaId")
+    @Query("DELETE FROM graph_data WHERE serial_number= :metaId")
     Completable deleteByMetaIdGraphData(int metaId);
 }

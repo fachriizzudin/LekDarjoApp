@@ -94,10 +94,10 @@ public class DownloadUtil {
                 });
     }
 
-    private Integer getFileIdFromUri(String documentUri) {
+    private String getFileIdFromUri(String documentUri) {
         Pattern pattern = Pattern.compile("[^files/]*$");
         Matcher matcher = pattern.matcher(documentUri);
-        if (matcher.find()) return Integer.parseInt(matcher.group());
+        if (matcher.find()) return matcher.group();
         return null;
     }
 
@@ -106,7 +106,7 @@ public class DownloadUtil {
 
         Log.d("insertPathToDatabase", documentUri);
         Log.d("insertPathToDatabase", fileName);
-        int fileId = getFileIdFromUri(documentUri);
+        String fileId = getFileIdFromUri(documentUri);
         Log.d("insertPathToDatabase", String.valueOf(fileId));
         disposable.add(myDatabase.getInstance(context)
                 .fileModelDao().insertFile(new FileModel(fileId, fileName, filePath))

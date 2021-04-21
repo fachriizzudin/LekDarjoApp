@@ -23,6 +23,8 @@ import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
+import static com.lazuardifachri.bps.lekdarjoapp.util.Constant.refreshTime;
+
 public class StatisticalNewsListViewModel extends AndroidViewModel {
 
     public MutableLiveData<List<StatisticalNews>> statisticalNewsLiveData = new MutableLiveData<>();
@@ -49,12 +51,9 @@ public class StatisticalNewsListViewModel extends AndroidViewModel {
     public void refresh() {
         long updateTime = preferencesHelper.getNewsUpdateTime();
         long currentTime = System.nanoTime();
-        long refreshTimeMonth = 30 * 24 * 60 * 60 * 1000 * 1000 * 1000L;
-        if (updateTime != 0 && currentTime - updateTime < refreshTimeMonth) {
-            Log.d("prefStat", "database");
+        if (updateTime != 0 && currentTime - updateTime < refreshTime) {
             fetchAllFromDatabase();
         } else {
-            Log.d("prefStat", "remote");
             fetchAllFromRemote();
         }
     }

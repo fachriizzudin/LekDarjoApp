@@ -1,5 +1,7 @@
 package com.lazuardifachri.bps.lekdarjoapp.util;
 
+import android.util.Log;
+
 import com.lazuardifachri.bps.lekdarjoapp.model.response.DownloadResponseBody;
 
 import java.io.IOException;
@@ -23,6 +25,7 @@ public class DownloadInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Response response = chain.proceed(chain.request());
+        Log.d("mimeType", response.headers().toString());
         return response.newBuilder().body(
                 new DownloadResponseBody(response.body(), listener)
         ).build();

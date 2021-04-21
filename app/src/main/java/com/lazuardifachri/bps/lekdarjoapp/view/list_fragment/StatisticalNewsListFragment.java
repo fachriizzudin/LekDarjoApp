@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class StatisticalNewsListFragment extends Fragment implements StatisticalNewsFilterDialogFragment.OnFilterSelected{
@@ -157,7 +158,7 @@ public class StatisticalNewsListFragment extends Fragment implements Statistical
         binding.error.setVisibility(View.GONE);
         binding.loadingProgressBar.setVisibility(View.VISIBLE);
 
-        Log.d("paramsDialog", String.valueOf(subjectId) + " " + String.valueOf(categoryId) + " " +String.valueOf(monthString) + " " + String.valueOf(year));
+        Log.d("paramsDialog", subjectId + " " + categoryId + " " + monthString + " " + year);
 
         int filterCase = 0;
 
@@ -225,7 +226,7 @@ public class StatisticalNewsListFragment extends Fragment implements Statistical
             String hashMapKey = "01-" + news.getReleaseDate().substring(3);
             Log.d("hashmapkey", hashMapKey);
             if (groupedHashMap.containsKey(hashMapKey)) {
-                groupedHashMap.get(hashMapKey).add(news);
+                Objects.requireNonNull(groupedHashMap.get(hashMapKey)).add(news);
             } else {
                 set = new LinkedHashSet<>();
                 set.add(news);
@@ -237,7 +238,7 @@ public class StatisticalNewsListFragment extends Fragment implements Statistical
         Collections.sort(sortedKeys, (o1, o2) -> {
             DateFormat f = new SimpleDateFormat("dd-MM-yyyy");
             try {
-                return f.parse(o2).compareTo(f.parse(o1));
+                return Objects.requireNonNull(f.parse(o2)).compareTo(f.parse(o1));
             } catch (ParseException e) {
                 throw new IllegalArgumentException(e);
             }
@@ -251,12 +252,12 @@ public class StatisticalNewsListFragment extends Fragment implements Statistical
     }
 
 
-    private ArrayList<ObjectList> generateListFromMap(LinkedHashMap<String, Set<StatisticalNews>> groupedHashMap) {
+    private void generateListFromMap(LinkedHashMap<String, Set<StatisticalNews>> groupedHashMap) {
         ArrayList<ObjectList> consolidatedList = new ArrayList<>();
         for (String date : groupedHashMap.keySet()) {
             DateObject dateItem = new DateObject(date);
             consolidatedList.add(dateItem);
-            for (StatisticalNews news : groupedHashMap.get(date)) {
+            for (StatisticalNews news : Objects.requireNonNull(groupedHashMap.get(date))) {
                 StatisticalNewsObject generalItem = new StatisticalNewsObject();
                 generalItem.setStatisticalNewsModel(news);
                 consolidatedList.add(generalItem);
@@ -265,7 +266,6 @@ public class StatisticalNewsListFragment extends Fragment implements Statistical
 
         adapter.setDataChange(consolidatedList);
 
-        return consolidatedList;
     }
 
 }

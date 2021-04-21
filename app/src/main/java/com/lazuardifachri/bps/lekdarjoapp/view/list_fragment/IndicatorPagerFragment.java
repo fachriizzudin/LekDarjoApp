@@ -65,5 +65,6 @@ public class IndicatorPagerFragment extends Fragment {
             }
         });
 
+
     }
 }
