@@ -39,9 +39,6 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle actionBarDrawerToggle;
-    private Toolbar toolbar;
-    private NavigationView navigationView;
 
     private ActivityMainBinding binding;
 
@@ -79,10 +76,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setupDrawer() {
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawerLayout = binding.drawer;
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
         actionBarDrawerToggle.syncState();
@@ -90,11 +87,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setupNavigation() {
-        navigationView = binding.navigationView;
+        NavigationView navigationView = binding.navigationView;
         navController = Navigation.findNavController(this, R.id.navHostFragment);
         NavigationUI.setupWithNavController(navigationView, navController);
         navigationView.setNavigationItemSelectedListener(this);
-        navController.navigate(R.id.mainFragment);
+        navController.navigate(R.id.graphListFragment);
     }
 
 
@@ -105,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (item.getItemId()) {
             case R.id.main:
-                navController.navigate(R.id.mainFragment);
+                navController.navigate(R.id.graphListFragment);
                 break;
             case R.id.news:
                 navController.navigate(R.id.statisticalNewsListFragment);

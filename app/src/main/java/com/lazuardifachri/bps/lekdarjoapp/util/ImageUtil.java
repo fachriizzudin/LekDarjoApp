@@ -3,67 +3,54 @@ package com.lazuardifachri.bps.lekdarjoapp.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
+import android.graphics.drawable.PictureDrawable;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.BindingAdapter;
-import androidx.palette.graphics.Palette;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.MultiTransformation;
+import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou;
 import com.lazuardifachri.bps.lekdarjoapp.R;
-import com.lazuardifachri.bps.lekdarjoapp.model.ColorPalette;
+
 
 public class ImageUtil {
-    public static void loadImage(ImageView imageView, String url, CircularProgressDrawable progressDrawable, Context context) {
-
-        RequestOptions options = new RequestOptions()
-                .placeholder(progressDrawable)
-                .error(R.drawable.ic_saved);
-
-        GlideUrl glideUrl = new GlideUrl(url,
-                new LazyHeaders.Builder()
-                        .addHeader("Authorization", "Bearer " + SharedPreferencesHelper.getInstance(context).fetchAuthToken())
-                        .build());
-
-        Glide.with(imageView.getContext())
-                .setDefaultRequestOptions(options)
-                .load(glideUrl)
-                .into(imageView);
-    }
-
-    public static CircularProgressDrawable getProgressDrawable(Context context) {
-        CircularProgressDrawable cpd = new CircularProgressDrawable(context);
-        cpd.setStrokeWidth(10f);
-        cpd.setCenterRadius(50f);
-        cpd.start();
-        return cpd;
-    }
 
     @BindingAdapter("android:imageUrl")
     public static void loadImage(ImageView view, String url) {
         if (url!=null) {
-            loadImage(view, url, getProgressDrawable(view.getContext()), view.getContext());
+            RequestOptions options = new RequestOptions()
+                    .placeholder(getProgressDrawable(view.getContext()))
+                    .error(R.drawable.ic_picture);
+
+            GlideUrl glideUrl = new GlideUrl(url,
+                    new LazyHeaders.Builder()
+                            .addHeader("Authorization", "Bearer " + SharedPreferencesHelper.getInstance(view.getContext()).fetchAuthToken())
+                            .build());
+
+            Glide.with(view.getContext())
+                    .setDefaultRequestOptions(options)
+                    .load(glideUrl)
+                    .into(view);
         }
     }
 
     @BindingAdapter("android:infographicUrl")
     public static void loadInfographic(ImageView imageView, String url) {
         if (url!=null) {
-            loadImage(imageView, url, getProgressDrawable(imageView.getContext()), imageView.getContext());
             RequestOptions options = new RequestOptions()
                     .placeholder(getProgressDrawable(imageView.getContext()))
-                    .error(R.drawable.ic_infographic);
+                    .error(R.drawable.ic_picture);
 
             GlideUrl glideUrl = new GlideUrl(url,
                     new LazyHeaders.Builder()
@@ -91,6 +78,27 @@ public class ImageUtil {
         }
     }
 
+    @BindingAdapter("android:imageSVGUrl")
+    public static void loadImageSVG(ImageView view, String url) {
+        if (url!=null) {
+            RequestBuilder<PictureDrawable> requestBuilder = GlideToVectorYou
+                    .init()
+                    .with(view.getContext())
+                    .setPlaceHolder(R.drawable.ic_picture, R.drawable.ic_picture)
+                    .getRequestBuilder();
+
+            GlideUrl glideUrl = new GlideUrl(url,
+                    new LazyHeaders.Builder()
+                            .addHeader("Authorization", "Bearer " + SharedPreferencesHelper.getInstance(view.getContext()).fetchAuthToken())
+                            .build());
+
+            requestBuilder
+                    .load(glideUrl)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(view);
+        }
+    }
+
     @BindingAdapter("android:newsSubject")
     public static void loadImage(ImageView view, int subjectId) {
         switch (subjectId) {
@@ -106,4 +114,11 @@ public class ImageUtil {
         }
     }
 
+    public static CircularProgressDrawable getProgressDrawable(Context context) {
+        CircularProgressDrawable cpd = new CircularProgressDrawable(context);
+        cpd.setStrokeWidth(10f);
+        cpd.setCenterRadius(50f);
+        cpd.start();
+        return cpd;
+    }
 }

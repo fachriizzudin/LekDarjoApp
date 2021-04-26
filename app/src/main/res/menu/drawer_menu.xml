@@ -27,7 +27,6 @@
                 android:icon="@drawable/ic_infographic"
                 android:checkable="true"
                 android:title="@string/item_infographic" />
-
         </menu>
 
     </item>

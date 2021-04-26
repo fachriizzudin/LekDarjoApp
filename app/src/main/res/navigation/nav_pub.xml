@@ -4,59 +4,6 @@
     app:startDestination="@id/publicationListFragment">
 
     <fragment
-        android:id="@+id/mainFragment"
-        android:name="com.lazuardifachri.bps.lekdarjoapp.view.GraphFragment"
-        android:label="MainFragment" >
-        <action
-            android:id="@+id/actionMainToPublicationList"
-            app:destination="@id/publicationListFragment" />
-        <action
-            android:id="@+id/actionMainToIndicatorList"
-            app:destination="@id/indicatorListFragment" />
-        <action
-            android:id="@+id/actionMainInfographicList"
-            app:destination="@id/infographicListFragment" />
-        <action
-            android:id="@+id/actionMainToAbout"
-            app:destination="@id/aboutFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_statisticalNewsListFragment"
-            app:destination="@id/statisticalNewsListFragment" />
-        <action
-            android:id="@+id/actionMainToEconomy"
-            app:destination="@id/economyGrowthFragment2" />
-        <action
-            android:id="@+id/actionMainToIpm"
-            app:destination="@id/ipmFragment" />
-        <action
-            android:id="@+id/actionMainToPopulation"
-            app:destination="@id/populationFragment" />
-        <action
-            android:id="@+id/actionMainToPoverty"
-            app:destination="@id/povertyFragment" />
-        <action
-            android:id="@+id/actionMainToUnemployment"
-            app:destination="@id/unemploymentFragment" />
-        <action
-            android:id="@+id/actionMainToRiceProduction"
-            app:destination="@id/riceProductionFragment" />
-        <action
-            android:id="@+id/actionMainToIndustry"
-            app:destination="@id/industryFragment" />
-        <action
-            android:id="@+id/actionMainToLuasPanen"
-            app:destination="@id/luasPanenFragment" />
-        <action
-            android:id="@+id/actionMainToPDRB"
-            app:destination="@id/PDRBFragment" />
-        <action
-            android:id="@+id/actionMainToInflation"
-            app:destination="@id/inflationFragment" />
-        <action
-            android:id="@+id/actionMaintToGiniRatio"
-            app:destination="@id/giniRatioFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/publicationListFragment"
         android:name="com.lazuardifachri.bps.lekdarjoapp.view.list_fragment.PublicationListFragment"
         android:label="PublicationListFragment" >
@@ -122,57 +69,39 @@
             android:defaultValue="0" />
     </fragment>
     <fragment
-        android:id="@+id/economyGrowthFragment2"
-        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.EconomyGrowthFragment"
-        android:label="EconomyGrowthFragment" >
-        <argument
-            android:name="id"
-            app:argType="integer"
-            android:defaultValue="0" />
+        android:id="@+id/graphListFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.list_fragment.GraphListFragment"
+        android:label="GraphListFragment">
+        <action
+            android:id="@+id/actionGraphListToGraphDetail"
+            app:destination="@id/graphDetailFragment" >
+            <argument
+                android:name="uuid"
+                android:defaultValue="0" />
+        </action>
+        <action
+            android:id="@+id/actionGraphListToStatisticalNewsList"
+            app:destination="@id/statisticalNewsListFragment" />
+        <action
+            android:id="@+id/actionGraphListToPublicatioinList"
+            app:destination="@id/publicationListFragment" />
+        <action
+            android:id="@+id/actionGraphListToIndicatorList"
+            app:destination="@id/indicatorListFragment" />
+        <action
+            android:id="@+id/actionGraphListToAbout"
+            app:destination="@id/aboutFragment" />
+        <action
+            android:id="@+id/actionGraphListToInfographicList"
+            app:destination="@id/infographicListFragment" />
     </fragment>
     <fragment
-        android:id="@+id/ipmFragment"
-        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.IpmFragment"
-        android:label="IpmFragment" >
+        android:id="@+id/graphDetailFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.detail_fragment.GraphDetailFragment"
+        android:label="GraphDetailFragment">
         <argument
-            android:name="id"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:name="uuid"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
-    <fragment
-        android:id="@+id/populationFragment"
-        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.PopulationFragment"
-        android:label="PopulationFragment" />
-    <fragment
-        android:id="@+id/povertyFragment"
-        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.PovertyFragment"
-        android:label="PovertyFragment" />
-    <fragment
-        android:id="@+id/unemploymentFragment"
-        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.UnemploymentFragment"
-        android:label="UnemploymentFragment" />
-    <fragment
-        android:id="@+id/riceProductionFragment"
-        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.RiceProductionFragment"
-        android:label="RiceProductionFragment" />
-    <fragment
-        android:id="@+id/inflationFragment"
-        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.InflationFragment"
-        android:label="InflationFragment" />
-    <fragment
-        android:id="@+id/PDRBFragment"
-        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.PDRBFragment"
-        android:label="PDRBFragment" />
-    <fragment
-        android:id="@+id/luasPanenFragment"
-        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.LuasPanenFragment"
-        android:label="LuasPanenFragment" />
-    <fragment
-        android:id="@+id/industryFragment"
-        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.IndustryFragment"
-        android:label="IndustryFragment" />
-    <fragment
-        android:id="@+id/giniRatioFragment"
-        android:name="com.lazuardifachri.bps.lekdarjoapp.view.graph_fragment.GiniRatioFragment"
-        android:label="GiniRatioFragment" />
 </navigation>

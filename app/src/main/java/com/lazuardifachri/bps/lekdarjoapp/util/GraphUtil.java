@@ -24,28 +24,29 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.MPPointF;
 import com.lazuardifachri.bps.lekdarjoapp.model.Graph;
 import com.lazuardifachri.bps.lekdarjoapp.model.GraphData;
+
 import android.graphics.Typeface;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Locale;
 
 public class GraphUtil {
 
-    public static LineChart setChartData(LineChart lineChart, GraphData graphData, int seekBarX, double seekBarY, int type) {
+    public static LineChart setChartData(LineChart lineChart, Graph graph, int seekBarX, double seekBarY, int dataType) {
         Log.d("setchartdata", "masuk");
         ArrayList<Entry> values = new ArrayList<>();
 
         double sum = 0;
         int counter = 0;
 
-        for (Graph data : graphData.getData()) {
+        for (GraphData data : graph.getData()) {
             if (data.getYear() >= seekBarX) {
                 counter++;
                 values.add(new Entry(data.getYear(), (float) data.getValue(), 2));
@@ -58,8 +59,16 @@ public class GraphUtil {
         int maxYear = (int) values.get(values.size() - 1).getX();
         int minYear = (int) values.get(0).getX();
 
+        float maxValue = Collections.max(values, (o1, o2) -> Float.compare(o1.getY(), o2.getY())).getY();
+        float minValue = Collections.min(values, (o1, o2) -> Float.compare(o1.getY(), o2.getY())).getY();
+        float median = (maxValue-minValue) / 2;
+
         lineChart.getXAxis().setAxisMaximum(maxYear+1);
         lineChart.getXAxis().setAxisMinimum(minYear-1);
+
+        lineChart.setVisibleYRange(minValue, maxValue, YAxis.AxisDependency.LEFT);
+        lineChart.getAxis(YAxis.AxisDependency.LEFT).setAxisMaximum(maxValue+median);
+        lineChart.getAxis(YAxis.AxisDependency.LEFT).setAxisMinimum(minValue-median);
 
         LineDataSet dataSet;
 
@@ -83,8 +92,8 @@ public class GraphUtil {
             data.setValueTextColor(Color.BLACK);
             data.setValueTextSize(15f);
 
-            if (type == 1) {
-                Log.d("setchartdata type", String.valueOf(type));
+            if (dataType == 1) {
+                Log.d("setchartdata dataType", String.valueOf(dataType));
                 data.setValueFormatter(new ValueFormatter() {
                     @Override
                     public String getFormattedValue(float value) {
@@ -93,21 +102,20 @@ public class GraphUtil {
                         return String.valueOf(bd.floatValue());
                     }
                 });
-            } else if (type == 3) {
-                Log.d("setchartdata type", String.valueOf(type));
-                Log.d("type", String.valueOf(type));
+            } else if (dataType == 2) {
+                Log.d("setchartdata dataType", String.valueOf(dataType));
                 data.setValueFormatter(new ValueFormatter() {
                     @Override
                     public String getFormattedValue(float value) {
-                        return String.format("%.2f",value/1000000.0);
-                        //return String.valueOf(bd.floatValue());
+                        BigDecimal bd = new BigDecimal(Float.toString(value));
+                        bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+                        return String.valueOf(bd.intValue());
                     }
                 });
             }
 
             // set data
             lineChart.setData(data);
-
         }
 
         lineChart.animateX(1000);
@@ -127,6 +135,7 @@ public class GraphUtil {
 
         // enable touch gestures
         lineChart.setTouchEnabled(true);
+        lineChart.setPinchZoom(true);
 
         lineChart.setDragDecelerationFrictionCoef(0.9f);
 
@@ -151,27 +160,18 @@ public class GraphUtil {
         xAxis.setCenterAxisLabels(false);
         xAxis.setGranularity(1f);
 
-        if (type == 1) {
-            Log.d("setchart type", String.valueOf(type));
-            xAxis.setValueFormatter(new ValueFormatter() {
-                @SuppressLint("DefaultLocale")
-                @Override
-                public String getFormattedValue(float value) {
-                    BigDecimal bd = new BigDecimal(Float.toString(value));
-                    bd = bd.setScale(0, BigDecimal.ROUND_HALF_UP);
-                    return String.format("%.0f", bd.floatValue());
-                    }
-            });
-        } else if (type == 3) {
-            Log.d("setchart type", String.valueOf(type));
-            xAxis.setValueFormatter(new ValueFormatter() {
-                @SuppressLint("DefaultLocale")
-                @Override
-                public String getFormattedValue(float value) {
-                    return String.format("%.2f",value/1000000.0);
+
+        Log.d("setchart type", String.valueOf(type));
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @SuppressLint("DefaultLocale")
+            @Override
+            public String getFormattedValue(float value) {
+                BigDecimal bd = new BigDecimal(Float.toString(value));
+                bd = bd.setScale(0, BigDecimal.ROUND_HALF_UP);
+                return String.format("%.0f", bd.floatValue());
                 }
-            });
-        }
+        });
+
 
         // left y Axis
         YAxis leftAxis = lineChart.getAxisLeft();
@@ -179,7 +179,8 @@ public class GraphUtil {
         leftAxis.setTextColor(Color.BLACK);
         leftAxis.setDrawGridLines(true);
         leftAxis.setGranularityEnabled(true);
-        leftAxis.setAxisMinimum(0f);
+
+
 
         leftAxis.setTextColor(Color.BLACK);
 
@@ -189,7 +190,7 @@ public class GraphUtil {
         return lineChart;
     }
 
-    public static BarChart setChartDataDouble(BarChart barChart, GraphData graphData1, GraphData graphData2, int seekBarX, double seekBarY) {
+    public static BarChart setChartDataDouble(BarChart barChart, Graph graph1, Graph graph2, int seekBarX, double seekBarY) {
 
         float groupSpace = 0.12f;
         float barSpace = 0.4f; // x4 DataSet
@@ -203,7 +204,7 @@ public class GraphUtil {
         double sum1 = 0;
         int counter1 = 0;
 
-        for (Graph data : graphData1.getData()) {
+        for (GraphData data : graph1.getData()) {
             if (data.getYear() >= seekBarX) {
                 counter1++;
                 values1.add(new BarEntry(data.getYear(), (float) data.getValue(), 2));
@@ -213,7 +214,7 @@ public class GraphUtil {
 
         double sum2 = 0;
 
-        for (Graph data : graphData2.getData()) {
+        for (GraphData data : graph2.getData()) {
             if (data.getYear() >= seekBarX) {
                 values2.add(new BarEntry(data.getYear(), (float) data.getValue(), 2));
                 sum2 = (sum2 + data.getValue());
@@ -341,20 +342,20 @@ public class GraphUtil {
         return barChart;
     }
 
-    public static PieChart setChartData(PieChart pieChart, GraphData graphData1, GraphData graphData2, int seekBarX) {
+    public static PieChart setChartData(PieChart pieChart, Graph graph1, Graph graph2, int seekBarX) {
         ArrayList<PieEntry> values = new ArrayList<>();
 
         double male = 0;
         double female = 0;
 
-        for (Graph data : graphData1.getData()) {
+        for (GraphData data : graph1.getData()) {
             if (data.getYear() == seekBarX) {
                 values.add(new PieEntry((int) data.getValue(), "Laki-laki", 2));
                 male = data.getValue();
             }
         }
 
-        for (Graph data : graphData2.getData()) {
+        for (GraphData data : graph2.getData()) {
             if (data.getYear() == seekBarX) {
                 values.add(new PieEntry((int) data.getValue(), "Perempuan", 2));
                 female = data.getValue();

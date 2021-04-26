@@ -1,0 +1,144 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="graph"
+            type="com.lazuardifachri.bps.lekdarjoapp.model.Graph" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="@dimen/card_margin"
+                    android:layout_marginHorizontal="@dimen/card_margin"
+                    android:gravity="center"
+                    android:text="@{graph.meta.title}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+                <TextView
+                    android:id="@+id/unit"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginHorizontal="@dimen/card_margin"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="390dp"
+                    android:layout_margin="@dimen/card_margin"
+                    android:visibility="invisible"/>
+
+                <LinearLayout
+                    android:id="@+id/seekBarSection1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="10"
+                    android:orientation="horizontal"
+                    android:layout_marginHorizontal="@dimen/card_margin"
+                    android:layout_marginTop="@dimen/card_margin"
+                    android:visibility="invisible">
+
+                    <TextView
+                        android:layout_width="100px"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Tahun"
+                        android:gravity="center"/>
+
+                    <com.warkiz.widget.IndicatorSeekBar
+                        android:id="@+id/xSeekBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="9"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/seekBarSection2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="10"
+                    android:orientation="horizontal"
+                    android:layout_marginHorizontal="@dimen/card_margin"
+                    android:layout_marginTop="@dimen/card_margin"
+                    android:visibility="invisible">
+
+                    <TextView
+                        android:layout_width="100px"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Skala"
+                        android:gravity="center"/>
+
+                    <com.warkiz.widget.IndicatorSeekBar
+                        android:id="@+id/ySeekBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="9"
+                        app:isb_progress_value_float="true"/>
+
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:id="@+id/descriptionSection"
+                    style="@style/Widget.CardContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/card_margin"
+                    android:visibility="invisible">
+
+                    <TextView
+                        style="@style/Title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Deskripsi" />
+
+                    <TextView
+                        android:id="@+id/description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|end"
+                        android:layout_marginTop="5dp"
+                        android:justificationMode="inter_word" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </ScrollView>
+
+        <ProgressBar
+            android:id="@+id/loadingProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

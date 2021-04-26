@@ -43,7 +43,7 @@
     <style name="Indicators">
         <item name="android:textSize">24sp</item>
         <item name="android:fontFamily">sans-serif-condensed-medium</item>
-        <item name="android:textStyle">normal</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="Detail">

@@ -92,7 +92,7 @@ public class StatisticalNewsDetailViewModel extends AndroidViewModel {
 
         DetailFileDownloadListener listener = new DetailFileDownloadListener() {
             @Override
-            public String onStartDownload(String fileName, String documentUri) {
+            public String onStartDownload(String fileName) {
                 Log.d("listener", "onStartDownload");
                 insertDownloadWaitingList(id);
                 downloadLoading.setValue(true);
@@ -124,14 +124,14 @@ public class StatisticalNewsDetailViewModel extends AndroidViewModel {
             }
 
             @Override
-            public void onFinishDownload(String documentUri) {
+            public void onFinishDownload() {
                 Log.d("listener", "onFinishDownload");
                 downloadLoading.postValue(false);
                 deleteDownloadWaitingList(id);
             }
 
             @Override
-            public void onFailDownload(String errorInfo, String documentUri) {
+            public void onFailDownload(String errorInfo) {
                 downloadLoading.postValue(false);
                 downloadError.postValue(true);
                 deleteDownloadWaitingList(id);
@@ -140,7 +140,7 @@ public class StatisticalNewsDetailViewModel extends AndroidViewModel {
         };
 
         String fileName = title.replaceAll(" ", "").concat(".pdf");
-        String filePath = listener.onStartDownload(fileName, documentUri);
+        String filePath = listener.onStartDownload(fileName);
         FileDownloadApi fileDownloadApi = ServiceGenerator.createDetailDownloadService(FileDownloadApi.class, getApplication(), listener);
 
         fileDownloadApi.download(documentUri)
@@ -161,7 +161,7 @@ public class StatisticalNewsDetailViewModel extends AndroidViewModel {
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                        listener.onFailDownload(e.toString(), documentUri);
+                        listener.onFailDownload(e.toString());
                     }
 
                     @Override
@@ -181,7 +181,7 @@ public class StatisticalNewsDetailViewModel extends AndroidViewModel {
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull Long aLong) {
                         checkIfFileExistFromDatabase(id);
-                        listener.onFinishDownload(documentUri);
+                        listener.onFinishDownload();
                     }
 
                     @Override
@@ -268,9 +268,9 @@ public class StatisticalNewsDetailViewModel extends AndroidViewModel {
             fos.close();
             inputString.close();
         } catch (FileNotFoundException e) {
-            listener.onFailDownload("FileNotFoundException", documentUri);
+            listener.onFailDownload("FileNotFoundException");
         } catch (IOException e) {
-            listener.onFailDownload("IOException", documentUri);
+            listener.onFailDownload("IOException");
         }
     }
 

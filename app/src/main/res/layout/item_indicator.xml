@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="indicator"
             type="com.lazuardifachri.bps.lekdarjoapp.model.Indicator" />
@@ -13,6 +12,8 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:cardElevation="5dp"
+        app:cardBackgroundColor="@color/white"
         android:layout_margin="10dp">
 
         <LinearLayout

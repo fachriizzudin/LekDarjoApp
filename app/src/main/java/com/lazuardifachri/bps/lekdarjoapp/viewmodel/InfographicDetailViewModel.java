@@ -53,6 +53,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
     public MutableLiveData<ColorPalette> pubPaletteLiveData = new MutableLiveData<>();
 
     public MutableLiveData<Uri> filePathUri = new MutableLiveData<>();
+    public MutableLiveData<Boolean> loading = new MutableLiveData<>();
     public MutableLiveData<Boolean> downloadError = new MutableLiveData<>();
     public MutableLiveData<Boolean> downloadLoading = new MutableLiveData<>();
 
@@ -63,6 +64,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
     }
 
     public void setupBackgroundColor(String url) {
+        loading.setValue(true);
         Glide.with(getApplication())
                 .asBitmap()
                 .load(url)
@@ -74,6 +76,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
                                 int intColor = palette.getLightVibrantColor(ContextCompat.getColor(getApplication(), R.color.blue));
                                 ColorPalette pubPalette = new ColorPalette(intColor);
                                 pubPaletteLiveData.setValue(pubPalette);
+                                loading.setValue(false);
                             }
                         });
                     }
@@ -130,7 +133,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
 
         DetailFileDownloadListener listener = new DetailFileDownloadListener() {
             @Override
-            public String onStartDownload(String fileName, String documentUri) {
+            public String onStartDownload(String fileName) {
                 Log.d("listener", "onStartDownload");
                 insertDownloadWaitingList(id);
                 downloadLoading.setValue(true);
@@ -164,7 +167,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
             }
 
             @Override
-            public void onFinishDownload(String documentUri) {
+            public void onFinishDownload() {
                 Log.d("listener", "onFinishDownload");
                 downloadLoading.postValue(false);
                 deleteDownloadWaitingList(id);
@@ -172,7 +175,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
             }
 
             @Override
-            public void onFailDownload(String errorInfo, String documentUri) {
+            public void onFailDownload(String errorInfo) {
                 Log.d("listenerOnFail", "run");
                 Log.d("error", errorInfo);
                 downloadLoading.postValue(false);
@@ -183,7 +186,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
         };
 
         String fileName = title.replaceAll(" ", "").concat(".png");
-        String filePath = listener.onStartDownload(fileName, documentUri);
+        String filePath = listener.onStartDownload(fileName);
         FileDownloadApi fileDownloadApi = ServiceGenerator.createDetailDownloadService(FileDownloadApi.class, getApplication(), listener);
 
         fileDownloadApi.download(documentUri)
@@ -204,7 +207,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                        listener.onFailDownload(e.toString(), documentUri);
+                        listener.onFailDownload(e.toString());
                     }
 
                     @Override
@@ -224,7 +227,7 @@ public class InfographicDetailViewModel extends AndroidViewModel {
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull Long aLong) {
                         checkIfFileExistFromDatabase(id);
-                        listener.onFinishDownload(documentUri);
+                        listener.onFinishDownload();
                     }
 
                     @Override
@@ -360,9 +363,9 @@ public class InfographicDetailViewModel extends AndroidViewModel {
             fos.close();
             inputString.close();
         } catch (FileNotFoundException e) {
-            listener.onFailDownload("FileNotFoundException", documentUri);
+            listener.onFailDownload("FileNotFoundException");
         } catch (IOException e) {
-            listener.onFailDownload("IOException", documentUri);
+            listener.onFailDownload("IOException");
         }
     }
 

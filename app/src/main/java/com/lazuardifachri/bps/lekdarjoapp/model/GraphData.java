@@ -1,68 +1,54 @@
 package com.lazuardifachri.bps.lekdarjoapp.model;
 
-import androidx.room.ColumnInfo;
-import androidx.room.Embedded;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
-@Entity(tableName = "graph_data")
 public class GraphData {
 
-    @ColumnInfo(name = "data")
-    @SerializedName("data")
-    private List<Graph> data;
+    @SerializedName("id")
+    private int id;
 
-    @Embedded
-    @SerializedName("meta")
-    private GraphMeta meta;
+    @SerializedName("value")
+    private double value;
 
-    @PrimaryKey(autoGenerate = true)
-    private int uuid;
+    @SerializedName("year")
+    private int year;
 
-
-    public GraphData() {
+    public GraphData(int id, double value, int year) {
+        this.id = id;
+        this.value = value;
+        this.year = year;
     }
 
-    public GraphData(List<Graph> data, GraphMeta meta, int uuid) {
-        this.data = data;
-        this.meta = meta;
-        this.uuid = uuid;
+    public int getId() {
+        return id;
     }
 
-    public List<Graph> getData() {
-        return data;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void setData(List<Graph> data) {
-        this.data = data;
+    public double getValue() {
+        return value;
     }
 
-    public GraphMeta getMeta() {
-        return meta;
+    public void setValue(double value) {
+        this.value = value;
     }
 
-    public void setMeta(GraphMeta meta) {
-        this.meta = meta;
+    public int getYear() {
+        return year;
     }
 
-    public int getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(int uuid) {
-        this.uuid = uuid;
+    public void setYear(int year) {
+        this.year = year;
     }
 
     @Override
     public String toString() {
-        return "GraphData{" +
-                "data=" + data +
-                ", meta=" + meta +
-                ", uuid=" + uuid +
+        return "Graph{" +
+                "id=" + id +
+                ", value=" + value +
+                ", year=" + year +
                 '}';
     }
 }

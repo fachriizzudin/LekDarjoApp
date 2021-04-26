@@ -67,17 +67,17 @@ public class PublicationFilterDialogFragment extends DialogFragment {
         subjectSpinner.setAdapter(subjectAdapter);
         subjectSpinner.setSelection(subjectAdapter.getPosition(Parameters.getInstance().getSubjects().get(0)));
 
-        Spinner districtSpinner = binding.dialogDistrictSpinner;
-        ArrayAdapter<District> districtAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, Parameters.getInstance().getDistricts());
-        districtSpinner.setAdapter(districtAdapter);
-        districtSpinner.setSelection(districtAdapter.getPosition(Parameters.getInstance().getDistricts().get(0)));
+//        Spinner districtSpinner = binding.dialogDistrictSpinner;
+//        ArrayAdapter<District> districtAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, Parameters.getInstance().getDistricts());
+//        districtSpinner.setAdapter(districtAdapter);
+//        districtSpinner.setSelection(districtAdapter.getPosition(Parameters.getInstance().getDistricts().get(0)));
 
         Button button = binding.dialogSearchButton;
 
         button.setOnClickListener(v -> {
             Subject subject = (Subject) subjectSpinner.getSelectedItem();
-            District district = (District) districtSpinner.getSelectedItem();
-            onFilterSelected.sendInput(subject.getId(), district.getCode(), numberPicker.getValue());
+//            District district = (District) districtSpinner.getSelectedItem();
+            onFilterSelected.sendInput(subject.getId(), "0", numberPicker.getValue());
             dismiss();
         });
 

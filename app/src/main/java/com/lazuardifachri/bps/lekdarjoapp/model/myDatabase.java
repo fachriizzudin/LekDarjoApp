@@ -9,7 +9,7 @@ import androidx.room.TypeConverters;
 
 import com.lazuardifachri.bps.lekdarjoapp.model.dao.DownloadDao;
 import com.lazuardifachri.bps.lekdarjoapp.model.dao.FileModelDao;
-import com.lazuardifachri.bps.lekdarjoapp.model.dao.GraphDataDao;
+import com.lazuardifachri.bps.lekdarjoapp.model.dao.GraphDao;
 import com.lazuardifachri.bps.lekdarjoapp.model.dao.IndicatorDao;
 import com.lazuardifachri.bps.lekdarjoapp.model.dao.InfographicDao;
 import com.lazuardifachri.bps.lekdarjoapp.model.dao.PublicationDao;
@@ -17,7 +17,7 @@ import com.lazuardifachri.bps.lekdarjoapp.model.dao.StatisticalNewsDao;
 
 @Database(entities = {Publication.class, FileModel.class, Download.class,
         StatisticalNews.class, Indicator.class, Infographic.class, GraphMeta.class,
-        GraphData.class}, version = 19, exportSchema = false)
+        Graph.class}, version = 20, exportSchema = false)
 @TypeConverters({GraphConverter.class})
 public abstract class myDatabase extends RoomDatabase {
 
@@ -46,5 +46,6 @@ public abstract class myDatabase extends RoomDatabase {
 
     public abstract InfographicDao infographicDao();
 
-    public abstract GraphDataDao graphDataDao();
+    public abstract GraphDao graphDao();
+
 }

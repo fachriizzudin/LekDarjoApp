@@ -1,54 +1,74 @@
 package com.lazuardifachri.bps.lekdarjoapp.model;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.SerializedName;
 
-public class Graph {
+import java.util.List;
 
-    @SerializedName("id")
-    private int id;
+@Entity(tableName = "graph")
+public class Graph implements Comparable<Graph> {
 
-    @SerializedName("value")
-    private double value;
+    @ColumnInfo(name = "data")
+    @SerializedName("data")
+    private List<GraphData> data;
 
-    @SerializedName("year")
-    private int year;
+    @Embedded
+    @SerializedName("meta")
+    private GraphMeta meta;
 
-    public Graph(int id, double value, int year) {
-        this.id = id;
-        this.value = value;
-        this.year = year;
+    @PrimaryKey(autoGenerate = true)
+    private int uuid;
+
+
+    public Graph() {
     }
 
-    public int getId() {
-        return id;
+    public Graph(List<GraphData> data, GraphMeta meta, int uuid) {
+        this.data = data;
+        this.meta = meta;
+        this.uuid = uuid;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public List<GraphData> getData() {
+        return data;
     }
 
-    public double getValue() {
-        return value;
+    public void setData(List<GraphData> data) {
+        this.data = data;
     }
 
-    public void setValue(double value) {
-        this.value = value;
+    public GraphMeta getMeta() {
+        return meta;
     }
 
-    public int getYear() {
-        return year;
+    public void setMeta(GraphMeta meta) {
+        this.meta = meta;
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    public int getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(int uuid) {
+        this.uuid = uuid;
     }
 
     @Override
     public String toString() {
-        return "Graph{" +
-                "id=" + id +
-                ", value=" + value +
-                ", year=" + year +
+        return "GraphData{" +
+                "data=" + data +
+                ", meta=" + meta +
+                ", uuid=" + uuid +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Graph graph) {
+        int serialNumber = graph.getMeta().getSerialNumber();
+        return this.getMeta().getSerialNumber() - serialNumber;
     }
 }

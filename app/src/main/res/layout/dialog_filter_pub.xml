@@ -22,18 +22,18 @@
             android:layout_height="wrap_content"
             android:prompt="@string/spinner_prompt"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="5dp"
-            android:text="@string/district" />
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="15dp"-->
+<!--            android:layout_marginBottom="5dp"-->
+<!--            android:text="@string/district" />-->
 
-        <Spinner
-            android:id="@+id/dialogDistrictSpinner"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:prompt="@string/spinner_prompt" />
+<!--        <Spinner-->
+<!--            android:id="@+id/dialogDistrictSpinner"-->
+<!--            android:layout_width="fill_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:prompt="@string/spinner_prompt" />-->
 
 
         <TextView

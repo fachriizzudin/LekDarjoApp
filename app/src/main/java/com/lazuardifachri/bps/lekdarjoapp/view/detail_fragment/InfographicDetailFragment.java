@@ -107,6 +107,11 @@ public class InfographicDetailFragment extends Fragment {
                 }
             }
         });
+        viewModel.loading.observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading != null) {
+                binding.loadingProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            }
+        });
     }
 
     private void shareImage(Uri uri) {

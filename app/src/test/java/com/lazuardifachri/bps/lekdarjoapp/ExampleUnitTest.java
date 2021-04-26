@@ -2,7 +2,7 @@ package com.lazuardifachri.bps.lekdarjoapp;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.lazuardifachri.bps.lekdarjoapp.model.Graph;
+import com.lazuardifachri.bps.lekdarjoapp.model.GraphData;
 import com.lazuardifachri.bps.lekdarjoapp.util.StringUtil;
 
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -138,9 +137,9 @@ public class ExampleUnitTest {
 
         Gson gson = new Gson();
 
-        ArrayList<Graph> data = gson.fromJson(json, new TypeToken<List<Graph>>(){}.getType());
+        ArrayList<GraphData> data = gson.fromJson(json, new TypeToken<List<GraphData>>(){}.getType());
 
-        Graph lastData = Collections.max(data, Comparator.comparingInt(Graph::getYear));
+        GraphData lastData = Collections.max(data, Comparator.comparingInt(GraphData::getYear));
 
         System.out.println(lastData.getYear());
 
