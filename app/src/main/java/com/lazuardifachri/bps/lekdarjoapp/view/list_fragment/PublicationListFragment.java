@@ -63,7 +63,6 @@ public class PublicationListFragment extends Fragment implements PublicationFilt
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Publikasi");
 
-
         return view;
     }
 

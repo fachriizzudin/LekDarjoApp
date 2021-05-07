@@ -9,14 +9,14 @@
             type="com.lazuardifachri.bps.lekdarjoapp.model.Graph" />
         <variable
             name="listener"
-            type="com.lazuardifachri.bps.lekdarjoapp.view.listener.GraphMetaCLickListener" />
+            type="com.lazuardifachri.bps.lekdarjoapp.view.listener.GraphCLickListener" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/povertyCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
+        android:layout_marginHorizontal="18dp"
         android:layout_marginBottom="20dp"
         app:cardElevation="5dp"
         app:cardBackgroundColor="@color/white"
@@ -25,7 +25,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:onClick="@{listener::onGraphMetaClick}">
+            android:onClick="@{listener::onGraphClick}">
 
             <TextView
                 android:id="@+id/graphDataUuId"

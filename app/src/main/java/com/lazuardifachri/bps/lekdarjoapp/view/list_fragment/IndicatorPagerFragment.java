@@ -8,11 +8,13 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.lazuardifachri.bps.lekdarjoapp.databinding.FragmentIndicatorListBinding;
 import com.lazuardifachri.bps.lekdarjoapp.view.adapter.IndicatorPagerAdapter;
+import com.lazuardifachri.bps.lekdarjoapp.viewmodel.IndicatorListViewModel;
 
 public class IndicatorPagerFragment extends Fragment {
 
@@ -26,12 +28,8 @@ public class IndicatorPagerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         binding = FragmentIndicatorListBinding.inflate(inflater, container, false);
-
         View view = binding.getRoot();
-
-
         return view;
     }
 

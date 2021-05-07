@@ -61,7 +61,7 @@ public class StatisticalNewsListFragment extends Fragment implements Statistical
 
         setHasOptionsMenu(true);
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Berita Statistik");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Berita Resmi Statistik");
 
         return view;
     }

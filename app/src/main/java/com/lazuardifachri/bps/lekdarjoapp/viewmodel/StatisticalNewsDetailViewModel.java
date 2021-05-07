@@ -13,6 +13,7 @@ import com.lazuardifachri.bps.lekdarjoapp.model.Download;
 import com.lazuardifachri.bps.lekdarjoapp.model.FileModel;
 import com.lazuardifachri.bps.lekdarjoapp.model.StatisticalNews;
 import com.lazuardifachri.bps.lekdarjoapp.model.api.FileDownloadApi;
+import com.lazuardifachri.bps.lekdarjoapp.model.api.FileHeaderApi;
 import com.lazuardifachri.bps.lekdarjoapp.model.myDatabase;
 import com.lazuardifachri.bps.lekdarjoapp.util.DetailFileDownloadListener;
 import com.lazuardifachri.bps.lekdarjoapp.util.ServiceGenerator;
@@ -27,6 +28,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.observers.DefaultObserver;
 import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -42,6 +44,7 @@ public class StatisticalNewsDetailViewModel extends AndroidViewModel {
     public MutableLiveData<Boolean> downloadError = new MutableLiveData<>();
     public MutableLiveData<Boolean> downloadLoading = new MutableLiveData<>();
 
+    FileHeaderApi fileHeaderApi = ServiceGenerator.createService(FileHeaderApi.class, getApplication());
     private final CompositeDisposable disposable = new CompositeDisposable();
 
     public StatisticalNewsDetailViewModel(@NonNull Application application) {
@@ -139,10 +142,45 @@ public class StatisticalNewsDetailViewModel extends AndroidViewModel {
             }
         };
 
-        String fileName = title.replaceAll(" ", "").concat(".pdf");
-        String filePath = listener.onStartDownload(fileName);
-        FileDownloadApi fileDownloadApi = ServiceGenerator.createDetailDownloadService(FileDownloadApi.class, getApplication(), listener);
+        fileHeaderApi.lookup(documentUri)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DefaultObserver<ResponseBody>() {
+                    @Override
+                    public void onNext(@io.reactivex.rxjava3.annotations.NonNull ResponseBody responseBody) {
+                        try {
+                            String fileName = title.replaceAll(" ", "").replaceAll("/", " atau ");
+                            Log.d("content-type", responseBody.contentType().toString());
+                            if (responseBody.contentType().toString().equals("application/pdf") || responseBody.contentType().toString().equals("application/octet-stream")) {
+                                fileName = fileName + ".pdf";
+                            } else {
+                                Toast.makeText(getApplication(), "Download Failed", Toast.LENGTH_SHORT).show();
+                                throw new IOException();
+                            }
+                            String filePath = listener.onStartDownload(fileName);
+                            startDownload(id, documentUri, fileName, filePath, listener);
+                        } catch (IOException e) {
 
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        Toast.makeText(getApplication(), "Download Failed", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
+    }
+
+    private void startDownload(int id, String documentUri, String fileName, String filePath, DetailFileDownloadListener listener) {
+        FileDownloadApi fileDownloadApi = ServiceGenerator.createDetailDownloadService(FileDownloadApi.class, getApplication(), listener);
         fileDownloadApi.download(documentUri)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())

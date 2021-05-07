@@ -1,5 +1,9 @@
 package com.lazuardifachri.bps.lekdarjoapp.util;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,5 +53,19 @@ public class StringUtil {
             return null;
 
         return str;
+    }
+
+    public static String formatGraphInt(int value) {
+        String numberFormat = NumberFormat.getNumberInstance(Locale.ENGLISH).format(value);
+        StringTokenizer token = new StringTokenizer(numberFormat,".");
+        numberFormat = token.nextToken();
+        return numberFormat.replace(",", ".");
+    }
+
+    public static String formatGraphDouble(double value) {
+        String decimalFormat = DecimalFormat.getNumberInstance(Locale.ENGLISH).format(value);
+        StringTokenizer tokenDecimal = new StringTokenizer(decimalFormat,",");
+        decimalFormat = tokenDecimal.nextToken();
+        return decimalFormat.replace(".", ",");
     }
 }

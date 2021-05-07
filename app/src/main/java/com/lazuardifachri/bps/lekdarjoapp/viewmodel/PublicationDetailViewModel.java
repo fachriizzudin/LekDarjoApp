@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,10 +24,10 @@ import com.lazuardifachri.bps.lekdarjoapp.model.Download;
 import com.lazuardifachri.bps.lekdarjoapp.model.FileModel;
 import com.lazuardifachri.bps.lekdarjoapp.model.Publication;
 import com.lazuardifachri.bps.lekdarjoapp.model.api.FileDownloadApi;
+import com.lazuardifachri.bps.lekdarjoapp.model.api.FileHeaderApi;
 import com.lazuardifachri.bps.lekdarjoapp.model.myDatabase;
 import com.lazuardifachri.bps.lekdarjoapp.util.DetailFileDownloadListener;
 import com.lazuardifachri.bps.lekdarjoapp.util.ServiceGenerator;
-import com.lazuardifachri.bps.lekdarjoapp.util.StringUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,6 +39,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.observers.DefaultObserver;
 import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -54,6 +56,7 @@ public class PublicationDetailViewModel extends AndroidViewModel {
     public MutableLiveData<Boolean> downloadError = new MutableLiveData<>();
     public MutableLiveData<Boolean> downloadLoading = new MutableLiveData<>();
 
+    FileHeaderApi fileHeaderApi = ServiceGenerator.createService(FileHeaderApi.class, getApplication());
     private final CompositeDisposable disposable = new CompositeDisposable();
 
     public PublicationDetailViewModel(@NonNull Application application) {
@@ -176,15 +179,51 @@ public class PublicationDetailViewModel extends AndroidViewModel {
             }
         };
 
-        String fileName = title.replaceAll(" ", "").concat(".pdf");
-        String filePath = listener.onStartDownload(fileName);
-        FileDownloadApi fileDownloadApi = ServiceGenerator.createDetailDownloadService(FileDownloadApi.class, getApplication(), listener);
+        fileHeaderApi.lookup(documentUri)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DefaultObserver<ResponseBody>() {
+                    @Override
+                    public void onNext(@io.reactivex.rxjava3.annotations.NonNull ResponseBody responseBody) {
+                        try {
+                            String fileName = title.replaceAll(" ", "").replaceAll("/", " atau ");
+                            Log.d("contentType", responseBody.contentType().toString() );
+                            if (responseBody.contentType().toString().equals("application/pdf") || responseBody.contentType().toString().equals("application/octet-stream")) {
+                                fileName = fileName + ".pdf";
+                            } else {
+                                Toast.makeText(getApplication(), "Download Failed", Toast.LENGTH_SHORT).show();
+                                throw new IOException();
+                            }
+                            String filePath = listener.onStartDownload(fileName);
+                            startDownload(id, documentUri, fileName, filePath, listener);
+                        } catch (IOException e) {
 
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        Toast.makeText(getApplication(), "Download Failed", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
+
+    }
+
+    private void startDownload(int id, String documentUri, String fileName, String filePath, DetailFileDownloadListener listener) {
+        FileDownloadApi fileDownloadApi = ServiceGenerator.createDetailDownloadService(FileDownloadApi.class, getApplication(), listener);
         fileDownloadApi.download(documentUri)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .map(ResponseBody::byteStream).observeOn(Schedulers.computation())
-                .doOnNext(inputStream -> writeFile(inputStream, filePath, documentUri, listener)).observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(inputStream -> writeFile(inputStream, filePath, listener)).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<InputStream>() {
                     @Override
                     public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
@@ -193,7 +232,7 @@ public class PublicationDetailViewModel extends AndroidViewModel {
 
                     @Override
                     public void onNext(@io.reactivex.rxjava3.annotations.NonNull InputStream inputStream) {
-                        insertPathToDatabase(id, documentUri, fileName, filePath, listener);
+                        insertPathToDatabase(id, fileName, filePath, listener);
                     }
 
                     @Override
@@ -208,7 +247,7 @@ public class PublicationDetailViewModel extends AndroidViewModel {
                 });
     }
 
-    public void insertPathToDatabase(int id, String documentUri, String fileName, String filePath, DetailFileDownloadListener listener) {
+    private void insertPathToDatabase(int id, String fileName, String filePath, DetailFileDownloadListener listener) {
         String fileId = "publication" + id;
         disposable.add(myDatabase.getInstance(getApplication())
                 .fileModelDao().insertFile(new FileModel(fileId, fileName, filePath))
@@ -288,7 +327,7 @@ public class PublicationDetailViewModel extends AndroidViewModel {
                 }));
     }
 
-    private void writeFile(InputStream inputString, String filePath, String documentUri, DetailFileDownloadListener listener) {
+    private void writeFile(InputStream inputString, String filePath, DetailFileDownloadListener listener) {
         File file = new File(filePath);
         if (file.exists()) {
             file.delete();

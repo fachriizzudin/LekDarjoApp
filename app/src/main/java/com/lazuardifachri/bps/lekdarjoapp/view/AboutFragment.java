@@ -24,13 +24,9 @@ public class AboutFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         binding = FragmentAboutBinding.inflate(inflater, container, false);
-
         View view = binding.getRoot();
-
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Tentang");
-
         return view;
     }
 

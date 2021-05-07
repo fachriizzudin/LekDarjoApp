@@ -14,29 +14,20 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 
 import com.google.android.material.navigation.NavigationView;
 import com.lazuardifachri.bps.lekdarjoapp.BuildConfig;
 import com.lazuardifachri.bps.lekdarjoapp.R;
 import com.lazuardifachri.bps.lekdarjoapp.databinding.ActivityMainBinding;
-import com.lazuardifachri.bps.lekdarjoapp.model.api.LoginApi;
-import com.lazuardifachri.bps.lekdarjoapp.model.request.LoginRequest;
-import com.lazuardifachri.bps.lekdarjoapp.model.response.LoginResponse;
-import com.lazuardifachri.bps.lekdarjoapp.util.ServiceGenerator;
+import com.lazuardifachri.bps.lekdarjoapp.util.Constant;
 import com.lazuardifachri.bps.lekdarjoapp.util.SharedPreferencesHelper;
 
 import java.io.File;
 
-import io.reactivex.rxjava3.core.Observer;
-import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
-
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+ public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
 
@@ -46,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FragmentTransaction fragmentTransaction;
 
     private NavController navController;
-    private final LoginApi loginApi = ServiceGenerator.createService(LoginApi.class, this);
 
 
     @Override
@@ -63,8 +53,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // androidapp@mail.com
         // l1e2k3d4r5j6o
 
-        // loginApp();
-        SharedPreferencesHelper.getInstance(getApplicationContext()).saveAuthToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJsZWtkYXJqb3B5QGVtYWlsLmNvbSIsImlhdCI6MTYxODU4ODU2MiwiZXhwIjoyNjE4NTg4NTYyfQ.oLZc8sVSZIZMX1MkxVTWSlHhhGkmbLE4B6teQV1NTtMfcCN8A7lvXj6OOtLELuZK43imKiDy8lheMlHNhNDwEw");
+        SharedPreferencesHelper.getInstance(getApplicationContext()).saveAuthToken(Constant.JWT_TOKEN_API);
 
         File root = new File(getApplication().getFilesDir().getAbsolutePath());
         if (!root.exists()) {
@@ -111,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 navController.navigate(R.id.publicationListFragment);
                 break;
             case R.id.indicator:
-                navController.navigate(R.id.indicatorListFragment);
+                navController.navigate(R.id.indicatorPagerFragment);
                 break;
             case R.id.infographic:
                 navController.navigate(R.id.infographicListFragment);
@@ -123,42 +112,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 shareIntent.setType("text/plain");
-                shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Hey check out my app at: https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID);
+                shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Unduh LekDarjo, penyedia data dan statistik sidoarjo di: https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID);
                 startActivity(shareIntent);
                 break;
         }
         return true;
-    }
-
-    private void loginApp() {
-        loginApi.login(new LoginRequest("bpskabupatensidoarjo@gmail.com", "@Hero140"))
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<LoginResponse>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NonNull LoginResponse loginResponse) {
-                        SharedPreferencesHelper.getInstance(getApplicationContext()).saveAuthToken(loginResponse.getToken());
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        Log.d("onError", e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-
-    public NavController getNavController() {
-        return navController;
     }
 
     @Override

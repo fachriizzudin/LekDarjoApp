@@ -32,10 +32,12 @@ import com.lazuardifachri.bps.lekdarjoapp.model.GraphData;
 import android.graphics.Typeface;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
+import java.util.StringTokenizer;
 
 public class GraphUtil {
 
@@ -49,7 +51,11 @@ public class GraphUtil {
         for (GraphData data : graph.getData()) {
             if (data.getYear() >= seekBarX) {
                 counter++;
-                values.add(new Entry(data.getYear(), (float) data.getValue(), 2));
+                if (dataType == 2) {
+                    values.add(new Entry(data.getYear(), (float) (int) data.getValue(), 2));
+                } else {
+                    values.add(new Entry(data.getYear(), (float) data.getValue(), 2));
+                }
                 sum = (sum + data.getValue());
             }
         }
@@ -92,6 +98,7 @@ public class GraphUtil {
             data.setValueTextColor(Color.BLACK);
             data.setValueTextSize(15f);
 
+            // data desimal
             if (dataType == 1) {
                 Log.d("setchartdata dataType", String.valueOf(dataType));
                 data.setValueFormatter(new ValueFormatter() {
@@ -99,17 +106,19 @@ public class GraphUtil {
                     public String getFormattedValue(float value) {
                         BigDecimal bd = new BigDecimal(Float.toString(value));
                         bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
-                        return String.valueOf(bd.floatValue());
+                        return StringUtil.formatGraphDouble(bd.floatValue());
                     }
                 });
-            } else if (dataType == 2) {
+            }
+            // data integer
+            else if (dataType == 2) {
                 Log.d("setchartdata dataType", String.valueOf(dataType));
                 data.setValueFormatter(new ValueFormatter() {
                     @Override
                     public String getFormattedValue(float value) {
                         BigDecimal bd = new BigDecimal(Float.toString(value));
-                        bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
-                        return String.valueOf(bd.intValue());
+                        bd = bd.setScale(0, BigDecimal.ROUND_HALF_UP);
+                        return StringUtil.formatGraphInt(bd.intValue());
                     }
                 });
             }
@@ -126,7 +135,7 @@ public class GraphUtil {
 
     }
 
-    public static LineChart setChart(LineChart lineChart, int type) {
+    public static LineChart setChart(LineChart lineChart, int dataType) {
         Log.d("setchart", "masuk");
         lineChart.setBackgroundColor(Color.WHITE);
 
@@ -160,8 +169,6 @@ public class GraphUtil {
         xAxis.setCenterAxisLabels(false);
         xAxis.setGranularity(1f);
 
-
-        Log.d("setchart type", String.valueOf(type));
         xAxis.setValueFormatter(new ValueFormatter() {
             @SuppressLint("DefaultLocale")
             @Override
@@ -172,7 +179,6 @@ public class GraphUtil {
                 }
         });
 
-
         // left y Axis
         YAxis leftAxis = lineChart.getAxisLeft();
         leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
@@ -180,7 +186,25 @@ public class GraphUtil {
         leftAxis.setDrawGridLines(true);
         leftAxis.setGranularityEnabled(true);
 
-
+        leftAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                // data desimal
+                if (dataType == 1) {
+                    BigDecimal bd = new BigDecimal(Float.toString(value));
+                    bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+                    return StringUtil.formatGraphDouble(bd.floatValue());
+                }
+                // data integer
+                else if (dataType == 2) {
+                    BigDecimal bd = new BigDecimal(Float.toString(value));
+                    bd = bd.setScale(0, BigDecimal.ROUND_HALF_UP);
+                    return StringUtil.formatGraphInt(bd.intValue());
+                } else {
+                    return String.valueOf(value);
+                }
+            }
+        });
 
         leftAxis.setTextColor(Color.BLACK);
 

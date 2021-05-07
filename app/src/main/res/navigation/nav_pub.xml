@@ -24,9 +24,13 @@
             android:defaultValue="0" />
     </fragment>
     <fragment
-        android:id="@+id/indicatorListFragment"
+        android:id="@+id/indicatorPagerFragment"
         android:name="com.lazuardifachri.bps.lekdarjoapp.view.list_fragment.IndicatorPagerFragment"
-        android:label="IndicatorListFragment" />
+        android:label="IndicatorPagerFragment" >
+        <action
+            android:id="@+id/actionPagerToListIndicator"
+            app:destination="@id/indicatorListFragment" />
+    </fragment>
     <fragment
         android:id="@+id/infographicListFragment"
         android:name="com.lazuardifachri.bps.lekdarjoapp.view.list_fragment.InfographicListFragment"
@@ -87,7 +91,7 @@
             app:destination="@id/publicationListFragment" />
         <action
             android:id="@+id/actionGraphListToIndicatorList"
-            app:destination="@id/indicatorListFragment" />
+            app:destination="@id/indicatorPagerFragment" />
         <action
             android:id="@+id/actionGraphListToAbout"
             app:destination="@id/aboutFragment" />
@@ -103,5 +107,17 @@
             android:name="uuid"
             android:defaultValue="0"
             app:argType="integer" />
+        <action
+            android:id="@+id/actionGraphDetailToList"
+            app:destination="@id/graphListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/indicatorListFragment"
+        android:name="com.lazuardifachri.bps.lekdarjoapp.view.list_fragment.IndicatorListFragment"
+        android:label="IndicatorListFragment" >
+        <argument
+            android:name="id"
+            app:argType="integer"
+            android:defaultValue="1" />
     </fragment>
 </navigation>

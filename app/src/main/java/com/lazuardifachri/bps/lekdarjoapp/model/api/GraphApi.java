@@ -9,4 +9,7 @@ import retrofit2.http.Path;
 public interface GraphApi {
     @GET("api/graph/{id}")
     Single<Graph> getGraph(@Path("id") int id);
+
+    @GET("/api/graphmeta/count")
+    Single<Long> getGraphMetaCount();
 }

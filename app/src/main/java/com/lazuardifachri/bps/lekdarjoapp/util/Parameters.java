@@ -10,11 +10,15 @@ import java.util.List;
 public class Parameters {
 
     private static Parameters instance = new Parameters();
-    private List<Subject> subjects = new ArrayList<>();
-    private List<Category> socialCategories = new ArrayList<>();
-    private List<Category> economyCategories = new ArrayList<>();
-    private List<Category> agricultureCategories = new ArrayList<>();
-    private List<District> districts = new ArrayList<>();;
+    private final List<Subject> subjects = new ArrayList<>();
+    private final List<Category> socialCategories = new ArrayList<>();
+    private final List<Category> economyCategories = new ArrayList<>();
+    private final List<Category> agricultureCategories = new ArrayList<>();
+    private final List<District> districts = new ArrayList<>();
+
+    private final List<Category> socialCategoriesIdx = new ArrayList<>();
+    private final List<Category> economyCategoriesIdx = new ArrayList<>();
+    private final List<Category> agricultureCategoriesIdx = new ArrayList<>();
 
     private Parameters() {
 
@@ -85,6 +89,10 @@ public class Parameters {
         districts.add(new District("3515180","Balong"));
         districts.add(new District("3515","Umum"));
 
+        socialCategoriesIdx.addAll(socialCategories.subList(1, socialCategories.size()));
+        economyCategoriesIdx.addAll(economyCategories.subList(1, economyCategories.size()));
+        agricultureCategoriesIdx.addAll(agricultureCategories.subList(1, agricultureCategories.size()));
+
     }
 
     public static Parameters getInstance() {
@@ -108,6 +116,18 @@ public class Parameters {
 
     public List<Category> getAgricultureCategories() {
         return agricultureCategories;
+    }
+
+    public List<Category> getSocialCategoriesIdx() {
+        return socialCategoriesIdx;
+    }
+
+    public List<Category> getEconomyCategoriesIdx() {
+        return economyCategoriesIdx;
+    }
+
+    public List<Category> getAgricultureCategoriesIdx() {
+        return agricultureCategoriesIdx;
     }
 
     public List<District> getDistricts() {

@@ -54,18 +54,19 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
 
     private static final int PERMISSION_REQUEST_CODE = 1;
 
-    private int subjectId;
+//    private int subjectId;
+    private int categoryId;
     private int id;
     private String title;
     private String documentUri;
 
-    public static IndicatorListFragment newInstance(Integer counter) {
-        IndicatorListFragment fragment = new IndicatorListFragment();
-        Bundle args = new Bundle();
-        args.putInt("subjectId", counter + 1);
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    public static IndicatorListFragment newInstance(Integer counter) {
+//        IndicatorListFragment fragment = new IndicatorListFragment();
+//        Bundle args = new Bundle();
+//        args.putInt("subjectId", counter + 1);
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
     @Nullable
     @Override
@@ -77,8 +78,7 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
         fileModelViewModel = new ViewModelProvider(this).get(FileModelViewModel.class);
 
         if (getArguments() != null) {
-            Bundle bundle = getArguments();
-            subjectId = bundle.getInt("subjectId");
+            categoryId = IndicatorListFragmentArgs.fromBundle(getArguments()).getId();
         }
 
         adapter = new IndicatorAdapter(new ArrayList<>(), new IndicatorItemListener() {
@@ -97,6 +97,7 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
                         requestPermission();
                     }
                 } catch (IOException e) {
+                    Toast.makeText(getContext(), "Download Failed", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             }
@@ -123,7 +124,7 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
         binding.error.setVisibility(View.GONE);
         binding.notFound.setVisibility(View.GONE);
 
-        viewModel.refresh(subjectId);
+        viewModel.refresh(categoryId);
         observeViewModel();
 
         binding.refreshLayout.setOnRefreshListener(() -> {
@@ -131,7 +132,7 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
             binding.error.setVisibility(View.GONE);
             binding.notFound.setVisibility(View.GONE);
             binding.loadingProgressBar.setVisibility(View.VISIBLE);
-            viewModel.fetchBySubjectFromDatabase(subjectId);
+            viewModel.fetchByCategoryFromDatabase(categoryId);
             binding.refreshLayout.setRefreshing(false);
         });
     }
@@ -184,7 +185,7 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.action_menu, menu);
+        inflater.inflate(R.menu.indicator_action_menu, menu);
 
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(getContext().SEARCH_SERVICE);
 
@@ -208,20 +209,6 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
             }
         });
 
-        MenuItem filterMenuItem = menu.findItem(R.id.filterAction);
-
-        filterMenuItem.setOnMenuItemClickListener(item -> {
-            IndicatorFilterDialogFragment dialog = new IndicatorFilterDialogFragment();
-
-            Bundle bundle = new Bundle();
-            bundle.putInt("code", subjectId);
-
-            dialog.setArguments(bundle);
-            dialog.setTargetFragment(this, 0);
-            dialog.show(getParentFragmentManager(), "dialog");
-            return true;
-        });
-
         MenuItem refreshMenuItem = menu.findItem(R.id.refreshAction);
 
         refreshMenuItem.setOnMenuItemClickListener(item -> {
@@ -230,7 +217,7 @@ public class IndicatorListFragment extends Fragment implements IndicatorFilterDi
             binding.notFound.setVisibility(View.GONE);
             binding.loadingProgressBar.setVisibility(View.VISIBLE);
 
-            viewModel.fetchAllFromRemote(subjectId);
+            viewModel.fetchAllFromRemote(categoryId);
 
             binding.refreshLayout.setRefreshing(false);
             return true;

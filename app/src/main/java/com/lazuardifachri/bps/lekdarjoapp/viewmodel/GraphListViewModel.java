@@ -9,7 +9,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.lazuardifachri.bps.lekdarjoapp.model.Graph;
 import com.lazuardifachri.bps.lekdarjoapp.model.api.GraphApi;
-import com.lazuardifachri.bps.lekdarjoapp.model.api.GraphMetaApi;
 import com.lazuardifachri.bps.lekdarjoapp.model.myDatabase;
 import com.lazuardifachri.bps.lekdarjoapp.util.ServiceGenerator;
 import com.lazuardifachri.bps.lekdarjoapp.util.SharedPreferencesHelper;
@@ -32,7 +31,6 @@ public class GraphListViewModel extends AndroidViewModel {
     public MutableLiveData<Boolean> error = new MutableLiveData<>();
     public MutableLiveData<Boolean> loading = new MutableLiveData<>();
 
-    private final GraphMetaApi graphMetaApi = ServiceGenerator.createService(GraphMetaApi.class, getApplication());
     private final GraphApi graphApi = ServiceGenerator.createService(GraphApi.class, getApplication());
 
     private final CompositeDisposable disposable = new CompositeDisposable();
@@ -48,6 +46,7 @@ public class GraphListViewModel extends AndroidViewModel {
         if (graphLive.getValue().size() == counter.getValue()) {
             graphLive.setValue(new ArrayList<>(graphLive.getValue()));
             loading.setValue(false);
+            error.setValue(false);
         }
     }
 
@@ -64,8 +63,9 @@ public class GraphListViewModel extends AndroidViewModel {
 
     public void fetchAllFromRemote() {
         loading.setValue(true);
+        error.setValue(false);
         disposable.add(
-                graphMetaApi.getGraphMetaCount().subscribeOn(Schedulers.newThread())
+                graphApi.getGraphMetaCount().subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<Long>() {
                             @Override

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="category"
+            type="com.lazuardifachri.bps.lekdarjoapp.model.Category" />
+
+        <variable
+            name="listener"
+            type="com.lazuardifachri.bps.lekdarjoapp.view.listener.CategoryListener" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:onClick="@{listener::onCategoryClick}">
+
+        <TextView
+            android:id="@+id/categoryId"
+            style="@style/Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@{String.valueOf(category.id)}"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/pubListItemLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:padding="10dp"
+            android:orientation="vertical"
+            android:weightSum="11">
+
+            <TextView
+                android:id="@+id/indicatorCategory"
+                style="@style/Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@{category.name}" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</layout>
+

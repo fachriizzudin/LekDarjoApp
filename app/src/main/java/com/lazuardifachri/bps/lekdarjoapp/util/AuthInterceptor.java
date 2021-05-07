@@ -23,6 +23,14 @@ public class AuthInterceptor implements Interceptor {
         if (SharedPreferencesHelper.getInstance(context).fetchAuthToken() != null)
             requestBuilder.addHeader("Authorization", "Bearer " + SharedPreferencesHelper.getInstance(context).fetchAuthToken());
 
-        return chain.proceed(requestBuilder.build());
+        Response response = chain.proceed(requestBuilder.build());
+
+        int tryCount = 0;
+        while (!response.isSuccessful() && tryCount < Constant.tryRequest) {
+            tryCount++;
+            response = chain.proceed(requestBuilder.build());
+        }
+
+        return response;
     }
 }

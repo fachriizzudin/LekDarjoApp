@@ -25,7 +25,6 @@ public class GraphDetailFragment extends Fragment implements OnSeekChangeListene
     private GraphDetailViewModel viewModel;
 
     private int uuid;
-    private int graphType;
     private int dataType;
 
     private LineChart lineChart;
@@ -63,7 +62,6 @@ public class GraphDetailFragment extends Fragment implements OnSeekChangeListene
         viewModel.graphLive.observe(getViewLifecycleOwner(), graph -> {
             if (graph != null && getContext() != null) {
                 binding.setGraph(graph);
-                graphType = graph.getMeta().getGraphType();
                 dataType = graph.getMeta().getDataType();
                 lineChart = GraphUtil.setChart(lineChart,dataType);
             }
@@ -83,6 +81,10 @@ public class GraphDetailFragment extends Fragment implements OnSeekChangeListene
 
                 binding.description.setText(graph.getMeta().getDescription());
                 binding.unit.setText(verticalUnit);
+
+                if (graph.getMeta().getVerticalUnit().isEmpty()) {
+                    binding.unit.setVisibility(View.INVISIBLE);
+                }
 
                 int maxYear = graph.getData().get(graph.getData().size() - 1).getYear();
                 int minYear = graph.getData().get(0).getYear();

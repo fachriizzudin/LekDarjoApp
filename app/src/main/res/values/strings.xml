@@ -9,7 +9,7 @@
     <string name="menu_other">Lainya</string>
     <string name="item_main">Beranda</string>
     <string name="menu_main">Menu</string>
-    <string name="item_news">Berita Statistik</string>
+    <string name="item_news">Berita Resmi Statistik</string>
     <string name="item_publication">Publikasi</string>
     <string name="item_indicator">Indikator</string>
     <string name="item_infographic">Infografis</string>
@@ -26,6 +26,8 @@
     <string name="description">BPS Kabupaten Sidoarjo adalah instansi vertikal yang berada di bawah dan bertanggung jawab kepada kepala BPS Provinsi Jawa Timur. Struktur organisasi BPS Kabupaten Sidoarjo sesuai dengan Peraturan Presiden Nomor 86 Tahun 2007 terdiri dari Kepala, Subbagian Tata Usaha, Seksi Statistik Sosial, Seksi Statistik Produksi, Seksi Statistik Distribusi, Seksi Neraca Wilayah dan Analisis Statistik,  dan Seksi Integrasi Pengolahan dan Diseminasi Statistik.</string>
 
     <string name="link"><u>Kunjungi website</u></string>
+    <string name="error">Terjadi kesalahan, coba refresh kembali</string>
+    <string name="notfound">Data tidak ditemukan, coba refresh atau</string>
 
     <string-array name="cities_array">
         <item>Berlin</item>
